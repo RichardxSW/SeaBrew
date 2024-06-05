@@ -70,6 +70,18 @@ const History = () => {
                         <Text style={styles.paidText}>Paid</Text>
                     </View>
                 </View>
+                <View style={styles.bundleRow}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.itemName}>Choco Cappuccino Set</Text>
+                        <Text style={styles.visitDate}>
+                            Visit date: 29 May 2024
+                        </Text>
+                    </View>
+                    <View style={styles.groupContainer}>
+                        <Text style={styles.itemPrice}>Rp.190.000</Text>
+                        <Text style={styles.paidText}>Paid</Text>
+                    </View>
+                </View>
             </View>
         </View>
     );
@@ -80,8 +92,8 @@ const styles = StyleSheet.create({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
+        justifyContent: "center",
+        alignItems: "center",
         width: 360,
         height: 800,
         boxSizing: "border-box",
@@ -103,19 +115,18 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     bundleContainer: {
-        position: "absolute",
-        top: 159,
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        height: 486,
         paddingLeft: 9,
         paddingRight: 11,
         paddingTop: 14,
-        paddingBottom: 11,
+        paddingBottom: 14,
         borderRadius: 20,
         boxSizing: "border-box",
         backgroundColor: "rgba(179,224,245,1)",
+        marginTop: 10,
+        marginBottom: 10,
     },
     bundleRow: {
         display: "flex",
@@ -128,10 +139,9 @@ const styles = StyleSheet.create({
     textContainer: {
         display: "flex",
         flexDirection: "column",
-        height: "100%",
-        paddingRight: 55,
-        paddingBottom: 35.55,
+        paddingBottom: 40,
         boxSizing: "border-box",
+        flex: 1,
     },
     itemName: {
         color: "rgba(55,90,130,1)",
