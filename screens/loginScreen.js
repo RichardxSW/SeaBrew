@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { FontAwesome } from 'react-native-vector-icons';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (!username && !password) {
+      Alert.alert('Error', 'Please enter both username and password.');
+    } else if (!username) {
+      Alert.alert('Error', 'Please enter your username.');
+    } else if (!password) {
+      Alert.alert('Error', 'Please enter your password.');
+    } else {
+      // Lakukan proses login jika keduanya sudah terisi
+      navigation.navigate('Home');
+    }
+  };
+  
 
   return (
     <KeyboardAvoidingView
@@ -17,7 +32,7 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.titletext}>Login</Text>
 
           <View style={styles.inputContainer}>
-            <Image source={require('../assets/usericon.png')} style={styles.iconStyle} />
+            <FontAwesome name="user" size={24} color="#375A82" style={styles.iconStyle} />
             <TextInput
               style={styles.input}
               placeholder="Username"
@@ -28,7 +43,7 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <View style={styles.inputContainer}>
-            <Image source={require('../assets/passwordicon.png')} style={styles.iconStyle} />
+            <FontAwesome name="lock" size={24} color="#375A82" style={styles.iconStyle} />
             <TextInput
               style={styles.input}
               placeholder="Password"
@@ -39,8 +54,13 @@ export default function LoginScreen({ navigation }) {
             />
           </View>
 
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
+          style={styles.forgotPasswordContainer}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.buttonLoginContainer}
-            onPress={() => navigation.navigate('Home')}
+            onPress={handleLogin}
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
@@ -55,6 +75,14 @@ export default function LoginScreen({ navigation }) {
               style={styles.iconStyle} // Style untuk mengatur ukuran dan posisi ikon
             />
             <Text style={styles.buttonText}>Google</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.bottomtext}>
+            Don't have an account?
+          </Text>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.registerText}>Register</Text>
           </TouchableOpacity>
 
           <StatusBar style="auto" />
@@ -81,8 +109,8 @@ const styles = StyleSheet.create({
   },
 
   titletext: {
-    position: 'absolute',
-    top: 120,
+    position: 'relative',
+    marginBottom: 80,
     textAlign: 'center',
     fontSize: 40,
     fontWeight: '100',
@@ -118,7 +146,7 @@ const styles = StyleSheet.create({
     width: '70%',
     borderRadius: 10,
     overflow: 'hidden',
-    marginTop: 50,
+    marginTop: 30,
     marginBottom: 20,
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
@@ -160,5 +188,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
-  }
+  },
+
+  bottomtext: {
+    marginTop: 70,
+    textAlign: 'center',
+    color: '#375A82',
+    fontSize: 14,
+  },
+
+  registerText: {
+    marginTop: 5,
+    textAlign: 'center',
+    color: '#375A82',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
+
+  forgotPasswordContainer: {
+    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    marginLeft: '15%',
+  },
+
+  forgotPasswordText: {
+    color: '#375A82',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
 });
