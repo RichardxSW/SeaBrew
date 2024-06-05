@@ -10,7 +10,7 @@ export default function App() {
     async function prepare() {
       try {
         // Pre-load any resources or data that you need prior to rendering the app
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulating a delay
+        await new Promise(resolve => setTimeout(resolve, 2100)); // Simulating a delay
       } catch (e) {
         console.warn(e);
       } finally {
