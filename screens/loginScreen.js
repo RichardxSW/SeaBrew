@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 
 export default function LoginScreen({ navigation }) {
   return (
-    // <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
+    <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.text}>Login</Text>
         <View style={styles.buttonContainer}>
@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
         </View>
         <StatusBar style="auto" />
       </View>
-    // </ImageBackground>
+    </ImageBackground>
   );
 }
 
