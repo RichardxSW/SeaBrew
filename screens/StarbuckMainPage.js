@@ -47,20 +47,21 @@ return (
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
         <View style={styles.wallpaperContainer} />
-        <View style={styles.inputContainer}>
-                {!isFocused && !inputValue && (
+        {/* <View style={styles.inputContainer}> */}
+                {/* {!isFocused && !inputValue && (
                     <Text style={styles.placeholder}>
                         Search what do you want..
                     </Text>
-                )}
-                <TextInput
+                )} */}
+                <TextInput 
+                    placeholder='Search what do you want..'
                     style={styles.searchBar}
                     onFocus={() => setIsFocused(true)}
                     onBlur= {handleBlur}
                     onChangeText={text => setInputValue(text)}
                     value={inputValue}
                 />
-            </View>
+            {/* </View> */}
             
         <Text style={styles.headerText}>SeaBrew's Coffee</Text>
 
@@ -84,7 +85,7 @@ return (
         </TouchableOpacity>
       </View>
 
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
           {filteredData.map(item => (
             <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
               <Image source={item.image} style={styles.image} resizeMode="cover" />
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 15,
-    marginTop: 20,
+    // marginTop: 20,
     marginBottom: 10,
   },
   wallpaperContainer: {
@@ -119,10 +120,11 @@ const styles = StyleSheet.create({
     zIndex: -5,
   },
   inputContainer: {
-    position: 'relative',
+    // position: 'absolute',
     height: 40,
     // width: '80%',
     justifyContent: 'center',
+    marginTop: 20,
 },
   searchBar: {
     height: 40,
@@ -132,6 +134,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 10,
+    marginTop: 25,
     backgroundColor: '#375A82',
     color: 'white',
   },
@@ -140,6 +143,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginVertical: 10,
     fontFamily: 'bold',
+    textAlign: 'center',
   },
   bannerContainer: {
     position: 'relative',
@@ -202,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    paddingHorizontal: 5, // Menambahkan padding horizontal untuk item
+    // paddingHorizontal: 5, // Menambahkan padding horizontal untuk item
   },
   image: {
     width: '100%',
