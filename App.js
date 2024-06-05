@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from './screens/splashScreen';
+import LoginScreen from './screens/loginScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
@@ -51,6 +52,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen 
+        name="Login" 
+        component={LoginScreen}
+        options={{ headerShown: false }} />
         <Stack.Screen 
           name="Home" 
           component={Home} 
