@@ -5,11 +5,14 @@ import { useFonts } from 'expo-font';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
+// import Navbar from "./components/Navbar";
 import SplashScreen from './screens/splashScreen';
 import LoginScreen from './screens/loginScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
+import StarbuckDetail from "./screens/StarbuckDetailPage";
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
 
@@ -77,7 +80,8 @@ export default function App() {
               fontSize: 27,
             },
             headerTitleAlign: 'center',
-          }}/>
+          }}
+          />
         <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
@@ -99,6 +103,22 @@ export default function App() {
             component={StarbuckMain}
             options={{headerShown : false }}
           />
+          <Stack.Screen 
+            name="StarbuckDetail"
+            component={StarbuckDetail}
+            options={{
+              title: 'Detail',
+              headerStyle: {
+                backgroundColor: 'transparent',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+            }}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -110,5 +130,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-  },
+},
 });
