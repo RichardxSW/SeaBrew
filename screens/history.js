@@ -18,6 +18,20 @@ const History = () => {
                     <View style={styles.groupContainer}>
                         <Text style={styles.itemPrice}>Rp.150.000</Text>
                         <Text style={styles.paidText}>Paid</Text>
+                        </View>
+                </View>
+                <View style={styles.bundleRow}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.itemName}>
+                            Green Macchiato Delight
+                        </Text>
+                        <Text style={styles.visitDate}>
+                            Visit date: 2 June 2024
+                        </Text>
+                    </View>
+                    <View style={styles.groupContainer}>
+                        <Text style={styles.itemPrice}>Rp.210.000</Text>
+                        <Text style={styles.paidText}>Paid</Text>
                     </View>
                 </View>
             </View>
@@ -26,7 +40,7 @@ const History = () => {
 }
 
 const styles = StyleSheet.create({
-    
+
 });
 
 export default History;
