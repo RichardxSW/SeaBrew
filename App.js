@@ -1,20 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
 import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import StarbuckMain from "./screens/StarbuckMainPage";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'lightblue' }}>SeaBrew on top yow</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen 
+        name="StarbuckMain"
+        component={StarbuckMain}
+        options={{headerShown : false }}
+         />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'blue',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
