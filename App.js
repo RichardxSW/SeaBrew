@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import 'react-native-gesture-handler';
 import { StyleSheet, Image} from 'react-native';
 import { useFonts } from 'expo-font';
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from './screens/splashScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from '@react-navigation/stack';
+import StarbuckMain from "./screens/StarbuckMainPage";
 
 const Stack = createStackNavigator();
 
@@ -86,6 +89,11 @@ export default function App() {
             },
             headerTitleAlign: 'center',
           }}/>
+          <Stack.Screen 
+            name="StarbuckMain"
+            component={StarbuckMain}
+            options={{headerShown : false }}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );
