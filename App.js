@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet} from 'react-native';
+import { StyleSheet, Image} from 'react-native';
 import { useFonts } from 'expo-font';
 import SplashScreen from './screens/splashScreen';
 import ShowList from './screens/showList';
+import Home from './screens/home';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -15,6 +16,10 @@ export default function App() {
     'Montserrat': require('./assets/fonts/Montserrat-Regular.ttf'),
     'MontserratSemiBold': require('./assets/fonts/Montserrat-SemiBold.ttf'),
     'MontserratMedium': require('./assets/fonts/Montserrat-Medium.ttf'),
+    'BigShouldersStencilBold': require('./assets/fonts/BigShouldersStencilText-Bold.ttf'),
+    'BigShouldersStencilRegular': require('./assets/fonts/BigShouldersStencilText-Regular.ttf'),
+    'BigShouldersStencilMedium': require('./assets/fonts/BigShouldersStencilText-Medium.ttf'),
+    'BigShouldersStencilSemiBold': require('./assets/fonts/BigShouldersStencilText-SemiBold.ttf'),
   });
 
   useEffect(() => {
@@ -44,12 +49,35 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen 
+          name="Home" 
+          component={Home} 
+          options={{
+            title: 'SeaBrew',
+            headerStyle: {
+              backgroundColor: '#92DAFD',
+              // backgroundColor: '#4DC3FC',
+            },
+            headerTintColor: '#375A82',
+            headerLeft: () => (
+              <Image
+                source={require('./assets/user.png')}
+                style={{ width: 23, height: 23, marginLeft: 15, marginTop: 5}}
+              />
+            ),
+            headerTitleStyle: {
+              fontFamily: 'BigShouldersStencilBold',
+              fontSize: 27,
+            },
+            headerTitleAlign: 'center',
+          }}/>
+        <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
           options={{
             title: 'All Show',
             headerStyle: {
               backgroundColor: '#92DAFD',
+              // backgroundColor: '#4DC3FC',
             },
             headerTintColor: 'black',
             headerTitleStyle: {
