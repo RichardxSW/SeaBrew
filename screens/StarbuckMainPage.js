@@ -4,6 +4,7 @@ import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Data from '../assets/data/sbuckdata.js';
+import CurrencyInput from 'react-native-currency-input';
 
 const StarbuckMainPage = () => {
   const navigation = useNavigation();
@@ -80,9 +81,9 @@ return (
         <TouchableOpacity onPress={() => setCategory('Non Coffee')}>
           <Text style={category === 'Non Coffee' ? styles.categoryTextActive : styles.categoryText}>Non Coffee</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setCategory('Food')}>
+        {/* <TouchableOpacity onPress={() => setCategory('Food')}>
           <Text style={category === 'Food' ? styles.categoryTextActive : styles.categoryText}>Food</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
@@ -90,7 +91,15 @@ return (
             <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
               <Image source={item.image} style={styles.image} resizeMode="cover" />
               <Text style={styles.itemName}>{item.name}</Text>
-              <Text style={styles.itemPrice}>{item.price}</Text>
+              <CurrencyInput 
+              style={styles.itemPrice}
+              value={item.price}
+              prefix="Rp "
+              delimiter="."
+              separator=","
+              precision={2}
+              editable={false}
+              />
               <TouchableOpacity style={styles.addButton}>
                 <Text style={styles.addButtonText}>+</Text>
               </TouchableOpacity>
@@ -169,7 +178,7 @@ const styles = StyleSheet.create({
   },
   categoryContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-between',
     marginBottom: 10,
   },
   categoryText: {
@@ -181,11 +190,13 @@ const styles = StyleSheet.create({
     paddingRight: 14,
     backgroundColor: '#B3E0F5',
     borderRadius: 20,
+    marginRight: 10,
   },
   categoryTextActive: {
     fontSize: 14,
     color: '#B3E0F5',
     // fontWeight: 'bold',
+    marginRight: 10,
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 14,
@@ -201,6 +212,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: 10,
     alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   scrollViewContent: {
     flexDirection: 'row',
