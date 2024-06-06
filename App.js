@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, Image} from 'react-native';
+import { Image } from 'react-native';
 import { useFonts } from 'expo-font';
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from './screens/splashScreen';
@@ -45,17 +44,22 @@ export default function App() {
     return <SplashScreen />;
   }
 
-  if (!fontsLoaded && !fontError) {
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  if (fontError) {
+    console.warn(fontError);
     return null;
   }
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen 
-        name="Login" 
-        component={LoginScreen}
-        options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="Login" 
+          component={LoginScreen}
+          options={{ headerShown: false }} />
         <Stack.Screen 
           name="Home" 
           component={Home} 
@@ -103,12 +107,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

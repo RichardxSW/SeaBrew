@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import backgroundImage from '../assets/background.png';
+import backgroundImage from '../assets/Background.png';
 import { FontAwesome } from 'react-native-vector-icons';
 import shows from '../assets/data/showdata.js';
 

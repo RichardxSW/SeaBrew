@@ -40,7 +40,7 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <TouchableOpacity style={styles.buttonLoginContainer}
-            // onPress={() => navigation.navigate('Main')}
+            onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
@@ -81,8 +81,8 @@ const styles = StyleSheet.create({
   },
 
   titletext: {
-    position: 'absolute',
-    top: 120,
+    position: 'relative',
+    marginBottom: 50,
     textAlign: 'center',
     fontSize: 40,
     fontWeight: '100',

@@ -1,68 +1,125 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import backgroundImage from '../assets/background.png';
-import { FontAwesome } from 'react-native-vector-icons';
+import PagerView from 'react-native-pager-view';
+import backgroundImage from '../assets/Background.png';
+import bundles from '../assets/data/bundledata.js';
 import shows from '../assets/data/showdata.js';
 
 const Home = () => {
   const navigation = useNavigation();
-  const [selectedShow, setSelectedShow] = useState(null);
+  const [selectedDay, setSelectedDay] = useState('Mon');
+  const filteredBundles = bundles.filter(bundle => bundle.id >= 1 && bundle.id <= 4);
+  const filteredCarousel = shows.filter(show => show.id >= 3 && show.id <= 5);
 
-  const handleShowPress = (show) => {
-    setSelectedShow(show);
+  const pagerRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (pagerRef.current) {
+        setCurrentPage(prevPage => {
+          const nextPage = (prevPage + 1) % filteredCarousel.length;
+          pagerRef.current.setPage(nextPage);
+          return nextPage;
+        });
+      }
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [filteredCarousel.length]);
+
+  const filterShowsByDay = (day) => {
+    const filteredShows = shows.filter(show => show.day.includes(day));
+    return filteredShows;
   };
 
-  const closeModal = () => {
-    setSelectedShow(null);
+  const handleDayPress = (day) => {
+    setSelectedDay(day);
   };
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
         <View style={styles.content}>
-          <Text style={styles.subtitle}>ni home</Text>
-          <View style={styles.gridContainer}>
-            {shows.map((show) => (
-              <TouchableOpacity key={show.id} style={styles.showContainer} onPress={() => handleShowPress(show)} activeOpacity={0.8}>
-                <ImageBackground source={show.image} style={styles.showImage}>
-                  <View style={styles.darkness}>
-                    <Text style={styles.showName}>{show.name}</Text>
-                  </View>
-                </ImageBackground>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View>
-            <Text style={styles.additionalText}>Don't miss out on these amazing show!</Text>
-          </View>
-          <TouchableOpacity style={styles.ticketButton} onPress={() => navigation.navigate('ShowList')}>
-            <FontAwesome name="ticket" size={24} marginRight={10} color="white" />
-            <Text style={styles.ticketButtonText}>Buy Ticket</Text>
-          </TouchableOpacity>
-
-          {/* Modal for show details */}
-          <Modal
-            animationType="easeandout"
-            transparent={true}
-            visible={selectedShow !== null}
-            onRequestClose={closeModal}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Pressable onPress={closeModal} style={styles.closeButton}>
-                  <FontAwesome name="close" size={20} color="#8b0000" />
-                </Pressable>
-                <Text style={styles.modalTitle}>{selectedShow?.name}</Text>
-                <Image source={selectedShow?.image} style={styles.modalImage} />
-                <Text style={styles.modalDescription}>{selectedShow?.description}</Text>
-                <View style={styles.location}>
-                  <FontAwesome name="map" size={24} color="black" />
-                  <Text style={{ fontSize: 16, marginLeft: 10, fontFamily:'MontserratSemiBold' }}>Location: {selectedShow?.location}</Text>
+          {/* Pager View for recommended shows */}
+          <View style={styles.pagerViewContainer}>
+            <PagerView ref={pagerRef} style={styles.pagerView} initialPage={0} onPageSelected={e => setCurrentPage(e.nativeEvent.position)}>
+              {filteredCarousel.map((show) => (
+                <View key={show.id} style={styles.page}>
+                  <ImageBackground source={show.image} style={styles.pageImage}>
+                    <View style={styles.darkness}>
+                      <Text style={styles.pageName}>{show.name}</Text>
+                    </View>
+                  </ImageBackground>
                 </View>
-              </View>
+              ))}
+            </PagerView>
+            {/* Carousel Indicators */}
+            <View style={styles.indicatorContainer}>
+              {filteredCarousel.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.indicator,
+                    { backgroundColor: currentPage === index ? '#4DC3FC' : 'white' }
+                  ]}
+                />
+              ))}
             </View>
-          </Modal>
+          </View>
+
+          {/* Container Top Pick Bundle */}
+          <View style={styles.topPickContainer}>
+            <Text style={styles.topPickTitle}>Top Pick Bundle</Text>
+            <View style={styles.bundleWrapper}>
+              {filteredBundles.map(bundle => (
+                <View key={bundle.id} style={styles.bundleContainer}>
+                  <View style={styles.bundleInfo}>
+                    <Text style={styles.bundleName}>{bundle.name}</Text>
+                    <Text style={styles.bundleDescription}>{bundle.description}</Text>
+                  </View>
+                  <Text style={styles.bundlePrice}>{bundle.price}</Text>
+                </View>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.seeAllContainer}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Container Available Show */}
+          <View style={styles.availableShowContainer}>
+            <Text style={styles.availableShowTitle}>Available Show</Text>
+            <View style={styles.dayButtonWrapper}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {days.map(day => (
+                  <TouchableOpacity 
+                    key={day} 
+                    style={[styles.dayButton, selectedDay === day ? styles.selectedDay : null]} 
+                    onPress={() => handleDayPress(day)}>
+                    <Text style={[styles.dayButtonText, selectedDay === day ? styles.selectedDayText : null]}>{day}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+            <View style={styles.gridContainer}>
+              {filterShowsByDay(selectedDay).map((show) => (
+                <View key={show.id} style={styles.showContainer}>
+                  <ImageBackground source={show.image} style={styles.showImage}>
+                    <View style={styles.darkness}>
+                      <Text style={styles.showName}>{show.name}</Text>
+                    </View>
+                  </ImageBackground>
+                </View>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.seeAllContainer} onPress={() => navigation.navigate('ShowList')}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ImageBackground>
     </ScrollView>
@@ -72,7 +129,6 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   backgroundImage: {
     flex: 1,
@@ -88,7 +144,154 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 16,
+  },
+  pagerView: {
+    width: '100%',
+    height: 200,
+    marginBottom: 20,
+  },
+  page: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pageImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  topPickContainer: {
+    marginTop: 20,
+  },
+  topPickTitle: {
+    fontFamily: 'MontserratBold',
+    fontSize: 20,
+    marginBottom: 10,
+    marginLeft: 10,
+    color: '#375A82',
+  },
+  availableShowContainer: {
+    width: '95%',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  availableShowTitle: {
+    fontFamily: 'MontserratBold',
+    fontSize: 20,
+    marginBottom: 10,
+    marginLeft: 5,
+    color: '#375A82',
+  },
+  bundleWrapper: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: '#B3E0F5',
+    borderRadius: 10,
+  },
+  bundleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: 12,
+    alignItems: 'center',
+  },
+  bundleInfo: {
+    flex: 1,
+  },
+  bundleName: {
+    fontFamily: 'MontserratBold',
+    fontSize: 13,
+    color: '#375A82',
+  },
+  bundleDescription: {
+    fontFamily: 'Montserrat',
+    fontSize: 11,
+    color: '#375A82',
+    width: '90%',
+  },
+  bundlePrice: {
+    fontFamily: 'MontserratBold',
+    fontSize: 15,
+    color: '#375A82',
+  },
+  seeAllContainer: {
+    marginTop: 5,
+    marginBottom: 10,
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  seeAllText: {
+    fontFamily: 'MontserratBold',
+    fontSize: 16,
+    color: '#375A82',
+  },
+  dayButtonWrapper: {
+    width: '100%',
+    marginRight: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  dayButton: {
+    paddingHorizontal: 5,
+    marginHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 20,
+    backgroundColor: '#B3E0F5',
+    width: 50,
+    alignItems: 'center',
+  },
+  selectedDay: {
+    color: 'white',
+    backgroundColor: '#375A82',
+  },
+  dayButtonText: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 13,
+    color: '#375A82',
+  },
+  selectedDayText: {
+    color: 'white',
+    fontSize: 13,
+    fontFamily: 'MontserratBold',
+  },
+  selectedDayTitle: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 18,
+    marginTop: 20,
+    marginBottom: 10,
+    color: 'white',
+  },
+  showImage: {
+    width: '100%',
+    height: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  darkness: {
+    backgroundColor: 'rgba(0,0,0,0.19)',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  showName: {
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 11,
+    color: 'white',
+    width: '90%',
+    textAlign: 'center',
+    opacity: 1.1,
+  },
+  pageName: {
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 26,
+    color: 'white',
+    width: '100%',
+    textAlign: 'center',
+    opacity: 1,
   },
   gridContainer: {
     flexDirection: 'row',
@@ -98,100 +301,34 @@ const styles = StyleSheet.create({
   },
   showContainer: {
     width: '48%',
+    backgroundColor: '#B3E0F5',
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: 16,
     alignItems: 'center',
   },
-  showImage: {
+  pagerViewContainer: {
     width: '100%',
-    height: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 20,
+    position: 'relative',
   },
-  darkness: {
-    backgroundColor: 'rgba(0,0,0,0.27)',
-    width: '100%',
-    height: 140,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  showName: {
-    fontFamily: 'MontserratSemiBold',
-    fontSize: 13,
-    color: 'white',
-    width: '80%',
-    textAlign: 'center',
-    opacity: 1.1,
-  },
-  ticketButton: {
-    marginTop: 16,
-    marginBottom: 32,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 20,
-    backgroundColor: '#375A82',
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  ticketButtonText: {
-    fontFamily: 'MontserratSemiBold',
-    color: 'white',
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    paddingBottom: 20,
-    paddingTop:20,
-    borderRadius: 20,
-    width: '90%',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    padding: 7,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontFamily: 'MontserratBold',
-    marginBottom: 10,
-    marginTop: 30,
-    marginLeft: 15,
-    textAlign: 'left',
-  },
-  modalImage: {
+  pagerView: {
     width: '100%',
     height: 200,
-    resizeMode: 'cover',
   },
-  modalDescription: {
-    fontSize: 13,
-    textAlign: 'center',
-    margin: 15,
-    fontFamily: 'MontserratMedium',
-  },
-  location: {
+  indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-    marginTop: 10,
+    position: 'absolute',
+    bottom: 10, 
+    left: 0,
+    right: 0,
   },
-  additionalText: {
-    fontSize: 16,
-    fontFamily: 'MontserratBold',
-    color: 'black',
-    textAlign: 'center',
+  indicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
 });
 
