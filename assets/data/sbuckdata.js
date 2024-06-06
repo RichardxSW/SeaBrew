@@ -23,7 +23,7 @@ const Data = [
     {
       id: 4,
       name: 'Cappuccino',
-      price: 48.000,
+      price: 48000,
       image: require('../imgStarbuck/Cappuccino.webp'),
       desc: 'Espresso with equal parts steamed milk and milk foam, offering a smooth and creamy texture.'
     },
