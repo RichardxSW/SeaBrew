@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '100',
     color: '#375A82',
+    fontFamily: 'Montserrat',
   },
 
   inputContainer: {
@@ -140,6 +141,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#375A82',
+    fontFamily: 'Montserrat',
   },
 
   buttonLoginContainer: {
@@ -156,6 +158,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
+    fontFamily: 'Montserrat',
   },
 
   buttonGoogleContainer: {
@@ -188,6 +191,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
+    fontFamily: 'Montserrat',
   },
 
   bottomtext: {
@@ -195,12 +199,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
+    fontFamily: 'Montserrat',
   },
 
   registerText: {
     marginTop: 5,
     textAlign: 'center',
     color: '#375A82',
+    fontFamily: 'Montserrat',
     fontSize: 14,
     textDecorationLine: 'underline',
   },
@@ -213,6 +219,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     color: '#375A82',
     fontSize: 14,
+    fontFamily: 'Montserrat',
     textDecorationLine: 'underline',
   },
 });

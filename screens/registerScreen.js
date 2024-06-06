@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '100',
     color: '#375A82',
+    fontFamily: 'Montserrat',
   },
 
   inputContainer: {
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#375A82',
+    fontFamily: 'Montserrat',
   },
 
   buttonRegisContainer: {
@@ -203,6 +205,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
+    fontFamily: 'Montserrat',
   },
 
   buttonGoogleContainer: {
@@ -235,6 +238,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
+    fontFamily: 'Montserrat',
   },
 
   bottomtext: {
@@ -242,6 +246,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
+    fontFamily: 'Montserrat',
   },
 
   loginText: {
@@ -250,6 +255,7 @@ const styles = StyleSheet.create({
     color: '#375A82',
     fontSize: 14,
     textDecorationLine: 'underline',
+    fontFamily: 'Montserrat',
   },
 
   checkboxContainer: {
@@ -273,5 +279,6 @@ checkbox: {
 checkboxLabel: {
     fontSize: 14,
     color: '#375A82', // Warna teks sesuai tema
+    fontFamily: 'Montserrat',
 },
 });
