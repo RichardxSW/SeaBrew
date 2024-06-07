@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [fullname, setFullname] = useState('');
 
   return (
     <KeyboardAvoidingView
@@ -14,47 +16,35 @@ export default function ProfileScreen({ navigation }) {
     >
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
         <View style={styles.innerContainer}>
-          <Text style={styles.titletext}>My Profile</Text>
-
+          <View style={styles.headerContainer}>
+            <Text style={styles.titletext}>My Profile</Text>
+            <TouchableOpacity 
+              style={styles.logoutButton} 
+              onPress={() => navigation.navigate('Login')}
+            >
+              <FontAwesome name="sign-out" size={30} color="#375A82" />
+            </TouchableOpacity>
+          </View>
+          
           <View style={styles.inputContainer}>
-            <Image source={require('../assets/usericon.png')} style={styles.iconStyle} />
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-            />
+            <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
+            <Text style={styles.text}>tanjaya123</Text>
           </View>
 
           <View style={styles.inputContainer}>
-            <Image source={require('../assets/passwordicon.png')} style={styles.iconStyle} />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry
-            />
+            <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
+            <Text style={styles.text}>Tanjaya Jason Winata</Text>
           </View>
 
-          <TouchableOpacity style={styles.buttonLoginContainer}
-            onPress={() => navigation.navigate('Home')}
+          <View style={styles.emailInputContainer}>
+            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
+            <Text style={styles.emailtext}>tanjaya123@gmail.com</Text>
+          </View>
+
+          <TouchableOpacity style={styles.buttonEditContainer}
+            // onPress={() => navigation.navigate('EditProfile')}
           >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.text}>
-            Or Sign In With
-          </Text>
-
-          <TouchableOpacity style={styles.buttonGoogleContainer}>
-            <Image
-              source={require('../assets/googleicon.png')} // Ubah path gambar sesuai dengan lokasi dan nama file gambar Anda
-              style={styles.iconStyle} // Style untuk mengatur ukuran dan posisi ikon
-            />
-            <Text style={styles.buttonText}>Google</Text>
+            <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
 
           <StatusBar style="auto" />
@@ -80,25 +70,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  titletext: {
+  headerContainer: {
     position: 'absolute',
     top: 60,
-    textAlign: 'center',
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+
+  titletext: {
     fontSize: 24,
     fontWeight: '100',
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
 
+  logoutButton: {
+    position: 'absolute',
+    right: 20,
+  },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '70%',
-    height: 50,
+    width: '100%', // Changed to 100%
+    height: 60,
     marginVertical: 10,
-    paddingLeft: 20,
+    paddingLeft: 40,
     paddingHorizontal: 10,
-    borderRadius: 5,
     backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: {
@@ -110,12 +112,41 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  input: {
-    flex: 1,
-    color: '#375A82',
+  emailInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%', // Changed to 100%
+    height: 60,
+    marginVertical: 8,
+    paddingLeft: 39,
+    paddingHorizontal: 10,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 
-  buttonLoginContainer: {
+  text: {
+    flex: 1,
+    color: '#375A82',
+    fontFamily: 'Montserrat',
+    fontSize: 15,
+  },
+
+  emailtext: {
+    flex: 1,
+    color: '#375A82',
+    fontFamily: 'Montserrat',
+    fontSize: 15,
+    marginLeft: 2.5,
+  },
+
+  buttonEditContainer: {
     width: '70%',
     borderRadius: 10,
     overflow: 'hidden',
@@ -129,25 +160,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
-  },
-
-  buttonGoogleContainer: {
-    flexDirection: 'row', // Mengatur layout menjadi horizontal
-    alignItems: 'center', // Mengatur agar ikon dan teks berada di tengah secara vertikal
-    justifyContent: 'center',
-    width: '40%',
-    overflow: 'hidden',
-    marginTop: 20,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    fontFamily: 'Montserrat',
   },
 
   iconStyle: {
@@ -156,10 +169,12 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginRight: 10,
   },
-  
-  text: {
-    textAlign: 'center',
-    color: '#375A82',
-    fontSize: 14,
-  }
+
+  ficonStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: 10,
+    marginTop: 4,
+  },
 });

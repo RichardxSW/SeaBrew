@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     color: '#375A82',
+    fontFamily: 'Montserrat',
   },
 
   buttonLoginContainer: {
