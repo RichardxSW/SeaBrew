@@ -127,17 +127,17 @@ export default function App() {
             }}
           />
           <Stack.Screen 
-          name="Register" 
-          component={RegisterScreen}
-          options={{ headerShown: false }} />
+            name="Register" 
+            component={RegisterScreen}
+            options={{ headerShown: false }} />
           <Stack.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ headerShown: false }} />
+            name="Profile" 
+            component={ProfileScreen}
+            options={{ headerShown: false }} />
           <Stack.Screen 
-        name="EditProfile" 
-        component={EditProfileScreen}
-        options={{ headerShown: false }} />
+            name="EditProfile" 
+            component={EditProfileScreen}
+            options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

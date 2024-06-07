@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
       Alert.alert('Error', 'Please enter your password.');
     } else {
       // Lakukan proses login jika keduanya sudah terisi
-      navigation.navigate('Home');
+      navigation.navigate('Navbar');
     }
   };
   
