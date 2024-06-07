@@ -196,7 +196,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    marginRight: 10,
+    marginRight: 11,
     marginTop: 4,
+    marginLeft: -2,
   },
 });
