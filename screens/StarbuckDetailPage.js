@@ -160,13 +160,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
   },
-  grayLine: {
-    height: 1, // Set the height of the line
-    backgroundColor: 'gray', // Gray color (you can customize this)
-    width: '100%', // Make the line span the entire width of the container
-    marginTop: 10, // Add some margin above the line (optional)
-    marginBottom: 10, // Add some margin below the line (optional)
-  },
+  // grayLine: {
+  //   height: 1, // Set the height of the line
+  //   backgroundColor: 'gray', // Gray color (you can customize this)
+  //   width: '100%', // Make the line span the entire width of the container
+  //   marginTop: 10, // Add some margin above the line (optional)
+  //   marginBottom: 10, // Add some margin below the line (optional)
+  // },
   // header: {
   //   flexDirection: 'row',
   //   alignItems: 'center',
@@ -224,6 +224,9 @@ const styles = StyleSheet.create({
   },
   productOptions: {
     marginTop: 15,
+    paddingBottom: 10,
+    borderBottomColor: '#999',
+    borderBottomWidth: 1,
   },
   productOptionTitle: {
     fontSize: 16,
