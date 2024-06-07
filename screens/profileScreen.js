@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
-export default function ProfileScreen({ navigation }) {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [fullname, setFullname] = useState('');
+export default function ProfileScreen({ navigation, route }) {
+  const [username, setUsername] = useState('tanjaya123');
+  const [email, setEmail] = useState('tanjaya123@gmail.com');
+  const [fullname, setFullname] = useState('Tanjaya Jason Winata');
+
+  useEffect(() => {
+    const { newData, successMessage } = route.params || {};
+    if (newData) {
+        setUsername(newData.newUsername);
+        setEmail(newData.newEmail);
+        setFullname(newData.newFullname);
+    }
+}, [route.params]);
 
   return (
     <KeyboardAvoidingView
@@ -34,17 +43,17 @@ export default function ProfileScreen({ navigation }) {
           
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.text}>tanjaya123</Text>
+            <Text style={styles.text}>{username}</Text>
           </View>
 
           <View style={styles.inputContainer}>
             <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
-            <Text style={styles.text}>Tanjaya Jason Winata</Text>
+            <Text style={styles.text}>{fullname}</Text>
           </View>
 
           <View style={styles.emailInputContainer}>
             <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.emailtext}>tanjaya123@gmail.com</Text>
+            <Text style={styles.emailtext}>{email}</Text>
           </View>
 
           <TouchableOpacity style={styles.buttonEditContainer}
@@ -199,5 +208,13 @@ const styles = StyleSheet.create({
     marginRight: 11,
     marginTop: 4,
     marginLeft: -2,
+  },
+
+  successMessage: {
+    marginTop: 20,
+    color: 'green',
+    fontSize: 18,
+    fontFamily: 'Montserrat',
+    fontWeight: 'bold',
   },
 });

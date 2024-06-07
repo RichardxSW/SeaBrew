@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -8,6 +8,15 @@ export default function EditProfileScreen({ navigation }) {
   const [email, setEmail] = useState('tanjaya123@gmail.com');
   const [fullname, setFullName] = useState('Tanjaya Jason Winata');
 
+  const handleSaveChanges = () => {
+    if (!username || !fullname || !email) {
+      Alert.alert('Error', 'Please fill in all required fields.');
+    } else {
+      const newData = { newUsername: username, newEmail: email, newFullname: fullname };
+      navigation.navigate('Profile', {newData});
+    }
+  };
+  
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -21,6 +30,9 @@ export default function EditProfileScreen({ navigation }) {
 
           <View style={styles.avatarContainer}>
             <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
+            <TouchableOpacity style={styles.editIconContainer}>
+              <FontAwesome name="pencil" size={18} color="#FFFFFF" style={styles.editIcon} />
+            </TouchableOpacity>
           </View>
           
           <Text style={styles.labelText}>Username</Text>
@@ -60,9 +72,7 @@ export default function EditProfileScreen({ navigation }) {
             />
           </View>
 
-          <TouchableOpacity style={styles.buttonContainer}
-            // onPress={() => navigation.navigate('Profile')}
-          >
+          <TouchableOpacity style={styles.buttonContainer} onPress={handleSaveChanges}>
             <Text style={styles.buttonText}>Save Changes</Text>
           </TouchableOpacity>
 
@@ -98,17 +108,33 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: 100,
     height: 100,
+    position: 'relative',
+    marginBottom: 50,
+    marginTop: -10,
     borderRadius: 60, // half of width or height
     borderWidth: 8,
     borderColor: '#375A82',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 50,
-    marginTop: -10,
   },
 
   avatarIcon: {
     fontSize: 60,
+  },
+
+  editIconContainer: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: '#70B5F9',
+    borderRadius: 20,
+    width: 24, // Mengatur lebar ikon pensil
+    height: 24, // Mengatur tinggi ikon pensil
+    padding: 5,
+  },
+
+  editIcon: {
+    fontSize: 15,
   },
 
   titletext: {
