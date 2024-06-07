@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, Image} from 'react-native';
+import { Image } from 'react-native';
 import { useFonts } from 'expo-font';
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 import Navbar from "./components/Navbar";
@@ -50,7 +49,12 @@ export default function App() {
     return <SplashScreen />;
   }
 
-  if (!fontsLoaded && !fontError) {
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  if (fontError) {
+    console.warn(fontError);
     return null;
   }
 
