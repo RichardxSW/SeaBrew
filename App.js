@@ -9,6 +9,7 @@ import LoginScreen from './screens/loginScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
+import Ticket from "./screens/ticket";
 
 const Stack = createStackNavigator();
 
@@ -102,6 +103,23 @@ export default function App() {
             name="StarbuckMain"
             component={StarbuckMain}
             options={{headerShown : false }}
+          />
+          <Stack.Screen 
+            name="Ticket"
+            component={Ticket}
+            options={{
+              title: 'Ticket',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
           />
       </Stack.Navigator>
     </NavigationContainer>
