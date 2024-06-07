@@ -260,6 +260,8 @@ const styles = StyleSheet.create({
 
   checkboxContainer: {
     flexDirection: 'row',
+    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    marginLeft: '15%',
     alignItems: 'center',
     marginTop: 10,
 },
@@ -277,7 +279,7 @@ checkbox: {
 },
 
 checkboxLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#375A82', // Warna teks sesuai tema
     fontFamily: 'Montserrat',
 },
