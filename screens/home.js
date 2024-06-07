@@ -36,7 +36,7 @@ const Home = () => {
           <View>
             <Text style={styles.additionalText}>Don't miss out on these amazing show!</Text>
           </View>
-          <TouchableOpacity style={styles.ticketButton} onPress={() => navigation.navigate('StarbuckMain')}>
+          <TouchableOpacity style={styles.ticketButton} onPress={() => navigation.navigate('ShowList')}>
             <FontAwesome name="ticket" size={24} marginRight={10} color="white" />
             <Text style={styles.ticketButtonText}>Buy Ticket</Text>
           </TouchableOpacity>

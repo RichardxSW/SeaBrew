@@ -5,14 +5,13 @@ import { useFonts } from 'expo-font';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
-// import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar";
 import SplashScreen from './screens/splashScreen';
 import LoginScreen from './screens/loginScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
 import StarbuckDetail from "./screens/StarbuckDetailPage";
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createStackNavigator();
 
@@ -59,7 +58,12 @@ export default function App() {
         name="Login" 
         component={LoginScreen}
         options={{ headerShown: false }} />
-        <Stack.Screen 
+      <Stack.Screen 
+        name="Navbar" 
+        component={Navbar}
+        options={{ headerShown: false }} 
+        />
+        {/* <Stack.Screen 
           name="Home" 
           component={Home} 
           options={{
@@ -81,7 +85,7 @@ export default function App() {
             },
             headerTitleAlign: 'center',
           }}
-          />
+          /> */}
         <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
@@ -98,11 +102,11 @@ export default function App() {
             },
             headerTitleAlign: 'center',
           }}/>
-          <Stack.Screen 
+          {/* <Stack.Screen 
             name="StarbuckMain"
             component={StarbuckMain}
             options={{headerShown : false }}
-          />
+          /> */}
           <Stack.Screen 
             name="StarbuckDetail"
             component={StarbuckDetail}
