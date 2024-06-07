@@ -100,7 +100,7 @@ return (
               precision={2}
               editable={false}
               />
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
                 <Text style={styles.addButtonText}>+</Text>
               </TouchableOpacity>
             </TouchableOpacity>
