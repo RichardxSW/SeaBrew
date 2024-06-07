@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 import HomeScreen from '../screens/home';
 import CartScreen from '../screens/cart';
+import ScreenTabs from '../screens/screenTabs';
 import StarbuckMainScreen from '../screens/StarbuckMainPage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -39,6 +40,10 @@ const Navbar = () => {
         <Tab.Screen 
             name="StarbuckMainScreen" 
             component={StarbuckMainScreen}
+            options={{headerShown : false }} />
+        <Tab.Screen 
+            name="ScreenTabs" 
+            component={ScreenTabs}
             options={{headerShown : false }} />
         
     </Tab.Navigator>
