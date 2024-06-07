@@ -4,6 +4,7 @@ import HomeScreen from '../screens/home';
 import CartScreen from '../screens/cart';
 import ScreenTabs from '../screens/screenTabs';
 import StarbuckMainScreen from '../screens/StarbuckMainPage';
+import ProfileScreen from '../screens/profileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
@@ -44,6 +45,10 @@ const Navbar = () => {
         <Tab.Screen 
             name="ScreenTabs" 
             component={ScreenTabs}
+            options={{headerShown : false }} />
+        <Tab.Screen 
+            name="ProfileScreen" 
+            component={ProfileScreen}
             options={{headerShown : false }} />
         
     </Tab.Navigator>

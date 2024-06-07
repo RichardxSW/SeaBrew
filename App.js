@@ -57,14 +57,6 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
       <Stack.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ headerShown: false }} />
-      <Stack.Screen 
-        name="EditProfile" 
-        component={EditProfileScreen}
-        options={{ headerShown: false }} />
-      <Stack.Screen 
         name="Login" 
         component={LoginScreen}
         options={{ headerShown: false }} />
@@ -133,6 +125,14 @@ export default function App() {
               headerTitleAlign: 'center',
             }}
           />
+          <Stack.Screen 
+        name="Profile" 
+        component={ProfileScreen}
+        options={{ headerShown: false }} />
+          <Stack.Screen 
+        name="EditProfile" 
+        component={EditProfileScreen}
+        options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
