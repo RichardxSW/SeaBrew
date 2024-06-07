@@ -13,7 +13,9 @@ export default function EditProfileScreen({ navigation }) {
       Alert.alert('Error', 'Please fill in all required fields.');
     } else {
       const newData = { newUsername: username, newEmail: email, newFullname: fullname };
-      navigation.navigate('Profile', {newData});
+      // Simulate data sending
+      // console.log('Data to be sent:', newData);
+      Alert.alert('Success', 'Changes have been saved successfully.');
     }
   };
   

@@ -137,7 +137,7 @@ export default function App() {
           <Stack.Screen 
             name="EditProfile" 
             component={EditProfileScreen}
-            options={{ headerShown: false }} />
+           />
       </Stack.Navigator>
     </NavigationContainer>
   );
