@@ -31,7 +31,7 @@ export default function RegisterScreen({ navigation }) {
           <Text style={styles.titletext}>Register</Text>
 
           <View style={styles.inputContainer}>
-            <FontAwesome name="user" size={24} color="#375A82" style={styles.iconStyle} />
+            <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
             <TextInput
               style={styles.input}
               placeholder="Full Name"
@@ -232,6 +232,15 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
     marginRight: 10,
+  },
+
+  ficonStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: 12,
+    marginTop: 3,
+    marginLeft: -2,
   },
   
   text: {
