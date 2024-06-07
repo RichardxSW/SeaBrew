@@ -16,14 +16,20 @@ export default function ProfileScreen({ navigation }) {
     >
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
         <View style={styles.innerContainer}>
+
           <View style={styles.headerContainer}>
             <Text style={styles.titletext}>My Profile</Text>
+
             <TouchableOpacity 
               style={styles.logoutButton} 
               onPress={() => navigation.navigate('Login')}
             >
               <FontAwesome name="sign-out" size={30} color="#375A82" />
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.avatarContainer}>
+            <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
           </View>
           
           <View style={styles.inputContainer}>
@@ -70,16 +76,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  avatarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 60, // half of width or height
+    borderWidth: 8,
+    borderColor: '#375A82',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 60,
+    marginTop: -90,
+  },
+
+  avatarIcon: {
+    fontSize: 60,
+  },
+
   headerContainer: {
     position: 'absolute',
-    top: 60,
+    top: 50, // Ubah nilai top di sini
     left: 0,
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-  },
+},
 
   titletext: {
     fontSize: 24,
