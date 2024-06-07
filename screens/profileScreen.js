@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -48,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <TouchableOpacity style={styles.buttonEditContainer}
-            // onPress={() => navigation.navigate('EditProfile')}
+            onPress={() => navigation.navigate('EditProfile')}
           >
             <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>

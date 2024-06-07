@@ -4,9 +4,9 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function EditProfileScreen({ navigation }) {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [fullname, setFullname] = useState('');
+  const [username, setUsername] = useState('tanjaya123');
+  const [email, setEmail] = useState('tanjaya123@gmail.com');
+  const [fullname, setFullName] = useState('Tanjaya Jason Winata');
 
   return (
     <KeyboardAvoidingView
@@ -17,40 +17,59 @@ export default function EditProfileScreen({ navigation }) {
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
         <View style={styles.innerContainer}>
 
-          <View style={styles.headerContainer}>
-            <Text style={styles.titletext}>My Profile</Text>
-
-            <TouchableOpacity 
-              style={styles.logoutButton} 
-              onPress={() => navigation.navigate('Login')}
-            >
-              <FontAwesome name="sign-out" size={30} color="#375A82" />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.titletext}>Edit Profile</Text>
 
           <View style={styles.avatarContainer}>
             <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
           </View>
           
+          <Text style={styles.labelText}>Username</Text>
           <View style={styles.inputContainer}>
-            <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.text}>tanjaya123</Text>
+            <TextInput
+              style={styles.input}
+              defaultValue={username}
+              placeholder='Username'
+              placeholderTextColor="rgba(55, 90, 130, 0.5)"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+            />
           </View>
 
+          <Text style={styles.labelText}>Full Name</Text>
           <View style={styles.inputContainer}>
-            <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
-            <Text style={styles.text}>Tanjaya Jason Winata</Text>
+            <TextInput
+              style={styles.input}
+              defaultValue={fullname}
+              placeholder='Full Name'
+              placeholderTextColor="rgba(55, 90, 130, 0.5)"
+              value={fullname}
+              onChangeText={(text) => setFullName(text)}
+            />
           </View>
 
+          <Text style={styles.labelText}>Email</Text>
           <View style={styles.emailInputContainer}>
-            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.emailtext}>tanjaya123@gmail.com</Text>
+            <TextInput
+              style={styles.input}
+              defaultValue={email}
+              placeholder='Email'
+              placeholderTextColor="rgba(55, 90, 130, 0.5)"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
+            />
           </View>
 
-          <TouchableOpacity style={styles.buttonEditContainer}
-            // onPress={() => navigation.navigate('EditProfile')}
+          <TouchableOpacity style={styles.buttonContainer}
+            // onPress={() => navigation.navigate('Profile')}
           >
-            <Text style={styles.buttonText}>Edit Profile</Text>
+            <Text style={styles.buttonText}>Save Changes</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.buttonContainer}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
 
           <StatusBar style="auto" />
@@ -84,45 +103,33 @@ const styles = StyleSheet.create({
     borderColor: '#375A82',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 60,
-    marginTop: -90,
+    marginBottom: 50,
+    marginTop: -10,
   },
 
   avatarIcon: {
     fontSize: 60,
   },
 
-  headerContainer: {
-    position: 'absolute',
-    top: 50, // Ubah nilai top di sini
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-},
-
   titletext: {
+    position: 'relative',
+    marginBottom: 50,
+    marginTop: -100,
     fontSize: 24,
     fontWeight: '100',
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
 
-  logoutButton: {
-    position: 'absolute',
-    right: 20,
-  },
-
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%', // Changed to 100%
-    height: 60,
-    marginVertical: 10,
-    paddingLeft: 40,
+    width: '70%',
+    height: 50,
+    marginVertical: 8,
+    paddingLeft: 20,
     paddingHorizontal: 10,
+    borderRadius: 5,
     backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: {
@@ -137,11 +144,12 @@ const styles = StyleSheet.create({
   emailInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%', // Changed to 100%
-    height: 60,
+    width: '70%',
+    height: 50,
     marginVertical: 8,
-    paddingLeft: 39,
+    paddingLeft: 19,
     paddingHorizontal: 10,
+    borderRadius: 5,
     backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: {
@@ -153,27 +161,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  text: {
+  labelText: {
+    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    marginLeft: '15%',
+    color: '#375A82',
+    fontFamily: 'Montserrat',
+    marginTop: 10,
+    marginBottom: -7,
+  },
+
+  input: {
     flex: 1,
     color: '#375A82',
     fontFamily: 'Montserrat',
-    fontSize: 15,
   },
 
-  emailtext: {
-    flex: 1,
-    color: '#375A82',
-    fontFamily: 'Montserrat',
-    fontSize: 15,
-    marginLeft: 2.5,
-  },
-
-  buttonEditContainer: {
+  buttonContainer: {
     width: '70%',
     borderRadius: 10,
     overflow: 'hidden',
-    marginTop: 50,
-    marginBottom: 20,
+    marginTop: 30,
+    marginBottom: 5,
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },
@@ -181,23 +189,7 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center',
     color: '#375A82',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Montserrat',
-  },
-
-  iconStyle: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    marginRight: 10,
-  },
-
-  ficonStyle: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    marginRight: 11,
-    marginTop: 4,
-    marginLeft: -2,
   },
 });
