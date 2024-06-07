@@ -14,6 +14,7 @@ import StarbuckMain from "./screens/StarbuckMainPage";
 import StarbuckDetail from "./screens/StarbuckDetailPage";
 import EditProfileScreen from './screens/editProfileScreen';
 import ProfileScreen from './screens/profileScreen';
+import Ticket from "./screens/ticket";
 
 const Stack = createStackNavigator();
 
@@ -142,6 +143,23 @@ export default function App() {
             name="EditProfile" 
             component={EditProfileScreen}
            />
+          <Stack.Screen 
+            name="Ticket"
+            component={Ticket}
+            options={{
+              title: 'Ticket',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );
