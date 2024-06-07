@@ -147,7 +147,7 @@ const Ticket = () => {
                           <FontAwesome name="plus" size={16} color="#fff" />
                         </TouchableOpacity>
                       </View>
-                      <Text style={styles.ticketPrice}>RP.{ticket.price.toLocaleString()}</Text>
+                      <Text style={styles.ticketPrice}>IDR {ticket.price.toLocaleString()}</Text>
                     </View>
                   ))
                 : weekdayTickets.map((ticket, index) => (
@@ -163,13 +163,13 @@ const Ticket = () => {
                           <FontAwesome name="plus" size={16} color="#fff" />
                         </TouchableOpacity>
                       </View>
-                      <Text style={styles.ticketPrice}>RP.{ticket.price.toLocaleString()}</Text>
+                      <Text style={styles.ticketPrice}>IDR {ticket.price.toLocaleString()}</Text>
                     </View>
                   ))}
             </View>
             {subtotal >= 0 && (
             <View>
-                <Text style={styles.subtotalText}>Subtotal: RP.{subtotal.toLocaleString()}</Text>
+                <Text style={styles.subtotalText}>Subtotal: IDR {subtotal.toLocaleString()}</Text>
             </View>
             )}
 
