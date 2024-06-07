@@ -1,25 +1,34 @@
+// screens/LoginScreen.js
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    if (!username && !password) {
-      Alert.alert('Error', 'Please enter both username and password.');
-    } else if (!username) {
-      Alert.alert('Error', 'Please enter your username.');
+    if (!email && !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+    } else if (!email) {
+      Alert.alert('Error', 'Please enter your email.');
     } else if (!password) {
       Alert.alert('Error', 'Please enter your password.');
     } else {
-      // Lakukan proses login jika keduanya sudah terisi
-      navigation.navigate('Navbar');
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log('Logged in with user:', user);
+          navigation.navigate('Navbar');
+        })
+        .catch((error) => {
+          Alert.alert('Error', error.message);
+        });
     }
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -32,13 +41,13 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.titletext}>Login</Text>
 
           <View style={styles.inputContainer}>
-            <FontAwesome name="user" size={24} color="#375A82" style={styles.iconStyle} />
+            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
             <TextInput
               style={styles.input}
-              placeholder="Username"
+              placeholder="Email"
               placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
           </View>
 
@@ -55,31 +64,25 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
-          style={styles.forgotPasswordContainer}>
+            style={styles.forgotPasswordContainer}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonLoginContainer}
-            onPress={handleLogin}
-          >
+          <TouchableOpacity style={styles.buttonLoginContainer} onPress={handleLogin}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
-          <Text style={styles.text}>
-            Or Sign In With
-          </Text>
+          <Text style={styles.text}>Or Sign In With</Text>
 
           <TouchableOpacity style={styles.buttonGoogleContainer}>
             <Image
-              source={require('../assets/googleicon.png')} // Ubah path gambar sesuai dengan lokasi dan nama file gambar Anda
-              style={styles.iconStyle} // Style untuk mengatur ukuran dan posisi ikon
+              source={require('../assets/googleicon.png')}
+              style={styles.iconStyle}
             />
             <Text style={styles.buttonText}>Google</Text>
           </TouchableOpacity>
 
-          <Text style={styles.bottomtext}>
-            Don't have an account?
-          </Text>
+          <Text style={styles.bottomtext}>Don't have an account?</Text>
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>
             <Text style={styles.registerText}>Register</Text>
@@ -97,17 +100,14 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-
   container: {
     flex: 1,
   },
-
   innerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   titletext: {
     position: 'relative',
     marginBottom: 80,
@@ -117,7 +117,6 @@ const styles = StyleSheet.create({
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
-
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -137,13 +136,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   input: {
     flex: 1,
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
-
   buttonLoginContainer: {
     width: '70%',
     borderRadius: 10,
@@ -153,17 +150,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },
-
   buttonText: {
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
     fontFamily: 'Montserrat',
   },
-
   buttonGoogleContainer: {
-    flexDirection: 'row', // Mengatur layout menjadi horizontal
-    alignItems: 'center', // Mengatur agar ikon dan teks berada di tengah secara vertikal
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     width: '40%',
     overflow: 'hidden',
@@ -179,21 +174,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   iconStyle: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
     marginRight: 10,
   },
-  
   text: {
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
     fontFamily: 'Montserrat',
   },
-
   bottomtext: {
     marginTop: 70,
     textAlign: 'center',
@@ -201,7 +193,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat',
   },
-
   registerText: {
     marginTop: 5,
     textAlign: 'center',
@@ -210,12 +201,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: 'underline',
   },
-
   forgotPasswordContainer: {
-    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    alignSelf: 'flex-start',
     marginLeft: '15%',
   },
-
   forgotPasswordText: {
     color: '#375A82',
     fontSize: 14,

@@ -38,7 +38,7 @@ export default function ProfileScreen({ navigation, route }) {
           </View>
 
           <View style={styles.avatarContainer}>
-            <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
+            <FontAwesome name="user" size={50} color="#375A82"/>
           </View>
           
           <View style={styles.inputContainer}>
@@ -89,21 +89,17 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 60, // half of width or height
-    borderWidth: 8,
+    borderWidth: 6,
     borderColor: '#375A82',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 60,
-    marginTop: -90,
-  },
-
-  avatarIcon: {
-    fontSize: 60,
+    marginTop: -25,
   },
 
   headerContainer: {
     position: 'absolute',
-    top: 50, // Ubah nilai top di sini
+    top: 40, // Ubah nilai top di sini
     left: 0,
     right: 0,
     flexDirection: 'row',

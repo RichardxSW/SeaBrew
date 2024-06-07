@@ -1,24 +1,33 @@
+// screens/RegisterScreen.js
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function RegisterScreen({ navigation }) {
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [agreeTerms, setAgreeTerms] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const handleRegister = () => {
     if (!username || !password || !fullName || !email || !agreeTerms) {
       Alert.alert('Error', 'Please fill in all required fields and agree to the terms and conditions.');
     } else {
-      // Lakukan proses login jika keduanya sudah terisi
-      navigation.navigate('Login');
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log('Registered with user:', user);
+          navigation.navigate('Login');
+        })
+        .catch((error) => {
+          Alert.alert('Error', error.message);
+        });
     }
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -78,35 +87,29 @@ export default function RegisterScreen({ navigation }) {
 
           <View style={styles.checkboxContainer}>
             <TouchableOpacity
-                style={styles.checkbox}
-                onPress={() => setAgreeTerms(!agreeTerms)}
+              style={styles.checkbox}
+              onPress={() => setAgreeTerms(!agreeTerms)}
             >
-                {agreeTerms && <FontAwesome name="check" size={16} color="#375A82" />}
+              {agreeTerms && <FontAwesome name="check" size={16} color="#375A82" />}
             </TouchableOpacity>
             <Text style={styles.checkboxLabel}>I agree to terms and conditions</Text>
-            </View>
+          </View>
 
-          <TouchableOpacity style={styles.buttonRegisContainer}
-            onPress={handleRegister}
-          >
+          <TouchableOpacity style={styles.buttonRegisContainer} onPress={handleRegister}>
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
 
-          <Text style={styles.text}>
-            Or Sign Up With
-          </Text>
+          <Text style={styles.text}>Or Sign Up With</Text>
 
           <TouchableOpacity style={styles.buttonGoogleContainer}>
             <Image
-              source={require('../assets/googleicon.png')} // Ubah path gambar sesuai dengan lokasi dan nama file gambar Anda
-              style={styles.iconStyle} // Style untuk mengatur ukuran dan posisi ikon
+              source={require('../assets/googleicon.png')}
+              style={styles.iconStyle}
             />
             <Text style={styles.buttonText}>Google</Text>
           </TouchableOpacity>
 
-          <Text style={styles.bottomtext}>
-            Already have an account?
-          </Text>
+          <Text style={styles.bottomtext}>Already have an account?</Text>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={styles.loginText}>Login</Text>
@@ -124,17 +127,14 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-
   container: {
     flex: 1,
   },
-
   innerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   titletext: {
     position: 'relative',
     marginBottom: 65,
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
-
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -164,7 +163,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   emailInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -184,13 +182,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   input: {
     flex: 1,
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
-
   buttonRegisContainer: {
     width: '70%',
     borderRadius: 10,
@@ -200,17 +196,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },
-
   buttonText: {
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
     fontFamily: 'Montserrat',
   },
-
   buttonGoogleContainer: {
-    flexDirection: 'row', // Mengatur layout menjadi horizontal
-    alignItems: 'center', // Mengatur agar ikon dan teks berada di tengah secara vertikal
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     width: '40%',
     overflow: 'hidden',
@@ -226,14 +220,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   iconStyle: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
     marginRight: 10,
   },
-
   ficonStyle: {
     width: 24,
     height: 24,
@@ -242,14 +234,12 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -2,
   },
-  
   text: {
     textAlign: 'center',
     color: '#375A82',
     fontSize: 14,
     fontFamily: 'Montserrat',
   },
-
   bottomtext: {
     marginTop: 70,
     textAlign: 'center',
@@ -257,7 +247,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat',
   },
-
   loginText: {
     marginTop: 5,
     textAlign: 'center',
@@ -266,30 +255,27 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontFamily: 'Montserrat',
   },
-
   checkboxContainer: {
     flexDirection: 'row',
-    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    alignSelf: 'flex-start',
     marginLeft: '15%',
     alignItems: 'center',
     marginTop: 10,
-},
-
-checkbox: {
+  },
+  checkbox: {
     width: 25,
     height: 25,
     borderRadius: 5,
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#70B5F9', // Garis border berwarna biru sesuai tema
+    borderColor: '#70B5F9',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-},
-
-checkboxLabel: {
+  },
+  checkboxLabel: {
     fontSize: 12,
-    color: '#375A82', // Warna teks sesuai tema
+    color: '#375A82',
     fontFamily: 'Montserrat',
-},
+  },
 });

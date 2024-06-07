@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
@@ -15,6 +15,19 @@ import StarbuckDetail from "./screens/StarbuckDetailPage";
 import EditProfileScreen from './screens/editProfileScreen';
 import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
+import { initializeApp } from "firebase/app";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBrg-qp3vfv09l2jxSWLtptKFbOZHkyJac",
+  authDomain: "seabrew-f052c.firebaseapp.com",
+  projectId: "seabrew-f052c",
+  storageBucket: "seabrew-f052c.appspot.com",
+  messagingSenderId: "62416172444",
+  appId: "1:62416172444:web:5a187986fb6403c49ac459",
+  measurementId: "G-SKHC3JH4KV"
+};
+
+initializeApp(firebaseConfig);
 
 const Stack = createStackNavigator();
 
