@@ -3,20 +3,19 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextI
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
 
-export default function LoginScreen({ navigation }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+export default function RegisterScreen({ navigation }) {
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [agreeTerms, setAgreeTerms] = useState(false);
 
-  const handleLogin = () => {
-    if (!username && !password) {
-      Alert.alert('Error', 'Please enter both username and password.');
-    } else if (!username) {
-      Alert.alert('Error', 'Please enter your username.');
-    } else if (!password) {
-      Alert.alert('Error', 'Please enter your password.');
+  const handleRegister = () => {
+    if (!username || !password || !fullName || !email || !agreeTerms) {
+      Alert.alert('Error', 'Please fill in all required fields and agree to the terms and conditions.');
     } else {
       // Lakukan proses login jika keduanya sudah terisi
-      navigation.navigate('Home');
+      navigation.navigate('Login');
     }
   };
   
@@ -29,7 +28,30 @@ export default function LoginScreen({ navigation }) {
     >
       <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
         <View style={styles.innerContainer}>
-          <Text style={styles.titletext}>Login</Text>
+          <Text style={styles.titletext}>Register</Text>
+
+          <View style={styles.inputContainer}>
+            <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              placeholderTextColor="rgba(55, 90, 130, 0.5)"
+              value={fullName}
+              onChangeText={(text) => setFullName(text)}
+            />
+          </View>
+
+          <View style={styles.emailInputContainer}>
+            <FontAwesome name="envelope" size={20} color="#375A82" style={styles.iconStyle} />
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="rgba(55, 90, 130, 0.5)"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
+            />
+          </View>
 
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={24} color="#375A82" style={styles.iconStyle} />
@@ -54,19 +76,24 @@ export default function LoginScreen({ navigation }) {
             />
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
-          style={styles.forgotPasswordContainer}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity
+                style={styles.checkbox}
+                onPress={() => setAgreeTerms(!agreeTerms)}
+            >
+                {agreeTerms && <FontAwesome name="check" size={16} color="#375A82" />}
+            </TouchableOpacity>
+            <Text style={styles.checkboxLabel}>I agree to terms and conditions</Text>
+            </View>
 
-          <TouchableOpacity style={styles.buttonLoginContainer}
-            onPress={handleLogin}
+          <TouchableOpacity style={styles.buttonRegisContainer}
+            onPress={handleRegister}
           >
-            <Text style={styles.buttonText}>Login</Text>
+            <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
 
           <Text style={styles.text}>
-            Or Sign In With
+            Or Sign Up With
           </Text>
 
           <TouchableOpacity style={styles.buttonGoogleContainer}>
@@ -78,11 +105,11 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
 
           <Text style={styles.bottomtext}>
-            Don't have an account?
+            Already have an account?
           </Text>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.registerText}>Register</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.loginText}>Login</Text>
           </TouchableOpacity>
 
           <StatusBar style="auto" />
@@ -110,7 +137,7 @@ const styles = StyleSheet.create({
 
   titletext: {
     position: 'relative',
-    marginBottom: 80,
+    marginBottom: 65,
     textAlign: 'center',
     fontSize: 40,
     fontWeight: '100',
@@ -123,8 +150,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '70%',
     height: 50,
-    marginVertical: 10,
+    marginVertical: 8,
     paddingLeft: 20,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  emailInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '70%',
+    height: 50,
+    marginVertical: 8,
+    paddingLeft: 19,
     paddingHorizontal: 10,
     borderRadius: 5,
     backgroundColor: '#FFFFFF',
@@ -144,7 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
   },
 
-  buttonLoginContainer: {
+  buttonRegisContainer: {
     width: '70%',
     borderRadius: 10,
     overflow: 'hidden',
@@ -186,6 +233,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginRight: 10,
   },
+
+  ficonStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: 12,
+    marginTop: 3,
+    marginLeft: -2,
+  },
   
   text: {
     textAlign: 'center',
@@ -202,24 +258,38 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
   },
 
-  registerText: {
+  loginText: {
     marginTop: 5,
     textAlign: 'center',
     color: '#375A82',
-    fontFamily: 'Montserrat',
     fontSize: 14,
     textDecorationLine: 'underline',
+    fontFamily: 'Montserrat',
   },
 
-  forgotPasswordContainer: {
+  checkboxContainer: {
+    flexDirection: 'row',
     alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
     marginLeft: '15%',
-  },
+    alignItems: 'center',
+    marginTop: 10,
+},
 
-  forgotPasswordText: {
-    color: '#375A82',
-    fontSize: 14,
+checkbox: {
+    width: 25,
+    height: 25,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#70B5F9', // Garis border berwarna biru sesuai tema
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+},
+
+checkboxLabel: {
+    fontSize: 12,
+    color: '#375A82', // Warna teks sesuai tema
     fontFamily: 'Montserrat',
-    textDecorationLine: 'underline',
-  },
+},
 });

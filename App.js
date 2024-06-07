@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Navbar from "./components/Navbar";
 import SplashScreen from './screens/splashScreen';
 import LoginScreen from './screens/loginScreen';
+import RegisterScreen from './screens/registerScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
@@ -125,6 +126,10 @@ export default function App() {
               headerTitleAlign: 'center',
             }}
           />
+          <Stack.Screen 
+          name="Register" 
+          component={RegisterScreen}
+          options={{ headerShown: false }} />
           <Stack.Screen 
         name="Profile" 
         component={ProfileScreen}
