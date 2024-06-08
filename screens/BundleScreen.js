@@ -95,7 +95,8 @@ const BundleScreen = () => {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
-        <View style={styles.content}>
+      <View style={styles.dateScrollContainer}>
+        {/* <View style={styles.content}> */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
             {dates.map((date) => (
               <TouchableOpacity
@@ -125,8 +126,9 @@ const BundleScreen = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
+          </View>
+          <View style={styles.bundleList}>
           <FlatList 
-          style={styles.bundleList}
           showsVerticalScrollIndicator={false}
             data={filteredBundles}
             renderItem={renderItem}
@@ -154,12 +156,14 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-  content: {
-    // flex: 1,
+  dateScrollContainer: {
+    overflow: 'hidden',
+    height: 80,
   },
   dateScroll: {
     width: '100%',
     marginBottom: 20,
+    height: 0,
   },
   dateContainer: {
     alignItems: 'center',
@@ -197,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bundleList: {
-
+    flex: 1,
   },
   bundleDetails: {
     flex: 1,
