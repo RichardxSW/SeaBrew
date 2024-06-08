@@ -94,7 +94,7 @@ return (
               <CurrencyInput 
               style={styles.itemPrice}
               value={item.price}
-              prefix="Rp "
+              prefix="IDR "
               delimiter="."
               separator=","
               precision={2}

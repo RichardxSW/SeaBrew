@@ -78,7 +78,7 @@ const BundleScreen = () => {
         <Text style={styles.bundleDesc}>{item.desc}</Text>
       </View>
       <View style={styles.bundleActions}>
-        <Text style={styles.bundlePrice}>Rp.{item.price.toLocaleString()}</Text>
+        <Text style={styles.bundlePrice}>IDR {item.price.toLocaleString()}</Text>
         <View style={styles.quantityContainer}>
           <TouchableOpacity style={styles.quantityButton} onPress={() => handleDecrement(index)}>
             <Text style={styles.quantityButtonText}>-</Text>

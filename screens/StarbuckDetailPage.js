@@ -89,7 +89,7 @@ const StarbuckDetailPage = ({ route }) => {
             <CurrencyInput 
               style={styles.productPrice}
               value={item.price}
-              prefix="Rp "
+              prefix="IDR "
               delimiter="."
               separator=","
               precision={2}

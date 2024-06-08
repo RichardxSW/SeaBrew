@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import CurrencyInput from 'react-native-currency-input';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -7,7 +8,15 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       <View style={styles.itemImagePlaceholder}></View>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>IDR {item.price}</Text>
+        <CurrencyInput 
+              style={styles.itemPrice}
+              value={item.price}
+              prefix="IDR "
+              delimiter="."
+              separator=","
+              precision={0}
+              editable={false}
+              />
       </View>
     </View>
     <View style={styles.itemQuantity}>
@@ -63,9 +72,10 @@ const Cart = () => {
         </View>
 
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice}</Text>
-          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee}</Text>
-          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount}</Text>
+        <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice.toLocaleString()}</Text>
+        <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
+        <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
+
           <TouchableOpacity style={styles.buyButton}>
             <Text style={styles.buyButtonText}>Buy Now</Text>
           </TouchableOpacity>
@@ -85,6 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 12,
+    textAlign: 'center',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -149,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buyButton: {
-    backgroundColor: '#00796B',
+    backgroundColor: '#375A82',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
