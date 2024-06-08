@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function EditProfileScreen({ navigation }) {
   const [username, setUsername] = useState('tanjaya123');
   const [email, setEmail] = useState('tanjaya123@gmail.com');
   const [fullname, setFullName] = useState('Tanjaya Jason Winata');
+  const [profileImage, setProfileImage] = useState(null);
 
   const handleSaveChanges = () => {
     if (!username || !fullname || !email) {
@@ -18,7 +20,23 @@ export default function EditProfileScreen({ navigation }) {
       Alert.alert('Success', 'Changes have been saved successfully.');
     }
   };
-  
+
+  const openCamera = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'Camera access is required to take profile pictures.');
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+    if (!result.canceled) {
+      setProfileImage(result.uri);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -29,8 +47,12 @@ export default function EditProfileScreen({ navigation }) {
         <View style={styles.innerContainer}>
 
           <View style={styles.avatarContainer}>
-            <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
-            <TouchableOpacity style={styles.editIconContainer}>
+            {profileImage ? (
+              <ImageBackground source={{ uri: profileImage }} style={styles.avatarIcon} imageStyle={{ borderRadius: 50 }} />
+            ) : (
+              <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
+            )}
+            <TouchableOpacity style={styles.editIconContainer} onPress={openCamera}>
               <FontAwesome name="pencil" size={18} color="#FFFFFF" style={styles.editIcon} />
             </TouchableOpacity>
           </View>
@@ -105,7 +127,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 50,
     marginTop: -60,
-    borderRadius: 60, // half of width or height
+    borderRadius: 60,
     borderWidth: 8,
     borderColor: '#375A82',
     justifyContent: 'center',
@@ -114,6 +136,8 @@ const styles = StyleSheet.create({
 
   avatarIcon: {
     fontSize: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   editIconContainer: {
@@ -122,8 +146,8 @@ const styles = StyleSheet.create({
     right: -8,
     backgroundColor: '#70B5F9',
     borderRadius: 20,
-    width: 24, // Mengatur lebar ikon pensil
-    height: 24, // Mengatur tinggi ikon pensil
+    width: 24,
+    height: 24,
     padding: 5,
   },
 
@@ -182,7 +206,7 @@ const styles = StyleSheet.create({
   },
 
   labelText: {
-    alignSelf: 'flex-start', // Rata kiri agar sejajar dengan sisi kiri input box password
+    alignSelf: 'flex-start',
     marginLeft: '15%',
     color: '#375A82',
     fontFamily: 'Montserrat',
