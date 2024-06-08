@@ -7,6 +7,8 @@ import Data from '../assets/data/sbuckdata.js';
 // import Checkbox from 'react-native-elements';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import CurrencyInput from 'react-native-currency-input';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const StarbuckDetailPage = ({ route }) => {
   const { item } = route.params;
@@ -68,6 +70,75 @@ const StarbuckDetailPage = ({ route }) => {
       setQuantity(quantity - 1);
     }
   };
+
+  const addToCart = async (item, selectedSize, quantity) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You need to be logged in to add items to the cart');
+      return;
+    }
+    
+    const db = getFirestore();
+    
+    try {
+      // Dokumen cart untuk pengguna saat ini
+      const cartRef = doc(db, 'carts', user.uid);
+      
+      // Mengambil data keranjang dari Firestore
+      const cartSnapshot = await getDoc(cartRef);
+      let cartData;
+      
+      if (cartSnapshot.exists()) {
+        // Jika dokumen keranjang sudah ada, gunakan data yang ada
+        cartData = cartSnapshot.data();
+      } else {
+        // Jika dokumen keranjang belum ada, inisialisasi dengan objek kosong
+        cartData = {};
+      }
+      
+      // Pastikan bahwa cartData memiliki properti 'items' dan inisialisasi jika belum ada
+      if (!cartData.hasOwnProperty('items')) {
+        cartData.items = [];
+      }
+      
+      // Menentukan tanggal hari ini dalam format yang sesuai
+      const currentDate = new Date().toDateString(); // Sat Jun 08 2024
+      
+      // Mencari apakah item yang sama sudah ada dalam keranjang pada tanggal hari ini
+      const existingItemIndex = cartData.items.findIndex(
+        (cartItem) =>
+        cartItem.name === item.name && cartItem.dateAdded === currentDate
+      );
+      
+      if (existingItemIndex !== -1) {
+        // Jika item sudah ada dalam keranjang pada tanggal yang sama, tambahkan jumlah yang baru
+        cartData.items[existingItemIndex].quantity += quantity;
+      } else {
+        // Jika item belum ada dalam keranjang pada tanggal hari ini, tambahkan item baru
+        const newItem = {
+          name: item.name || null,
+          price: item.price || null,
+          quantity: quantity || null,
+          dateAdded: currentDate,
+        };
+        cartData.items.push(newItem);
+      }
+      
+      // Mengatur kembali dokumen keranjang dengan data yang telah diperbarui
+      await setDoc(cartRef, cartData);
+      
+      // Mengatur ulang nilai selectedIceorHot, selectedSize, dan quantity menjadi nilai default
+      setSelectedIceorHot(); // Mengosongkan radio button
+      setSelectedSize(); // Mengosongkan radio button
+      setQuantity(0); // Mengatur quantity menjadi 0
+      
+      alert('Item added to cart successfully!');
+    } catch (error) {
+      console.error('Error adding item to cart: ', error);
+      alert('Error adding item to cart: ' + error.message);
+    }
+  };  
 
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -140,7 +211,7 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.quantityButtonText}>+</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addToCartButton}>
+            <TouchableOpacity style={styles.addToCartButton} onPress={() => addToCart(item, selectedSize, quantity)}>
               <Text style={styles.addToCartButtonText}>Add To Cart</Text>
             </TouchableOpacity>
           </View>

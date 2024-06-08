@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -8,15 +9,15 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       <View style={styles.itemImagePlaceholder}></View>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <CurrencyInput 
-              style={styles.itemPrice}
-              value={item.price}
-              prefix="IDR "
-              delimiter="."
-              separator=","
-              precision={0}
-              editable={false}
-              />
+        <CurrencyInput
+          style={styles.itemPrice}
+          value={item.price}
+          prefix="IDR "
+          delimiter="."
+          separator=","
+          precision={0}
+          editable={false}
+        />
       </View>
     </View>
     <View style={styles.itemQuantity}>
@@ -28,12 +29,67 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 );
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: '1', name: 'Americano', price: 38000, quantity: 3 },
-    { id: '2', name: 'Frappuccino', price: 47000, quantity: 2 },
-    { id: '3', name: 'Choco Cappuccino Set', price: 190000, quantity: 2 },
-    { id: '4', name: 'Weekday Regular', price: 120500, quantity: 6 },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const db = getFirestore();
+      const cartsCollection = collection(db, 'carts');
+      const querySnapshot = await getDocs(cartsCollection);
+  
+      const items = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const bundle = data.bundle;
+        const itemsInBundle = data.items;
+        const tickets = data.tickets;
+  
+        // Process bundle data
+        bundle.forEach((bundleItem) => {
+          items.push({
+            id: bundleItem.id,
+            name: bundleItem.name,
+            price: bundleItem.price,
+            quantity: bundleItem.quantity,
+            date: bundleItem.date,
+          });
+        });
+  
+        // Process items data
+        itemsInBundle.forEach((item) => {
+          items.push({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            date: item.date,
+          });
+        });
+  
+        // Process tickets data
+        tickets.forEach((ticket) => {
+          items.push({
+            id: ticket.id,
+            name: ticket.name,
+            price: ticket.price,
+            quantity: ticket.quantity, // Assuming ticket count is the quantity
+            date: ticket.date,
+          });
+        });
+      });
+  
+      setCartItems(items);
+      setLoading(false);
+    };
+  
+    fetchCartItems();
+  }, []);
+  
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
@@ -42,7 +98,7 @@ const Cart = () => {
       )
     );
   };
-
+  
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -63,7 +119,11 @@ const Cart = () => {
         <FlatList
           data={cartItems}
           renderItem={({ item }) => (
-            <CartItem item={item} onIncrease={handleIncrease} onDecrease={handleDecrease} />
+            <CartItem 
+              item={item} 
+              onIncrease={handleIncrease} 
+              onDecrease={handleDecrease} // Menyertakan fungsi handleDecrease sebagai prop
+            />
           )}
           keyExtractor={(item) => item.id}
         />
@@ -72,9 +132,9 @@ const Cart = () => {
         </View>
 
         <View style={styles.summaryContainer}>
-        <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice.toLocaleString()}</Text>
-        <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
-        <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
+          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice.toLocaleString()}</Text>
+          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
+          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
 
           <TouchableOpacity style={styles.buyButton}>
             <Text style={styles.buyButtonText}>Buy Now</Text>

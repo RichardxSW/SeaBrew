@@ -17,6 +17,7 @@ import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
 import BundleScreen from './screens/BundleScreen';
 import { initializeApp } from "firebase/app";
+import 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBrg-qp3vfv09l2jxSWLtptKFbOZHkyJac",
