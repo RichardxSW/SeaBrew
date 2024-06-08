@@ -1,15 +1,16 @@
 import React from 'react';
-import { View, Image, Text, Button, StyleSheet } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const Confirmation = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/confirmation.png')} style={styles.image} />
-      <Text style={styles.text}>Payment Successful</Text>
-      <Button
-        title="Back to Home Screen"
-        onPress={() => navigation.navigate('Home')}
-      />
+      <View style={styles.imageContainer}>
+        <Image source={require('../assets/success.gif')} style={styles.image} />
+        <Text style={styles.text}>Payment Successful</Text>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.buttonText}>Back to Home Screen</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -20,6 +21,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+    padding: 16,
+  },
+  imageContainer: {
+    alignItems: 'center',
   },
   image: {
     width: 200,
@@ -30,6 +35,19 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  button: {
+    width: '100%',
+    backgroundColor: '#1E90FF',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
