@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buyButton: {
-    backgroundColor: '#00796B',
+    backgroundColor: '#1E90FF',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -163,6 +163,5 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
 });
-
 
 export default Cart;
