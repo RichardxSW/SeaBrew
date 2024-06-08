@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+
+const QuantitySelector = ({ quantity, onIncrease, onDecrease }) => (
+  <View style={styles.quantitySelector}>
+    <TouchableOpacity style={styles.quantityButton} onPress={onDecrease}>
+      <Text style={styles.quantityButtonText}>-</Text>
+    </TouchableOpacity>
+    <View style={styles.quantityBox}>
+      <Text style={styles.quantityText}>{quantity}</Text>
+    </View>
+    <TouchableOpacity style={styles.quantityButton} onPress={onIncrease}>
+      <Text style={styles.quantityButtonText}>+</Text>
+    </TouchableOpacity>
+  </View>
+);
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -10,11 +24,11 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
         <Text style={styles.itemPrice}>Rp. {item.price}</Text>
       </View>
     </View>
-    <View style={styles.itemQuantity}>
-      <Button title="-" onPress={() => onDecrease(item.id)} />
-      <Text style={styles.quantityText}>{item.quantity}</Text>
-      <Button title="+" onPress={() => onIncrease(item.id)} />
-    </View>
+    <QuantitySelector
+      quantity={item.quantity}
+      onIncrease={() => onIncrease(item.id)}
+      onDecrease={() => onDecrease(item.id)}
+    />
   </View>
 );
 
@@ -83,6 +97,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    textAlign: 'center',
+    fontFamily: 'MontserratMedium',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -112,18 +128,45 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'MontserratMedium',
   },
   itemPrice: {
     fontSize: 14,
     color: '#757575',
+    fontFamily: 'MontserratMedium',
   },
-  itemQuantity: {
+  quantitySelector: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    padding: 4,
+  },
+  quantityButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+  },
+  quantityButtonText: {
+    fontSize: 20,
+    color: '#1E90FF',
+  },
+  quantityBox: {
+    width: 40,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 4,
+    marginHorizontal: 8,
   },
   quantityText: {
-    marginHorizontal: 8,
     fontSize: 16,
+    color: '#000000',
   },
   metodeContainer: {
     padding: 16,
@@ -140,11 +183,13 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 14,
     marginBottom: 4,
+    fontFamily: 'MontserratMedium',
   },
   totalAmount: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
+    fontFamily: 'MontserratMedium',
   },
   buyButton: {
     backgroundColor: '#1E90FF',
@@ -156,11 +201,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'MontserratMedium',
   },
   background: {
     flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center"
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
 });
 
