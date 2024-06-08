@@ -20,7 +20,7 @@ export default function LoginScreen({ navigation }) {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log('Logged in with user:', user);
+          // console.log('Logged in with user:', user);
           navigation.navigate('Navbar');
         })
         .catch((error) => {

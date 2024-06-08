@@ -20,7 +20,7 @@ export default function RegisterScreen({ navigation }) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log('Registered with user:', user);
+          // console.log('Registered with user:', user);
           navigation.navigate('Login');
         })
         .catch((error) => {
