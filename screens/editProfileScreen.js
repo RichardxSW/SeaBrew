@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -48,64 +48,66 @@ export default function EditProfileScreen({ navigation }) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
-        <View style={styles.innerContainer}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.innerContainer}>
 
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatarBorder}>
-              {profileImage ? (
-                <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
-              ) : (
-                <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
-              )}
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatarBorder}>
+                {profileImage ? (
+                  <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
+                ) : (
+                  <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
+                )}
+              </View>
+              <TouchableOpacity style={styles.editIconContainer} onPress={openCamera}>
+                <FontAwesome name="pencil" size={18} color="#FFFFFF" style={styles.editIcon} />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.editIconContainer} onPress={openCamera}>
-              <FontAwesome name="pencil" size={18} color="#FFFFFF" style={styles.editIcon} />
+            
+            <Text style={styles.labelText}>Username</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                defaultValue={username}
+                placeholder='Username'
+                placeholderTextColor="rgba(55, 90, 130, 0.5)"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
+              />
+            </View>
+
+            <Text style={styles.labelText}>Full Name</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                defaultValue={fullname}
+                placeholder='Full Name'
+                placeholderTextColor="rgba(55, 90, 130, 0.5)"
+                value={fullname}
+                onChangeText={(text) => setFullName(text)}
+              />
+            </View>
+
+            <Text style={styles.labelText}>Email</Text>
+            <View style={styles.emailInputContainer}>
+              <TextInput
+                style={styles.input}
+                defaultValue={email}
+                placeholder='Email'
+                placeholderTextColor="rgba(55, 90, 130, 0.5)"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+              />
+            </View>
+
+            <TouchableOpacity style={styles.buttonContainer} onPress={handleSaveChanges}>
+              <Text style={styles.buttonText}>Save Changes</Text>
             </TouchableOpacity>
-          </View>
-          
-          <Text style={styles.labelText}>Username</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              defaultValue={username}
-              placeholder='Username'
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-            />
-          </View>
 
-          <Text style={styles.labelText}>Full Name</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              defaultValue={fullname}
-              placeholder='Full Name'
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={fullname}
-              onChangeText={(text) => setFullName(text)}
-            />
+            <StatusBar style="auto" />
           </View>
-
-          <Text style={styles.labelText}>Email</Text>
-          <View style={styles.emailInputContainer}>
-            <TextInput
-              style={styles.input}
-              defaultValue={email}
-              placeholder='Email'
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-            />
-          </View>
-
-          <TouchableOpacity style={styles.buttonContainer} onPress={handleSaveChanges}>
-            <Text style={styles.buttonText}>Save Changes</Text>
-          </TouchableOpacity>
-
-          <StatusBar style="auto" />
-        </View>
+        </ScrollView>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -121,10 +123,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+  },
+
   innerContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 20,
   },
 
   avatarContainer: {

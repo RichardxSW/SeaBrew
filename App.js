@@ -131,7 +131,7 @@ export default function App() {
             options={{
             title: 'Edit Profile',
             headerStyle: {
-              backgroundColor: '#79D2FA',
+              backgroundColor: '#92DAFD',
             },
             headerTintColor: '#375A82',
             headerTitleStyle: {

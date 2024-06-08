@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -36,60 +36,62 @@ export default function LoginScreen({ navigation }) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
-        <View style={styles.innerContainer}>
-          <Text style={styles.titletext}>Login</Text>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.innerContainer}>
+            <Text style={styles.titletext}>Login</Text>
 
-          <View style={styles.inputContainer}>
-            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.ficonStyle} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-            />
+            <View style={styles.inputContainer}>
+              <FontAwesome name="envelope" size={24} color="#375A82" style={styles.ficonStyle} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="rgba(55, 90, 130, 0.5)"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                keyboardType="email-address"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <FontAwesome name="lock" size={24} color="#375A82" style={styles.iconStyle} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="rgba(55, 90, 130, 0.5)"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+                secureTextEntry
+              />
+            </View>
+
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
+              style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.buttonLoginContainer} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.text}>Or Sign In With</Text>
+
+            <TouchableOpacity style={styles.buttonGoogleContainer}>
+              <Image
+                source={require('../assets/googleicon.png')}
+                style={styles.iconStyle}
+              />
+              <Text style={styles.buttonText}>Google</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.bottomtext}>Don't have an account?</Text>
+
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.registerText}>Register</Text>
+            </TouchableOpacity>
+
+            <StatusBar style="auto" />
           </View>
-
-          <View style={styles.inputContainer}>
-            <FontAwesome name="lock" size={24} color="#375A82" style={styles.iconStyle} />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="rgba(55, 90, 130, 0.5)"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
-            style={styles.forgotPasswordContainer}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.buttonLoginContainer} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.text}>Or Sign In With</Text>
-
-          <TouchableOpacity style={styles.buttonGoogleContainer}>
-            <Image
-              source={require('../assets/googleicon.png')}
-              style={styles.iconStyle}
-            />
-            <Text style={styles.buttonText}>Google</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.bottomtext}>Don't have an account?</Text>
-
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.registerText}>Register</Text>
-          </TouchableOpacity>
-
-          <StatusBar style="auto" />
-        </View>
+        </ScrollView>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -103,6 +105,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   innerContainer: {
     flex: 1,
     alignItems: 'center',
@@ -110,6 +116,7 @@ const styles = StyleSheet.create({
   },
   titletext: {
     position: 'relative',
+    marginTop: 20,
     marginBottom: 80,
     textAlign: 'center',
     fontSize: 40,
