@@ -15,6 +15,7 @@ import StarbuckDetail from "./screens/StarbuckDetailPage";
 import EditProfileScreen from './screens/editProfileScreen';
 import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
+import BundleScreen from './screens/BundleScreen';
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -172,6 +173,23 @@ export default function App() {
             component={Ticket}
             options={{
               title: 'Ticket',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
+          />
+          <Stack.Screen 
+            name="BundleScreen"
+            component={BundleScreen}
+            options={{
+              title: 'All Bundle',
               headerStyle: {
                 backgroundColor: '#92DAFD',
                 // backgroundColor: '#4DC3FC',

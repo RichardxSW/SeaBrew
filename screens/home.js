@@ -5,6 +5,7 @@ import PagerView from 'react-native-pager-view';
 import CurrencyInput from 'react-native-currency-input';
 import backgroundImage from '../assets/Background.png';
 import Bundle from '../assets/data/bundledata.js';
+import BundleScreen from './BundleScreen';
 import shows from '../assets/data/showdata.js';
 
 const Home = () => {
@@ -94,7 +95,7 @@ const Home = () => {
                 </View>
               ))}
             </View>
-            <TouchableOpacity style={styles.seeAllContainer}>
+            <TouchableOpacity style={styles.seeAllContainer} onPress={() => navigation.navigate('BundleScreen')}>
               <Text style={styles.seeAllText}>See More</Text>
             </TouchableOpacity>
           </View>
