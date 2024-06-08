@@ -125,7 +125,9 @@ const BundleScreen = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <FlatList
+          <FlatList 
+          style={styles.bundleList}
+          showsVerticalScrollIndicator={false}
             data={filteredBundles}
             renderItem={renderItem}
             keyExtractor={(item) => item.name}
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   content: {
-    flex: 1,
+    // flex: 1,
   },
   dateScroll: {
     width: '100%',
@@ -193,6 +195,9 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  bundleList: {
+
   },
   bundleDetails: {
     flex: 1,
