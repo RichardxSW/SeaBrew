@@ -54,6 +54,7 @@ const Navbar = () => {
             backgroundColor: '#92DAFD',
           },
           headerTintColor: '#375A82',
+          headerStatusBarHeight: 35,
           headerLeft: () => (
             <View style={styles.avatarContainer}>
               <View style={styles.avatarBorder}>
@@ -115,8 +116,8 @@ const styles = StyleSheet.create({
   },
 
   avatarIcon: {
-    width: 45,
-    height: 45,
+    width: 42,
+    height: 42,
     borderRadius: 50,
   },
 });
