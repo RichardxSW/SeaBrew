@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,8 +32,12 @@ export default function EditProfileScreen({ navigation }) {
       aspect: [1, 1],
       quality: 0.5,
     });
+
     if (!result.canceled) {
-      setProfileImage(result.uri);
+      console.log('Image URI:', result.assets[0].uri); // Log the URI
+      setProfileImage(result.assets[0].uri);
+    } else {
+      console.log('Image picking canceled');
     }
   };
 
@@ -47,11 +51,13 @@ export default function EditProfileScreen({ navigation }) {
         <View style={styles.innerContainer}>
 
           <View style={styles.avatarContainer}>
-            {profileImage ? (
-              <ImageBackground source={{ uri: profileImage }} style={styles.avatarIcon} imageStyle={{ borderRadius: 50 }} />
-            ) : (
-              <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
-            )}
+            <View style={styles.avatarBorder}>
+              {profileImage ? (
+                <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
+              ) : (
+                <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
+              )}
+            </View>
             <TouchableOpacity style={styles.editIconContainer} onPress={openCamera}>
               <FontAwesome name="pencil" size={18} color="#FFFFFF" style={styles.editIcon} />
             </TouchableOpacity>
@@ -127,7 +133,14 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 50,
     marginTop: -60,
-    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarBorder: {
+    width: 116,
+    height: 116,
+    borderRadius: 58,
     borderWidth: 8,
     borderColor: '#375A82',
     justifyContent: 'center',
@@ -135,9 +148,9 @@ const styles = StyleSheet.create({
   },
 
   avatarIcon: {
-    fontSize: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 
   editIconContainer: {

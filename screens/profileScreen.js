@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -7,6 +7,7 @@ export default function ProfileScreen({ navigation, route }) {
   const [username, setUsername] = useState('tanjaya123');
   const [email, setEmail] = useState('tanjaya123@gmail.com');
   const [fullname, setFullname] = useState('Tanjaya Jason Winata');
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const { newData, successMessage } = route.params || {};
@@ -38,7 +39,13 @@ export default function ProfileScreen({ navigation, route }) {
           </View>
 
           <View style={styles.avatarContainer}>
-            <FontAwesome name="user" size={50} color="#375A82"/>
+            <View style={styles.avatarBorder}>
+              {profileImage ? (
+                <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
+              ) : (
+                <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
+              )}
+            </View>
           </View>
           
           <View style={styles.inputContainer}>
@@ -88,13 +95,27 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: 100,
     height: 100,
-    borderRadius: 60, // half of width or height
-    borderWidth: 6,
+    position: 'relative',
+    marginBottom: 50,
+    marginTop: -60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarBorder: {
+    width: 116,
+    height: 116,
+    borderRadius: 58,
+    borderWidth: 8,
     borderColor: '#375A82',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 60,
-    marginTop: -25,
+  },
+
+  avatarIcon: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
   },
 
   headerContainer: {

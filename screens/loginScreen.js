@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    marginRight: 13,
-    marginLeft: -3,
+    marginRight: 14,
+    marginLeft: -4,
   },
   text: {
     textAlign: 'center',

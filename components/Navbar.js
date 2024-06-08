@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
-import React from 'react';
+import React, { useState }from 'react';
 import HomeScreen from '../screens/home';
 import CartScreen from '../screens/cart';
 import ScreenTabs from '../screens/screenTabs';
@@ -11,6 +11,8 @@ import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icon libr
 const Tab = createBottomTabNavigator();
 
 const Navbar = () => {
+  const [profileImage, setProfileImage] = useState(null);
+
   return (
     <Tab.Navigator
       style={styles.container}
@@ -52,10 +54,15 @@ const Navbar = () => {
           },
           headerTintColor: '#375A82',
           headerLeft: () => (
-            <Image
-              source={require('../assets/user.png')}
-              style={{ width: 23, height: 23, marginLeft: 15, marginTop: 5 }}
-            />
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatarBorder}>
+                {profileImage ? (
+                  <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
+                ) : (
+                  <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
+                )}
+              </View>
+          </View>
           ),
           headerTitleStyle: {
             fontFamily: 'BigShouldersStencilBold',
@@ -89,5 +96,26 @@ const styles = StyleSheet.create({
     right: 16,
     left: 16,
     borderRadius: 20
+  },
+
+  avatarContainer: {
+    width: 30,
+    height: 30,
+    marginLeft: 25,
+  },
+
+  avatarBorder: {
+    width: 35,
+    height: 35,
+    borderRadius: 58,
+    borderColor: '#375A82',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarIcon: {
+    width: 45,
+    height: 45,
+    borderRadius: 50,
   },
 });
