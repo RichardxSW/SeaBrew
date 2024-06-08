@@ -1,4 +1,3 @@
-// screens/LoginScreen.js
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -41,7 +40,7 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.titletext}>Login</Text>
 
           <View style={styles.inputContainer}>
-            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
+            <FontAwesome name="envelope" size={24} color="#375A82" style={styles.ficonStyle} />
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -179,6 +178,13 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
     marginRight: 10,
+  },
+  ficonStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: 13,
+    marginLeft: -3,
   },
   text: {
     textAlign: 'center',
