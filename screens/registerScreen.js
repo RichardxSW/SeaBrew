@@ -1,6 +1,6 @@
 // screens/RegisterScreen.js
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -36,6 +36,7 @@ export default function RegisterScreen({ navigation }) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
       <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.innerContainer}>
           <Text style={styles.titletext}>Register</Text>
 
@@ -117,6 +118,7 @@ export default function RegisterScreen({ navigation }) {
 
           <StatusBar style="auto" />
         </View>
+        </ScrollView>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -130,6 +132,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   innerContainer: {
     flex: 1,
     alignItems: 'center',
@@ -137,6 +143,7 @@ const styles = StyleSheet.create({
   },
   titletext: {
     position: 'relative',
+    marginTop: 25,
     marginBottom: 65,
     textAlign: 'center',
     fontSize: 40,
