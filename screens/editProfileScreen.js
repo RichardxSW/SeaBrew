@@ -28,8 +28,6 @@ export default function EditProfileScreen({ navigation }) {
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
         <View style={styles.innerContainer}>
 
-          <Text style={styles.titletext}>Edit Profile</Text>
-
           <View style={styles.avatarContainer}>
             <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
             <TouchableOpacity style={styles.editIconContainer}>
@@ -78,12 +76,6 @@ export default function EditProfileScreen({ navigation }) {
             <Text style={styles.buttonText}>Save Changes</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buttonContainer}
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-
           <StatusBar style="auto" />
         </View>
       </ImageBackground>
@@ -112,7 +104,7 @@ const styles = StyleSheet.create({
     height: 100,
     position: 'relative',
     marginBottom: 50,
-    marginTop: -10,
+    marginTop: -60,
     borderRadius: 60, // half of width or height
     borderWidth: 8,
     borderColor: '#375A82',
@@ -209,7 +201,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginTop: 30,
-    marginBottom: 5,
+    marginBottom: 70,
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },

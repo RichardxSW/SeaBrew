@@ -47,6 +47,7 @@ export default function LoginScreen({ navigation }) {
               placeholderTextColor="rgba(55, 90, 130, 0.5)"
               value={email}
               onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
             />
           </View>
 

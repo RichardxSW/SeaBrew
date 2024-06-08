@@ -88,6 +88,6 @@ const styles = StyleSheet.create({
     bottom: 16,
     right: 16,
     left: 16,
-    borderRadius: '20'
+    borderRadius: 20
   },
 });

@@ -155,7 +155,18 @@ export default function App() {
           <Stack.Screen 
             name="EditProfile" 
             component={EditProfileScreen}
-           />
+            options={{
+            title: 'Edit Profile',
+            headerStyle: {
+              backgroundColor: '#79D2FA',
+            },
+            headerTintColor: '#375A82',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat',
+              fontSize: 24,
+            },
+            headerTitleAlign: 'center',
+          }}/>
           <Stack.Screen 
             name="Ticket"
             component={Ticket}
