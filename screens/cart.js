@@ -7,7 +7,7 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       <View style={styles.itemImagePlaceholder}></View>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>Rp. {item.price}</Text>
+        <Text style={styles.itemPrice}>IDR {item.price}</Text>
       </View>
     </View>
     <View style={styles.itemQuantity}>
@@ -59,12 +59,13 @@ const Cart = () => {
           keyExtractor={(item) => item.id}
         />
         <View style={styles.metodeContainer}>
-          <Text style={styles.summaryText}>Metode Pembayaran: Gopay (Rp2.500.000)</Text>
+          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR 2.500.000)</Text>
         </View>
+
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Total Harga ({totalItems} Barang): Rp. {totalPrice}</Text>
-          <Text style={styles.summaryText}>Biaya Aplikasi: Rp. {applicationFee}</Text>
-          <Text style={styles.totalAmount}>Total Tagihan: Rp. {totalAmount}</Text>
+          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice}</Text>
+          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee}</Text>
+          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount}</Text>
           <TouchableOpacity style={styles.buyButton}>
             <Text style={styles.buyButtonText}>Buy Now</Text>
           </TouchableOpacity>
@@ -77,12 +78,13 @@ const Cart = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 25,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginTop: 20,
+    marginBottom: 12,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -129,13 +131,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginTop: 16,
+    marginBottom: 20
   },
   summaryContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginTop: 16,
+    marginBottom: 55
   },
   summaryText: {
     fontSize: 14,
