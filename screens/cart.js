@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -34,58 +35,44 @@ const Cart = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const db = getFirestore();
-      const cartsCollection = collection(db, 'carts');
-      const querySnapshot = await getDocs(cartsCollection);
+      const auth = getAuth(); 
+      const user = auth.currentUser;
+      
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userCartDocRef = doc(db, `carts/${user.uid}`); // Menggunakan doc untuk membuat referensi dokumen
+          const userCartDocSnap = await getDoc(userCartDocRef);
   
-      const items = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const bundle = data.bundle;
-        const itemsInBundle = data.items;
-        const tickets = data.tickets;
+          if (userCartDocSnap.exists()) {
+            const userData = userCartDocSnap.data();
+            const bundleItems = userData.bundle || [];
+            const itemsInBundle = userData.items || [];
+            const tickets = userData.tickets || [];
   
-        // Process bundle data
-        bundle.forEach((bundleItem) => {
-          items.push({
-            id: bundleItem.id,
-            name: bundleItem.name,
-            price: bundleItem.price,
-            quantity: bundleItem.quantity,
-            date: bundleItem.date,
-          });
-        });
+            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+              id: `${item.name}-${index}`, // Membuat ID unik berdasarkan nama dan indeks
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              date: item.date,
+            }));
   
-        // Process items data
-        itemsInBundle.forEach((item) => {
-          items.push({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            date: item.date,
-          });
-        });
-  
-        // Process tickets data
-        tickets.forEach((ticket) => {
-          items.push({
-            id: ticket.id,
-            name: ticket.name,
-            price: ticket.price,
-            quantity: ticket.quantity, // Assuming ticket count is the quantity
-            date: ticket.date,
-          });
-        });
-      });
-  
-      setCartItems(items);
-      setLoading(false);
-    };
+            setCartItems(allItems);
+            setLoading(false);
+          } else {
+            console.log("User cart does not exist");
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Error fetching cart items:', error);
+          setLoading(false);
+        }
+      }
+    };    
   
     fetchCartItems();
-  }, []);
-  
+  }, []);  
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -102,7 +89,7 @@ const Cart = () => {
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+        item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
       )
     );
   };
@@ -120,9 +107,10 @@ const Cart = () => {
           data={cartItems}
           renderItem={({ item }) => (
             <CartItem 
+              key={item.id}
               item={item} 
               onIncrease={handleIncrease} 
-              onDecrease={handleDecrease} // Menyertakan fungsi handleDecrease sebagai prop
+              onDecrease={handleDecrease} 
             />
           )}
           keyExtractor={(item) => item.id}
@@ -236,6 +224,5 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
 });
-
 
 export default Cart;
