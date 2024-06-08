@@ -85,29 +85,6 @@ export default function App() {
         component={Navbar}
         options={{ headerShown: false }} 
         />
-        {/* <Stack.Screen 
-          name="Home" 
-          component={Home} 
-          options={{
-            title: 'SeaBrew',
-            headerStyle: {
-              backgroundColor: '#92DAFD',
-              // backgroundColor: '#4DC3FC',
-            },
-            headerTintColor: '#375A82',
-            headerLeft: () => (
-              <Image
-                source={require('./assets/user.png')}
-                style={{ width: 23, height: 23, marginLeft: 15, marginTop: 5}}
-              />
-            ),
-            headerTitleStyle: {
-              fontFamily: 'BigShouldersStencilBold',
-              fontSize: 27,
-            },
-            headerTitleAlign: 'center',
-          }}
-          /> */}
         <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
@@ -124,11 +101,6 @@ export default function App() {
             },
             headerTitleAlign: 'center',
           }}/>
-          {/* <Stack.Screen 
-            name="StarbuckMain"
-            component={StarbuckMain}
-            options={{headerShown : false }}
-          /> */}
           <Stack.Screen 
             name="StarbuckDetail"
             component={StarbuckDetail}
