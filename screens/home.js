@@ -2,14 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
+import CurrencyInput from 'react-native-currency-input';
 import backgroundImage from '../assets/Background.png';
-import bundles from '../assets/data/bundledata.js';
+import Bundle from '../assets/data/bundledata.js';
 import shows from '../assets/data/showdata.js';
 
 const Home = () => {
   const navigation = useNavigation();
   const [selectedDay, setSelectedDay] = useState('Mon');
-  const filteredBundles = bundles.filter(bundle => bundle.id >= 1 && bundle.id <= 4);
+  const filteredBundles = Bundle.filter(bundle => bundle.id >= 1 && bundle.id <= 4);
   const filteredCarousel = shows.filter(show => show.id >= 3 && show.id <= 5);
 
   const pagerRef = useRef(null);
@@ -79,9 +80,17 @@ const Home = () => {
                 <View key={bundle.id} style={styles.bundleContainer}>
                   <View style={styles.bundleInfo}>
                     <Text style={styles.bundleName}>{bundle.name}</Text>
-                    <Text style={styles.bundleDescription}>{bundle.description}</Text>
+                    <Text style={styles.bundleDescription}>{bundle.desc}</Text>
                   </View>
-                  <Text style={styles.bundlePrice}>{bundle.price}</Text>
+                  <CurrencyInput 
+                    style={styles.bundlePrice}
+                    value={bundle.price}
+                    prefix="IDR "
+                    delimiter="."
+                    separator=","
+                    precision="0"
+                    editable={false}
+                    />
                 </View>
               ))}
             </View>
