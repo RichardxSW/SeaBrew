@@ -16,6 +16,7 @@ const Navbar = () => {
       style={styles.container}
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        tabBarHideOnKeyboard: true,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
