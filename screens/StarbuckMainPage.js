@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 10,
-    fontFamily: 'bold',
+    fontFamily: 'MontserratBold',
     textAlign: 'center',
   },
   bannerContainer: {
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ED5151',
     padding: 8,
     borderRadius: 16,
-    fontFamily: 'Montserrat.bold',
+    fontFamily: 'MontserratBold',
   },
   bannerImage: {
     width: '100%',

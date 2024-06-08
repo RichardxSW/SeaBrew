@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
       paddingTop: 30,
     },
     title: {
-      fontFamily: "Montserrat_700Bold",
+      fontFamily: "MontserratBold",
       fontSize: 30,
       color: "#375A82",
       marginBottom: 20,
@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
       paddingBottom: 40,
     },
     itemName: {
-      fontFamily: "Montserrat_700Bold",
+      fontFamily: "MontserratBold",
       fontSize: 15,
       color: "#375A82",
       marginBottom: 5,
     },
     visitDate: {
-      fontFamily: "Montserrat_400Regular",
+      fontFamily: "Montserrat",
       fontSize: 9,
       color: "#375A82",
       marginBottom: 10,
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
       marginRight: 10,
     },
     itemPrice: {
-      fontFamily: "Montserrat_700Bold",
+      fontFamily: "MontserratBold",
       fontSize: 12,
       color: "#375A82",
       marginBottom: 5,
     },
     paidText: {
-      fontFamily: "Montserrat_700Bold",
+      fontFamily: "MontserratBold",
       fontSize: 12,
       color: "#375A82",
     },
