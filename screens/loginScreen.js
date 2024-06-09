@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -22,6 +22,21 @@ export default function LoginScreen({ navigation }) {
           const user = userCredential.user;
           // console.log('Logged in with user:', user);
           navigation.navigate('Navbar');
+        })
+        .catch((error) => {
+          Alert.alert('Error', error.message);
+        });
+    }
+  };
+
+  const forgetPassword = () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email to reset password.');
+    } else {
+      const auth = getAuth();
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          Alert.alert('Password reset email sent.');
         })
         .catch((error) => {
           Alert.alert('Error', error.message);
@@ -64,7 +79,7 @@ export default function LoginScreen({ navigation }) {
               />
             </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} 
+            <TouchableOpacity onPress={forgetPassword} 
               style={styles.forgotPasswordContainer}>
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
