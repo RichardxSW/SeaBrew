@@ -4,9 +4,9 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation, route }) {
-  const [username, setUsername] = useState('tanjaya123');
-  const [email, setEmail] = useState('tanjaya123@gmail.com');
-  const [fullname, setFullname] = useState('Tanjaya Jason Winata');
+  const [username, setUsername] = useState('user123');
+  const [email, setEmail] = useState('user123@gmail.com');
+  const [fullname, setFullname] = useState('User User');
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
