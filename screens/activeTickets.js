@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
 
@@ -31,10 +39,15 @@ const ActiveTicketsScreen = () => {
       date: "7 June 2024",
       price: "Rp.190.000",
     },
+    {
+      id: 4,
+      name: ["Green Macchiato Delight", "Cappuccino & Americano Combo"],
+      date: "2 June 2024",
+      price: "Rp.210.000",
+    },
   ];
 
   const handlePress = (item) => {
-    console.log("Item pressed:", item);
     setSelectedItem(item);
     setModalVisible(true);
   };
@@ -60,7 +73,11 @@ const ActiveTicketsScreen = () => {
                 onPress={() => handlePress(item)}
               >
                 <View style={styles.textContainer}>
-                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemName}>
+                    {Array.isArray(item.name)
+                      ? item.name.join("\n")
+                      : item.name}
+                  </Text>
                   <Text style={styles.visitDate}>Visit date: {item.date}</Text>
                 </View>
                 <View style={styles.groupContainer}>
@@ -81,7 +98,6 @@ const ActiveTicketsScreen = () => {
           <TouchableWithoutFeedback onPress={closeModal}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{selectedItem.name}</Text>
                 <QRCode value={JSON.stringify(selectedItem)} size={200} />
                 <TouchableOpacity
                   style={styles.closeButton}
@@ -138,7 +154,7 @@ const styles = StyleSheet.create({
   },
   visitDate: {
     fontFamily: "Montserrat",
-    fontSize: 9,
+    fontSize: 12,
     color: "#375A82",
     marginBottom: 10,
   },
@@ -170,12 +186,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center", // Add this line
-  },
-  modalTitle: {
-    fontFamily: "MontserratBold",
-    fontSize: 20,
-    color: "#375A82",
-    marginBottom: 20,
   },
   closeButton: {
     marginTop: 20,

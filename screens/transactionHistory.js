@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback   } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
@@ -21,7 +28,7 @@ const History = () => {
     },
     {
       id: 2,
-      name: "Green Macchiato Delight",
+      name: ["Green Macchiato Delight", "Cappuccino & Americano Combo"],
       date: "2 June 2024",
       price: "Rp.210.000",
     },
@@ -34,7 +41,6 @@ const History = () => {
     // Add more transactions here if needed
   ];
   const handlePress = (item) => {
-    console.log("Item pressed:", item); // Debugging line
     setSelectedItem(item);
     setModalVisible(true);
   };
@@ -59,7 +65,9 @@ const History = () => {
               onPress={() => handlePress(item)}
             >
               <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemName}>
+                  {Array.isArray(item.name) ? item.name.join("\n") : item.name}
+                </Text>
                 <Text style={styles.visitDate}>Visit date: {item.date}</Text>
               </View>
               <View style={styles.groupContainer}>
@@ -79,7 +87,6 @@ const History = () => {
           <TouchableWithoutFeedback onPress={closeModal}>
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>{selectedItem.name}</Text>
                 <QRCode value={JSON.stringify(selectedItem)} size={200} />
                 <TouchableOpacity
                   style={styles.closeButton}
@@ -136,7 +143,7 @@ const styles = StyleSheet.create({
   },
   visitDate: {
     fontFamily: "Montserrat",
-    fontSize: 9,
+    fontSize: 12,
     color: "#375A82",
     marginBottom: 10,
   },
@@ -168,6 +175,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center", // Add this line
+  },
+  closeButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#375A82",
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: "white",
+    fontFamily: "MontserratBold",
   },
 });
 
