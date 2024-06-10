@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemDetails}>
-      {/* <View style={styles.itemImagePlaceholder}></View> */}
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
         <CurrencyInput
@@ -32,50 +32,51 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [balance, setBalance] = useState(0); // Initialize with 0 and fetch from Firestore
+  const [balance, setBalance] = useState(0);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      
-      if (user) {
-        try {
-          const db = getFirestore();
-          const userCartDocRef = doc(db, `carts/${user.uid}`);
-          const userCartDocSnap = await getDoc(userCartDocRef);
-  
-          if (userCartDocSnap.exists()) {
-            const userData = userCartDocSnap.data();
-            const bundleItems = userData.bundle || [];
-            const itemsInBundle = userData.items || [];
-            const tickets = userData.tickets || [];
-            const userBalance = userData.balance || 10000000; // Default to 10,000,000 if no balance is saved
-  
-            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
-              id: `${item.name}-${index}`,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              date: item.date,
-            }));
-  
-            setCartItems(allItems);
-            setBalance(userBalance);
-            setLoading(false);
-          } else {
-            console.log("User cart does not exist");
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error fetching cart items:', error);
-          setLoading(false);
+  const fetchCartItems = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    
+    if (user) {
+      try {
+        const db = getFirestore();
+        const userCartDocRef = doc(db, `carts/${user.uid}`);
+        const userCartDocSnap = await getDoc(userCartDocRef);
+
+        if (userCartDocSnap.exists()) {
+          const userData = userCartDocSnap.data();
+          const bundleItems = userData.bundle || [];
+          const itemsInBundle = userData.items || [];
+          const tickets = userData.tickets || [];
+          const userBalance = userData.balance || 10000000;
+
+          const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+            id: `${item.name}-${index}`,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            date: item.date,
+          }));
+
+          setCartItems(allItems);
+          setBalance(userBalance);
+        } else {
+          console.log("User cart does not exist");
         }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
       }
-    };
-  
-    fetchCartItems();
-  }, []);
+    }
+
+    setLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartItems();
+    }, [])
+  );
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -107,7 +108,6 @@ const Cart = () => {
       setBalance(newBalance);
       Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
 
-      // Clear the cart in Firestore and update the balance
       const auth = getAuth();
       const user = auth.currentUser;
       if (user) {
@@ -118,9 +118,9 @@ const Cart = () => {
             bundle: [],
             items: [],
             tickets: [],
-            balance: newBalance, // Save the updated balance
+            balance: newBalance,
           });
-          setCartItems([]); // Clear the cart items locally
+          setCartItems([]);
         } catch (error) {
           console.error('Error clearing cart items:', error);
         }
@@ -195,13 +195,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-  },
-  itemImagePlaceholder: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#DDDDDD',
-    borderRadius: 8,
-    marginRight: 16,
   },
   itemInfo: {
     flex: 1,
