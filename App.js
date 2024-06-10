@@ -10,6 +10,7 @@ import LoginScreen from './screens/loginScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
+import BundleScreen from './screens/BundleScreen';
 
 const Stack = createStackNavigator();
 
@@ -52,6 +53,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen 
+        name="BundleScreen" 
+        component={BundleScreen}
+        // options={{ headerShown: false }}
+         />
       <Stack.Screen 
         name="Login" 
         component={LoginScreen}
