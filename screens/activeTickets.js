@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ImageBackground,
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -11,6 +10,8 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
+import { collection, query, where, getDocs, doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 const ActiveTicketsScreen = () => {
   const [fontsLoaded] = useFonts({
@@ -19,33 +20,54 @@ const ActiveTicketsScreen = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const tickets = [
-    {
-      id: 1,
-      name: "Cappuccino & Americano Combo",
-      date: "7 June 2024",
-      price: "Rp.150.000",
-    },
-    {
-      id: 2,
-      name: "Green Macchiato Delight",
-      date: "7 June 2024",
-      price: "Rp.210.000",
-    },
-    {
-      id: 3,
-      name: "Choco Cappuccino Set",
-      date: "7 June 2024",
-      price: "Rp.190.000",
-    },
-    {
-      id: 4,
-      name: ["Green Macchiato Delight", "Cappuccino & Americano Combo"],
-      date: "2 June 2024",
-      price: "Rp.210.000",
-    },
-  ];
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userHistoryRef = doc(db, `history/${user.uid}`);
+          
+          console.log("Fetching data from Firestore...");
+
+          const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
+            console.log("Snapshot received:", snapshot);
+            if (snapshot.exists()) {
+              const userData = snapshot.data();
+              const purchases = userData.purchases || [];
+              
+              
+              // Filter transactions with today's date
+              const today = new Date();
+              const formattedToday = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+              const todayTransactions = purchases.flatMap((purchase) => purchase.items)
+                .filter((item) => {
+                  const transactionDate = new Date(item.date);
+                  const formattedTransactionDate = `${transactionDate.getFullYear()}-${transactionDate.getMonth() + 1}-${transactionDate.getDate()}`;
+                  return formattedTransactionDate === formattedToday;
+                });
+              todayTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+              setTransactions(todayTransactions);
+              setLoading(false);
+            } else {
+              console.log("User history does not exist");
+            }
+          });
+
+          return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
+        } catch (error) {
+          console.error('Error fetching transaction history:', error);
+        }
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   const handlePress = (item) => {
     setSelectedItem(item);
@@ -56,39 +78,35 @@ const ActiveTicketsScreen = () => {
     setModalVisible(false);
   };
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || loading) {
     return null;
   }
 
   return (
-    <ImageBackground source={require("../assets/Background.png")}>
-      <ScrollView>
-        <View style={styles.historyPage}>
-          <Text style={styles.title}>Active Tickets</Text>
-          <View style={styles.bundleContainer}>
-            {tickets.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.bundleRow}
-                onPress={() => handlePress(item)}
-              >
-                <View style={styles.textContainer}>
-                  <Text style={styles.itemName}>
-                    {Array.isArray(item.name)
-                      ? item.name.join("\n")
-                      : item.name}
-                  </Text>
-                  <Text style={styles.visitDate}>Visit date: {item.date}</Text>
-                </View>
-                <View style={styles.groupContainer}>
-                  <Text style={styles.itemPrice}>{item.price}</Text>
-                  <Text style={styles.paidText}>Paid</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+    <ScrollView>
+      <View style={styles.historyPage}>
+        <Text style={styles.title}>Active Tickets</Text>
+        <View style={styles.bundleContainer}>
+          {transactions.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.bundleRow}
+              onPress={() => handlePress(item)}
+            >
+              <View style={styles.textContainer}>
+                <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
+                <Text style={styles.visitDate}>
+                  Visit date: {item.date}
+                </Text>
+              </View>
+              <View style={styles.groupContainer}>
+                <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                <Text style={styles.paidText}>Paid</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
-      </ScrollView>
+      </View>
       {selectedItem && (
         <Modal
           transparent={true}
@@ -110,7 +128,7 @@ const ActiveTicketsScreen = () => {
           </TouchableWithoutFeedback>
         </Modal>
       )}
-    </ImageBackground>
+    </ScrollView>
   );
 };
 
