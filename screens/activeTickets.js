@@ -87,24 +87,28 @@ const ActiveTicketsScreen = () => {
       <View style={styles.historyPage}>
         <Text style={styles.title}>Active Tickets</Text>
         <View style={styles.bundleContainer}>
-          {transactions.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.bundleRow}
-              onPress={() => handlePress(item)}
-            >
-              <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
-                <Text style={styles.visitDate}>
-                  Visit date: {item.date}
-                </Text>
-              </View>
-              <View style={styles.groupContainer}>
-                <Text style={styles.itemPrice}>IDR {item.price}</Text>
-                <Text style={styles.paidText}>Paid</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {transactions.length === 0 ? (
+            <Text style={[styles.itemName, { textAlign: 'center' }]}>No Active Tickets</Text>
+          ) : (
+            transactions.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.bundleRow}
+                onPress={() => handlePress(item)}
+              >
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
+                  <Text style={styles.visitDate}>
+                    Visit date: {item.date}
+                  </Text>
+                </View>
+                <View style={styles.groupContainer}>
+                  <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                  <Text style={styles.paidText}>Paid</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </View>
       {selectedItem && (
