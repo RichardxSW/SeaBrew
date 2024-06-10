@@ -1,27 +1,8 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
-
-const QuantitySelector = ({ quantity, onIncrease, onDecrease }) => (
-  <View style={styles.quantitySelector}>
-    <TouchableOpacity style={styles.quantityButton} onPress={onDecrease}>
-      <Text style={styles.quantityButtonText}>-</Text>
-    </TouchableOpacity>
-    <View style={styles.quantityBox}>
-      <Text style={styles.quantityText}>{quantity}</Text>
-    </View>
-    <TouchableOpacity style={styles.quantityButton} onPress={onIncrease}>
-      <Text style={styles.quantityButtonText}>+</Text>
-    </TouchableOpacity>
-  </View>
-);
-=======
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
->>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -40,11 +21,11 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
         />
       </View>
     </View>
-    <QuantitySelector
-      quantity={item.quantity}
-      onIncrease={() => onIncrease(item.id)}
-      onDecrease={() => onDecrease(item.id)}
-    />
+    <View style={styles.itemQuantity}>
+      <Button title="-" onPress={() => onDecrease(item.id)} />
+      <Text style={styles.quantityText}>{item.quantity}</Text>
+      <Button title="+" onPress={() => onIncrease(item.id)} />
+    </View>
   </View>
 );
 
@@ -160,15 +141,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-<<<<<<< HEAD
-    marginBottom: 16,
-    textAlign: 'center',
-    fontFamily: 'MontserratMedium',
-=======
     marginTop: 20,
     marginBottom: 12,
     textAlign: 'center',
->>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
   },
   itemContainer: {
     flexDirection: 'row',
@@ -198,45 +173,18 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
-    fontFamily: 'MontserratMedium',
   },
   itemPrice: {
     fontSize: 14,
     color: '#757575',
-    fontFamily: 'MontserratMedium',
   },
-  quantitySelector: {
+  itemQuantity: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    padding: 4,
-  },
-  quantityButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 15,
-  },
-  quantityButtonText: {
-    fontSize: 20,
-    color: '#1E90FF',
-  },
-  quantityBox: {
-    width: 40,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 4,
-    marginHorizontal: 8,
   },
   quantityText: {
+    marginHorizontal: 8,
     fontSize: 16,
-    color: '#000000',
   },
   metodeContainer: {
     padding: 16,
@@ -253,20 +201,14 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 14,
     marginBottom: 4,
-    fontFamily: 'MontserratMedium',
   },
   totalAmount: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
-    fontFamily: 'MontserratMedium',
   },
   buyButton: {
-<<<<<<< HEAD
-    backgroundColor: '#1E90FF',
-=======
     backgroundColor: '#375A82',
->>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -275,17 +217,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
-    fontFamily: 'MontserratMedium',
   },
   background: {
     flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
+    resizeMode: "cover",
+    justifyContent: "center"
   },
 });
 
-<<<<<<< HEAD
 export default Cart;
-=======
-export default Cart;
->>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
