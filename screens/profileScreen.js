@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
     height: 100,
     position: 'relative',
     marginBottom: 50,
-    marginTop: -60,
+    marginTop: -20,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   avatarBorder: {
-    width: 116,
-    height: 116,
+    width: 70,
+    height: 70,
     borderRadius: 58,
     borderWidth: 8,
     borderColor: '#375A82',
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   },
 
   avatarIcon: {
-    width: 100,
-    height: 100,
+    width: 62,
+    height: 62,
     borderRadius: 50,
   },
 

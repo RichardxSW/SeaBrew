@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     fontFamily : 'Montserrat',
   },
   addToCartButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#375A82',
     padding: 15,
     borderRadius: 5,
     marginTop: 20,

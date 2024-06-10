@@ -5,6 +5,7 @@ import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, ScrollView,
 import { useNavigation } from '@react-navigation/native';
 import Data from '../assets/data/sbuckdata.js';
 import CurrencyInput from 'react-native-currency-input';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const StarbuckMainPage = () => {
   const navigation = useNavigation();
@@ -54,14 +55,18 @@ return (
                         Search what do you want..
                     </Text>
                 )} */}
-                <TextInput 
-                    placeholder='Search what do you want..'
-                    style={styles.searchBar}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur= {handleBlur}
-                    onChangeText={text => setInputValue(text)}
-                    value={inputValue}
-                />
+                <View style={styles.searchBarContainer}>
+          <FontAwesome name="search" size={20} color="#dddddd" style={styles.searchIcon} />
+          <TextInput 
+            placeholder='Search what do you want..'
+            style={styles.searchBar}
+            placeholderTextColor='#dddddd'
+            onFocus={() => setIsFocused(true)}
+            onBlur={handleBlur}
+            onChangeText={text => setInputValue(text)}
+            value={inputValue}
+          />
+        </View>
             {/* </View> */}
             
         <Text style={styles.headerText}>SeaBrew's Coffee</Text>
@@ -128,25 +133,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#ABE4FC',
     zIndex: -5,
   },
-  inputContainer: {
-    // position: 'absolute',
-    height: 40,
-    // width: '80%',
-    justifyContent: 'center',
-    marginTop: 20,
-},
-  searchBar: {
-    height: 40,
-    // borderColor: 'gray',
-    // borderWidth: 1,
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#375A82',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
     marginBottom: 10,
     marginTop: 25,
-    backgroundColor: '#375A82',
-    fontFamily: 'Montserrat',
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
     color: 'white',
+    fontFamily: 'Montserrat',
   },
   headerText: {
     fontSize: 24,
