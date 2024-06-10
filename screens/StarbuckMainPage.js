@@ -145,11 +145,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 25,
     backgroundColor: '#375A82',
+    fontFamily: 'Montserrat',
     color: 'white',
   },
   headerText: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginVertical: 10,
     fontFamily: 'MontserratBold',
     textAlign: 'center',
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
     fontSize: 14,
-    fontWeight: 'bold',
     color: '#fff',
     zIndex: 1,
     backgroundColor: '#ED5151',
@@ -191,6 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#B3E0F5',
     borderRadius: 20,
     marginRight: 10,
+    fontFamily: 'MontserratSemiBold',
   },
   categoryTextActive: {
     fontSize: 14,
@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     paddingRight: 14,
     borderRadius: 20,
     backgroundColor: '#375A82',
+    fontFamily: 'MontserratBold',
   },
   itemContainer: {
     width: '47%',
@@ -232,17 +233,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itemName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'MontserratBold',
     maxWidth: '80%',
     textAlign: 'left',
     marginBottom: 20,
   },
   itemPrice: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'gray',
     textAlign: 'left',
     position: 'absolute',
+    fontFamily: 'Montserrat',
     bottom: 10,
     left: 10, // Sesuaikan dengan posisi addButton
   },
@@ -259,8 +261,9 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: 'white',
+    alignContent: 'center',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
 });
 

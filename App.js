@@ -17,6 +17,8 @@ import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
 import BundleScreen from './screens/BundleScreen';
 import { initializeApp } from "firebase/app";
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'firebase/firestore';
 
 const firebaseConfig = {
@@ -30,6 +32,9 @@ const firebaseConfig = {
 };
 
 initializeApp(firebaseConfig);
+initializeAuth(initializeApp(firebaseConfig), {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 const Stack = createStackNavigator();
 
@@ -108,7 +113,7 @@ export default function App() {
             options={{
               title: 'Detail',
               headerStyle: {
-                backgroundColor: 'transparent',
+                backgroundColor: '#92DAFD',
               },
               headerTintColor: 'black',
               headerTitleStyle: {

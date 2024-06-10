@@ -210,23 +210,23 @@ const styles = StyleSheet.create({
     width: 70,
     marginHorizontal: 5,
     borderRadius: 10,
-    backgroundColor: '#375A82',
+    backgroundColor: '#B3E0F5',
   },
   selectedDateContainer: {
-    backgroundColor: '#0B1C3D',
+    backgroundColor: '#375A82',
   },
   dayText: {
     fontSize: 16,
     fontFamily: 'MontserratMedium',
-    color: '#B3E0F5',
+    color: '#375A82',
   },
   selectedDayText: {
-    color: '#375A82',
+    color: '#B3E0F5',
   },
   dateText: {
     fontSize: 16,
     fontFamily: 'MontserratBold',
-    color: '#B3E0F5',
+    color: '#375A82',
   },
   selectedDateText: {
     color: '#B3E0F5',

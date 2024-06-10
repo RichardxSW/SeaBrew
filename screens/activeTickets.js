@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 
@@ -12,6 +12,7 @@ const ActiveTicketsScreen = () => {
         return null;
       }
     return (
+      <ImageBackground source={require("../assets/Background.png")}>
         <ScrollView>
         <View style={styles.historyPage}>
             <Text style={styles.title}>Active Tickets</Text>
@@ -59,6 +60,7 @@ const ActiveTicketsScreen = () => {
             </View>
         </View>
         </ScrollView>
+      </ImageBackground>
     );
 }
 

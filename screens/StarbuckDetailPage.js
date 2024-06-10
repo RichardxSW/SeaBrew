@@ -33,7 +33,7 @@ const StarbuckDetailPage = ({ route }) => {
 
   const Size = useMemo(() => ([
     {
-        id: '1', // acts as primary key, should be unique and non-empty string
+        id: '1',
         label: 'Small',
         value: 'small',
         borderColor: 'black',
@@ -224,40 +224,15 @@ const StarbuckDetailPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#f0f0f0', // Light background color
   },
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
     justifyContent: 'center',
   },
-  // grayLine: {
-  //   height: 1, // Set the height of the line
-  //   backgroundColor: 'gray', // Gray color (you can customize this)
-  //   width: '100%', // Make the line span the entire width of the container
-  //   marginTop: 10, // Add some margin above the line (optional)
-  //   marginBottom: 10, // Add some margin below the line (optional)
-  // },
-  // header: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingHorizontal: 20,
-  //   paddingTop: 20,
-  //   // backgroundColor: '#f0f0f0', // Consistent background
-  // },
-  // backButton: {
-  //   padding: 10,
-  // },
-  // headerText: {
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   marginLeft: 'auto',
-  // },
   product: {
     flexDirection: 'column',
     alignItems: 'center',
-    // paddingHorizontal: 20,
-    // marginTop: 20,
   },
   productImage: {
     width: 170,
@@ -274,20 +249,19 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productPrice: {
     fontSize: 18,
-    fontWeight: 'bold',
-    // color: '#222',
+    fontFamily: 'MontserratSemiBold',
     color: '#4DC3FC',
-    // marginBottom: 15,
   },
   productDescriptionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productDescription: {
+    fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#999',
     marginTop: 10,
@@ -301,7 +275,7 @@ const styles = StyleSheet.create({
   },
   productOptionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productOptionButtons: {
     flexDirection: 'row', // Adjust as needed (e.g., 'row')
@@ -342,6 +316,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 10,
     paddingVertical: 8,
+    fontSize: 16,
+    fontFamily : 'Montserrat',
   },
   addToCartButton: {
     backgroundColor: '#4CAF50',
@@ -353,6 +329,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: 'MontserratSemiBold',
   },
 });
 
