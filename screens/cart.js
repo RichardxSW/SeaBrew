@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
+import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -33,7 +34,8 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState(0); // Initialize with 0 and fetch from Firestore
-
+  const navigation = useNavigation();
+  
   useEffect(() => {
     const fetchCartItems = async () => {
       const auth = getAuth();
@@ -105,7 +107,8 @@ const Cart = () => {
     if (balance >= totalAmount) {
       const newBalance = balance - totalAmount;
       setBalance(newBalance);
-      Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
+      // Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
+      navigation.navigate('Confirmation');
 
       // Clear the cart in Firestore and update the balance
       const auth = getAuth();
