@@ -1,14 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
-import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemDetails}>
-      <View style={styles.itemImagePlaceholder}></View>
+      {/* <View style={styles.itemImagePlaceholder}></View> */}
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
         <CurrencyInput
@@ -33,48 +32,50 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [balance, setBalance] = useState(0); // Initialize with 0 and fetch from Firestore
 
-  const fetchCartItems = async () => {
-    const auth = getAuth(); 
-    const user = auth.currentUser;
-    
-    if (user) {
-      try {
-        const db = getFirestore();
-        const userCartDocRef = doc(db, `carts/${user.uid}`);
-        const userCartDocSnap = await getDoc(userCartDocRef);
-
-        if (userCartDocSnap.exists()) {
-          const userData = userCartDocSnap.data();
-          const bundleItems = userData.bundle || [];
-          const itemsInBundle = userData.items || [];
-          const tickets = userData.tickets || [];
-
-          const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
-            id: `${item.name}-${index}`,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            date: item.date,
-          }));
-
-          setCartItems(allItems);
-        } else {
-          console.log("User cart does not exist");
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userCartDocRef = doc(db, `carts/${user.uid}`);
+          const userCartDocSnap = await getDoc(userCartDocRef);
+  
+          if (userCartDocSnap.exists()) {
+            const userData = userCartDocSnap.data();
+            const bundleItems = userData.bundle || [];
+            const itemsInBundle = userData.items || [];
+            const tickets = userData.tickets || [];
+            const userBalance = userData.balance || 10000000; // Default to 10,000,000 if no balance is saved
+  
+            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+              id: `${item.name}-${index}`,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              date: item.date,
+            }));
+  
+            setCartItems(allItems);
+            setBalance(userBalance);
+            setLoading(false);
+          } else {
+            console.log("User cart does not exist");
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Error fetching cart items:', error);
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error fetching cart items:', error);
-      } finally {
-        setLoading(false);
       }
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchCartItems();
-    }, [])
-  );
+    };
+  
+    fetchCartItems();
+  }, []);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -94,6 +95,39 @@ const Cart = () => {
         item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
       )
     );
+  };
+
+  const handleBuyNow = async () => {
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const applicationFee = 1000;
+    const totalAmount = totalPrice + applicationFee;
+
+    if (balance >= totalAmount) {
+      const newBalance = balance - totalAmount;
+      setBalance(newBalance);
+      Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
+
+      // Clear the cart in Firestore and update the balance
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userCartDocRef = doc(db, `carts/${user.uid}`);
+          await updateDoc(userCartDocRef, {
+            bundle: [],
+            items: [],
+            tickets: [],
+            balance: newBalance, // Save the updated balance
+          });
+          setCartItems([]); // Clear the cart items locally
+        } catch (error) {
+          console.error('Error clearing cart items:', error);
+        }
+      }
+    } else {
+      Alert.alert('Insufficient Balance', 'You do not have enough balance to make this purchase.');
+    }
   };
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -118,7 +152,7 @@ const Cart = () => {
           keyExtractor={(item) => item.id}
         />
         <View style={styles.metodeContainer}>
-          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR 2.500.000)</Text>
+          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR {balance.toLocaleString()})</Text>
         </View>
 
         <View style={styles.summaryContainer}>
@@ -126,7 +160,7 @@ const Cart = () => {
           <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
           <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
 
-          <TouchableOpacity style={styles.buyButton}>
+          <TouchableOpacity style={styles.buyButton} onPress={handleBuyNow}>
             <Text style={styles.buyButtonText}>Buy Now</Text>
           </TouchableOpacity>
         </View>
@@ -142,7 +176,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
     marginTop: 20,
     marginBottom: 12,
     textAlign: 'center',
@@ -175,10 +209,12 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Montserrat',
   },
   itemPrice: {
     fontSize: 14,
     color: '#757575',
+    fontFamily: 'Montserrat',
   },
   itemQuantity: {
     flexDirection: 'row',
@@ -187,26 +223,28 @@ const styles = StyleSheet.create({
   quantityText: {
     marginHorizontal: 8,
     fontSize: 16,
+    fontFamily: 'Montserrat',
   },
   metodeContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginBottom: 20
+    marginBottom: 20,
   },
   summaryContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginBottom: 55
+    marginBottom: 55,
   },
   summaryText: {
     fontSize: 14,
     marginBottom: 4,
+    fontFamily: 'Montserrat',
   },
   totalAmount: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
     marginBottom: 16,
   },
   buyButton: {
@@ -218,12 +256,12 @@ const styles = StyleSheet.create({
   buyButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   background: {
     flex: 1,
     resizeMode: "cover",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 });
 
