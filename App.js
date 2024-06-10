@@ -83,6 +83,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
       <Stack.Screen 
+        name="BundleScreen" 
+        component={BundleScreen}
+        // options={{ headerShown: false }}
+         />
+      <Stack.Screen 
         name="Login" 
         component={LoginScreen}
         options={{ headerShown: false }} />
