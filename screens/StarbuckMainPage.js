@@ -105,7 +105,7 @@ return (
               precision={2}
               editable={false}
               />
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
                 <Text style={styles.addButtonText}>+</Text>
               </TouchableOpacity>
             </TouchableOpacity>
@@ -120,7 +120,10 @@ return (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingTop: 15,
+    paddingBottom: 60,
     // marginTop: 20,
     marginBottom: 10,
   },
