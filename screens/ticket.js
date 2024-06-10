@@ -243,7 +243,6 @@ const Ticket = () => {
           )}
 
           <TouchableOpacity style={styles.ticketButton} onPress={addToCart}>
-            <FontAwesome name="shopping-basket" size={24} marginRight={10} color="white" />
             <Text style={styles.ticketButtonText}>Add To Cart - IDR {subtotal.toLocaleString()}</Text>
           </TouchableOpacity>
         </View>
@@ -409,13 +408,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#375A82',
     alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
+    // display: 'flex',
+    // flexDirection: 'row',
+    width: '100%',
   },
   ticketButtonText: {
     fontFamily: 'MontserratSemiBold',
     color: 'white',
     fontSize: 16,
+    textAlign: 'center',
   },
   resetButton: {
     paddingVertical: 12,
@@ -425,6 +426,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6347',
     alignItems: 'center',
     display: 'flex',
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
   },

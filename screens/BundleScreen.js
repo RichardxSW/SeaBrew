@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   addToCartButtonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'MonserratSemiBold',
     textAlign: 'center',
   },
   resetButton: {
