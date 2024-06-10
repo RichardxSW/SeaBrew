@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
+import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
@@ -31,56 +32,37 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState(0);
+  const navigation = useNavigation();
+  const db = getFirestore();
 
-  const fetchCartItems = async () => {
+  useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
-    
+
     if (user) {
-      try {
-        const db = getFirestore();
-        const userCartDocRef = doc(db, `carts/${user.uid}`);
-        const userCartDocSnap = await getDoc(userCartDocRef);
+      const unsubscribe = onSnapshot(doc(db, `carts/${user.uid}`), (snapshot) => { // Listen for real-time updates
+        const userData = snapshot.data();
+        const bundleItems = userData.bundle || [];
+        const itemsInBundle = userData.items || [];
+        const tickets = userData.tickets || [];
+        const userBalance = userData.balance || 10000000;
 
-        if (userCartDocSnap.exists()) {
-          const userData = userCartDocSnap.data();
-          const bundleItems = userData.bundle || [];
-          const itemsInBundle = userData.items || [];
-          const tickets = userData.tickets || [];
-          const userBalance = userData.balance || 10000000;
+        const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+          id: `${item.name}-${index}`,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          date: item.date,
+        }));
 
-          const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
-            id: `${item.name}-${index}`,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            date: item.date,
-          }));
+        setCartItems(allItems);
+        setBalance(userBalance);
+      });
 
-          setCartItems(allItems);
-          setBalance(userBalance);
-        } else {
-          console.log("User cart does not exist");
-        }
-      } catch (error) {
-        console.error('Error fetching cart items:', error);
-      }
+      return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
     }
-
-    setLoading(false);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchCartItems();
-    }, [])
-  );
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
+  }, [db]);
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
@@ -102,17 +84,42 @@ const Cart = () => {
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const applicationFee = 1000;
     const totalAmount = totalPrice + applicationFee;
-
+    const db = getFirestore();
+  
     if (balance >= totalAmount) {
       const newBalance = balance - totalAmount;
       setBalance(newBalance);
-      Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
-
+  
+      // Save purchase history to Firestore
       const auth = getAuth();
       const user = auth.currentUser;
       if (user) {
         try {
-          const db = getFirestore();
+          const userHistoryRef = doc(db, `history/${user.uid}`); // Get a reference to the user's history document
+          const purchaseData = {
+            items: cartItems.map(item => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              totalAmount: totalAmount,
+              date: new Date().toISOString(),
+            })),
+          };
+  
+          // Check if the user's history document exists
+          const userHistoryDoc = await getDoc(userHistoryRef);
+  
+          if (userHistoryDoc.exists()) {
+            // If the document exists, update it with the new purchase data
+            await updateDoc(userHistoryRef, {
+              purchases: arrayUnion(purchaseData),
+            });
+          } else {
+            // If the document doesn't exist, create it with the purchase data
+            await setDoc(userHistoryRef, { purchases: [purchaseData] });
+          }
+  
+          // Clear the cart in Firestore and update the balance
           const userCartDocRef = doc(db, `carts/${user.uid}`);
           await updateDoc(userCartDocRef, {
             bundle: [],
@@ -120,15 +127,18 @@ const Cart = () => {
             tickets: [],
             balance: newBalance,
           });
-          setCartItems([]);
+  
+          // Navigate to confirmation screen
+          navigation.navigate('Confirmation');
         } catch (error) {
-          console.error('Error clearing cart items:', error);
+          console.error('Error processing purchase:', error);
         }
       }
     } else {
       Alert.alert('Insufficient Balance', 'You do not have enough balance to make this purchase.');
     }
   };
+  
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
