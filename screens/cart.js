@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 
@@ -14,6 +15,13 @@ const QuantitySelector = ({ quantity, onIncrease, onDecrease }) => (
     </TouchableOpacity>
   </View>
 );
+=======
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import CurrencyInput from 'react-native-currency-input';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
+>>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -21,7 +29,15 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       <View style={styles.itemImagePlaceholder}></View>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>Rp. {item.price}</Text>
+        <CurrencyInput
+          style={styles.itemPrice}
+          value={item.price}
+          prefix="IDR "
+          delimiter="."
+          separator=","
+          precision={0}
+          editable={false}
+        />
       </View>
     </View>
     <QuantitySelector
@@ -33,12 +49,53 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 );
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: '1', name: 'Americano', price: 38000, quantity: 3 },
-    { id: '2', name: 'Frappuccino', price: 47000, quantity: 2 },
-    { id: '3', name: 'Choco Cappuccino Set', price: 190000, quantity: 2 },
-    { id: '4', name: 'Weekday Regular', price: 120500, quantity: 6 },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const auth = getAuth(); 
+      const user = auth.currentUser;
+      
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userCartDocRef = doc(db, `carts/${user.uid}`); // Menggunakan doc untuk membuat referensi dokumen
+          const userCartDocSnap = await getDoc(userCartDocRef);
+  
+          if (userCartDocSnap.exists()) {
+            const userData = userCartDocSnap.data();
+            const bundleItems = userData.bundle || [];
+            const itemsInBundle = userData.items || [];
+            const tickets = userData.tickets || [];
+  
+            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+              id: `${item.name}-${index}`, // Membuat ID unik berdasarkan nama dan indeks
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              date: item.date,
+            }));
+  
+            setCartItems(allItems);
+            setLoading(false);
+          } else {
+            console.log("User cart does not exist");
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('Error fetching cart items:', error);
+          setLoading(false);
+        }
+      }
+    };    
+  
+    fetchCartItems();
+  }, []);  
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
@@ -47,11 +104,11 @@ const Cart = () => {
       )
     );
   };
-
+  
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+        item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
       )
     );
   };
@@ -68,17 +125,24 @@ const Cart = () => {
         <FlatList
           data={cartItems}
           renderItem={({ item }) => (
-            <CartItem item={item} onIncrease={handleIncrease} onDecrease={handleDecrease} />
+            <CartItem 
+              key={item.id}
+              item={item} 
+              onIncrease={handleIncrease} 
+              onDecrease={handleDecrease} 
+            />
           )}
           keyExtractor={(item) => item.id}
         />
         <View style={styles.metodeContainer}>
-          <Text style={styles.summaryText}>Metode Pembayaran: Gopay (Rp2.500.000)</Text>
+          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR 2.500.000)</Text>
         </View>
+
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Total Harga ({totalItems} Barang): Rp. {totalPrice}</Text>
-          <Text style={styles.summaryText}>Biaya Aplikasi: Rp. {applicationFee}</Text>
-          <Text style={styles.totalAmount}>Total Tagihan: Rp. {totalAmount}</Text>
+          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice.toLocaleString()}</Text>
+          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
+          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
+
           <TouchableOpacity style={styles.buyButton}>
             <Text style={styles.buyButtonText}>Buy Now</Text>
           </TouchableOpacity>
@@ -91,14 +155,20 @@ const Cart = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 25,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+<<<<<<< HEAD
     marginBottom: 16,
     textAlign: 'center',
     fontFamily: 'MontserratMedium',
+=======
+    marginTop: 20,
+    marginBottom: 12,
+    textAlign: 'center',
+>>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
   },
   itemContainer: {
     flexDirection: 'row',
@@ -172,13 +242,13 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginTop: 16,
+    marginBottom: 20
   },
   summaryContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginTop: 16,
+    marginBottom: 55
   },
   summaryText: {
     fontSize: 14,
@@ -192,7 +262,11 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratMedium',
   },
   buyButton: {
+<<<<<<< HEAD
     backgroundColor: '#1E90FF',
+=======
+    backgroundColor: '#375A82',
+>>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -210,4 +284,8 @@ const styles = StyleSheet.create({
   },
 });
 
+<<<<<<< HEAD
 export default Cart;
+=======
+export default Cart;
+>>>>>>> f52ed91748416ae62c24d75981dbfbeb7ede3e7a
