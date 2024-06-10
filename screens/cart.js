@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
-import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -71,7 +70,7 @@ const Cart = () => {
       )
     );
   };
-
+  
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -125,7 +124,7 @@ const Cart = () => {
             bundle: [],
             items: [],
             tickets: [],
-            balance: newBalance,
+            balance: newBalance, // Save the updated balance
           });
   
           // Navigate to confirmation screen
@@ -205,6 +204,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+  },
+  itemImagePlaceholder: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#DDDDDD',
+    borderRadius: 8,
+    marginRight: 16,
   },
   itemInfo: {
     flex: 1,
