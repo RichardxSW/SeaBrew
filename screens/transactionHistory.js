@@ -1,12 +1,47 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
+import QRCode from "react-native-qrcode-svg";
 
 const History = () => {
   const [fontsLoaded] = useFonts({
     Montserrat_700Bold,
   });
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const transactions = [
+    {
+      id: 1,
+      name: "Cappuccino & Americano Combo",
+      date: "3 June 2024",
+      price: "Rp.150.000",
+    },
+    {
+      id: 2,
+      name: "Green Macchiato Delight",
+      date: "2 June 2024",
+      price: "Rp.210.000",
+    },
+    {
+      id: 3,
+      name: "Choco Cappuccino Set",
+      date: "29 May 2024",
+      price: "Rp.190.000",
+    },
+    // Add more transactions here if needed
+  ];
+  const handlePress = (item) => {
+    console.log("Item pressed:", item); // Debugging line
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   if (!fontsLoaded) {
     return null;
@@ -17,68 +52,46 @@ const History = () => {
       <View style={styles.historyPage}>
         <Text style={styles.title}>Transaction History</Text>
         <View style={styles.bundleContainer}>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Cappuccino & Americano Combo</Text>
-              <Text style={styles.visitDate}>Visit date: 3 June 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.150.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Green Macchiato Delight</Text>
-              <Text style={styles.visitDate}>Visit date: 2 June 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.210.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Choco Cappuccino Set</Text>
-              <Text style={styles.visitDate}>Visit date: 29 May 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.190.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Cappuccino & Americano Combo</Text>
-              <Text style={styles.visitDate}>Visit date: 3 June 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.150.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Green Macchiato Delight</Text>
-              <Text style={styles.visitDate}>Visit date: 2 June 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.210.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
-          <View style={styles.bundleRow}>
-            <View style={styles.textContainer}>
-              <Text style={styles.itemName}>Choco Cappuccino Set</Text>
-              <Text style={styles.visitDate}>Visit date: 29 May 2024</Text>
-            </View>
-            <View style={styles.groupContainer}>
-              <Text style={styles.itemPrice}>Rp.190.000</Text>
-              <Text style={styles.paidText}>Paid</Text>
-            </View>
-          </View>
+          {transactions.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.bundleRow}
+              onPress={() => handlePress(item)}
+            >
+              <View style={styles.textContainer}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.visitDate}>Visit date: {item.date}</Text>
+              </View>
+              <View style={styles.groupContainer}>
+                <Text style={styles.itemPrice}>{item.price}</Text>
+                <Text style={styles.paidText}>Paid</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
+      {selectedItem && (
+        <Modal
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={closeModal}
+        >
+          <TouchableWithoutFeedback onPress={closeModal}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>{selectedItem.name}</Text>
+                <QRCode value={JSON.stringify(selectedItem)} size={200} />
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={closeModal}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      )}
     </ScrollView>
   );
 };
