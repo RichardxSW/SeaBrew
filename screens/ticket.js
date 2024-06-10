@@ -110,6 +110,13 @@ const Ticket = () => {
     const db = getFirestore();
     const ticketCountForDate = ticketCounts[selectedDate.toISOString()] || {};
   
+    // Check if all ticket quantities are zero
+    const allQuantitiesZero = Object.values(ticketCountForDate).every(count => count === 0);
+    if (allQuantitiesZero) {
+      alert('You must buy one or more tickets');
+      return;
+    }
+  
     // Prepare tickets to add to the cart, excluding those with 0 quantity
     const tickets = Object.keys(ticketCountForDate)
       .filter(ticketName => ticketCountForDate[ticketName] > 0)
@@ -120,42 +127,41 @@ const Ticket = () => {
         date: selectedDate.toDateString(),
       }));
   
-      try {
-        // Check if there are existing tickets for the selected date
-        const cartRef = doc(db, 'carts', user.uid);
-        const cartSnapshot = await getDoc(cartRef);
-        let cartData = { tickets: [], ...cartSnapshot.data() }; // Merge existing data with an empty array if 'tickets' doesn't exist
-      
-        const existingTickets = cartData.tickets || [];
-      
-        // Update ticket counts
-        tickets.forEach(newTicket => {
-          const existingTicketIndex = existingTickets.findIndex(ticket => ticket.date === newTicket.date && ticket.name === newTicket.name);
-          if (existingTicketIndex !== -1) {
-            // If ticket already exists for the same date, update its count
-            existingTickets[existingTicketIndex].count += newTicket.count;
-          } else {
-            // If ticket doesn't exist for the same date, add it to existing tickets
-            existingTickets.push(newTicket);
-          }
-        });
-      
-        cartData.tickets = existingTickets; // Update the tickets array in cartData
-      
-        // Set updated ticket data in Firestore, along with other existing data
-        await setDoc(cartRef, cartData);
-      
-        alert('Tickets added to cart successfully!');
-        resetAllTicketCounts(); // Reset all ticket counts to 0
-      } catch (error) {
-        console.error('Error adding tickets to cart: ', error);
-        alert('Error adding tickets to cart: ' + error.message);
-      }      
-  };
-
+    try {
+      // Check if there are existing tickets for the selected date
+      const cartRef = doc(db, 'carts', user.uid);
+      const cartSnapshot = await getDoc(cartRef);
+      let cartData = { tickets: [], ...cartSnapshot.data() }; // Merge existing data with an empty array if 'tickets' doesn't exist
+  
+      const existingTickets = cartData.tickets || [];
+  
+      // Update ticket counts
+      tickets.forEach(newTicket => {
+        const existingTicketIndex = existingTickets.findIndex(ticket => ticket.date === newTicket.date && ticket.name === newTicket.name);
+        if (existingTicketIndex !== -1) {
+          // If ticket already exists for the same date, update its count
+          existingTickets[existingTicketIndex].quantity += newTicket.quantity;
+        } else {
+          // If ticket doesn't exist for the same date, add it to existing tickets
+          existingTickets.push(newTicket);
+        }
+      });
+  
+      cartData.tickets = existingTickets; // Update the tickets array in cartData
+  
+      // Set updated ticket data in Firestore, along with other existing data
+      await setDoc(cartRef, cartData);
+  
+      alert('Tickets added to cart successfully!');
+      resetAllTicketCounts(); // Reset all ticket counts to 0
+    } catch (error) {
+      console.error('Error adding tickets to cart: ', error);
+      alert('Error adding tickets to cart: ' + error.message);
+    }
+  };  
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container} showsVerticalScrollIndicator={false}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
         <View style={styles.content}>
           <View style={styles.allDateContainer}>
@@ -190,7 +196,7 @@ const Ticket = () => {
               ))}
             </ScrollView>
           </View>
-          <View style={styles.ticketContainer}>
+          <ScrollView showsVerticalScrollIndicator={false} style={styles.ticketContainer} >
             {isWeekend(selectedDate)
               ? weekendTickets.map((ticket, index) => (
                   <View key={index} style={styles.ticketInfo}>
@@ -224,13 +230,11 @@ const Ticket = () => {
                     <Text style={styles.ticketPrice}>IDR {ticket.price.toLocaleString()}</Text>
                   </View>
                 ))}
-          </View>
-          {subtotal >= 0 && (
-            <View>
-              <Text style={styles.subtotalText}>Subtotal: IDR {subtotal.toLocaleString()}</Text>
-            </View>
-          )}
-
+          </ScrollView>
+          {/* Remove the standalone subtotalText view */}
+          {/* <View>
+            <Text style={styles.subtotalText}>Subtotal: IDR {subtotal.toLocaleString()}</Text>
+          </View> */}
           {/* Tampilkan tombol reset hanya jika ada tiket yang dipilih */}
           {Object.keys(ticketCounts).length > 0 && (ticketCounts[selectedDate.toISOString()] && Object.values(ticketCounts[selectedDate.toISOString()]).some(count => count > 0)) && (
             <TouchableOpacity onPress={resetAllTicketCounts} style={styles.resetButton}>
@@ -240,11 +244,11 @@ const Ticket = () => {
 
           <TouchableOpacity style={styles.ticketButton} onPress={addToCart}>
             <FontAwesome name="shopping-basket" size={24} marginRight={10} color="white" />
-            <Text style={styles.ticketButtonText}>Add To Cart</Text>
+            <Text style={styles.ticketButtonText}>Add To Cart - IDR {subtotal.toLocaleString()}</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -340,7 +344,6 @@ const styles = StyleSheet.create({
   },
   ticketContainer: {
     width: '100%',
-    marginTop: 5,
   },
   ticketTitle: {
     fontSize: 18,
@@ -402,7 +405,7 @@ const styles = StyleSheet.create({
   ticketButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    marginBottom: 40,
+    marginBottom: 10,
     borderRadius: 20,
     backgroundColor: '#375A82',
     alignItems: 'center',
@@ -417,7 +420,7 @@ const styles = StyleSheet.create({
   resetButton: {
     paddingVertical: 12,
     paddingHorizontal: 48,
-    marginBottom: 20,
+    margin: 10,
     borderRadius: 20,
     backgroundColor: '#FF6347',
     alignItems: 'center',
