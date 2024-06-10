@@ -10,7 +10,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
-import { collection, query, where, getDocs, doc, getDoc, getFirestore } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 const History = () => {
@@ -24,49 +24,35 @@ const History = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        try {
-          const db = getFirestore();
-          const userCartDocRef = doc(db, `history/${user.uid}`);
-          const userCartDocSnap = await getDoc(userCartDocRef);
-
-          if (userCartDocSnap.exists()) {
-            const userData = userCartDocSnap.data();
-            const bundleItems = userData.bundle || [];
-            const itemsInBundle = userData.items || [];
-            const tickets = userData.tickets || [];
-
-            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
-              id: `${item.name}-${index}`,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              date: item.date.toDate().toLocaleDateString(),
-            }));
-
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (user) {
+      try {
+        const db = getFirestore();
+        const userHistoryRef = doc(db, `history/${user.uid}`);
+        
+        const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const userData = snapshot.data();
+            const purchases = userData.purchases || [];
+            const allItems = purchases.flatMap((purchase) => purchase.items);
+            allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
             setTransactions(allItems);
           } else {
             console.log("User history does not exist");
           }
-        } catch (error) {
-          console.error('Error fetching transaction history:', error);
-        }
+        });
+  
+        setLoading(false);
+  
+        // Return a cleanup function to unsubscribe from real-time updates when component unmounts
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error fetching transaction history:', error);
       }
-
-      setLoading(false);
-    };
-
-    const unsubscribe = onAuthStateChanged(getAuth(), (currentUser) => {
-      if (currentUser) {
-        fetchTransactions();
-      }
-    });
-
-    return () => unsubscribe();
+    }
   }, []);
 
   const handlePress = (item) => {
@@ -87,21 +73,21 @@ const History = () => {
       <View style={styles.historyPage}>
         <Text style={styles.title}>Transaction History</Text>
         <View style={styles.bundleContainer}>
-          {transactions.map((item) => (
+          {transactions.map((item, index) => (
             <TouchableOpacity
-              key={item.id}
+              key={index}
               style={styles.bundleRow}
               onPress={() => handlePress(item)}
             >
               <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
                 <Text style={styles.visitDate}>
                   Visit date: {item.date}
                 </Text>
               </View>
               <View style={styles.groupContainer}>
-                <Text style={styles.itemPrice}>Rp.{item.price}</Text>
-                <Text style={styles.paidText}>Quantity: {item.quantity}</Text>
+                <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                <Text style={styles.paidText}>Paid</Text>
               </View>
             </TouchableOpacity>
           ))}
