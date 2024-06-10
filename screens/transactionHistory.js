@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TouchableWithoutFeedback   } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
@@ -154,6 +154,20 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     fontSize: 12,
     color: "#375A82",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center", // Add this line
   },
 });
 
