@@ -13,13 +13,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splashrevi2.png",
         "backgroundColor": "#92DBFE"
-      }
+      },
+      "package": "com.anonymous.SeaBrew"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "aa5d5593-f445-43b1-8860-27d8ec22359c"
+      }
+    }
   }
 }

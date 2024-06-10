@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: '62416172444-rnsjboj40mpqgv617rpee5fv5q6g582h.apps.googleusercontent.com',
+    androidClientId: '155700096135-1qjsoa90b4q1ndietvlrnsvh5jl587a8.apps.googleusercontent.com',
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      const auth = getAuth();
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          navigation.navigate('Navbar');
+        })
+        .catch((error) => {
+          Alert.alert('Error', error.message);
+        });
+    }
+  }, [response]);
 
   const handleLogin = () => {
     if (!email && !password) {
@@ -90,7 +115,7 @@ export default function LoginScreen({ navigation }) {
 
             <Text style={styles.text}>Or Sign In With</Text>
 
-            <TouchableOpacity style={styles.buttonGoogleContainer}>
+            <TouchableOpacity style={styles.buttonGoogleContainer} disabled={!request} onPress={() => promptAsync()}>
               <Image
                 source={require('../assets/googleicon.png')}
                 style={styles.iconStyle}
