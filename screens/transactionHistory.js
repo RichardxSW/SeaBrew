@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
+import { collection, query, where, getDocs, doc, getDoc, getFirestore } from 'firebase/firestore';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 const History = () => {
   const [fontsLoaded] = useFonts({
@@ -18,28 +20,55 @@ const History = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const transactions = [
-    {
-      id: 1,
-      name: "Cappuccino & Americano Combo",
-      date: "3 June 2024",
-      price: "Rp.150.000",
-    },
-    {
-      id: 2,
-      name: ["Green Macchiato Delight", "Cappuccino & Americano Combo"],
-      date: "2 June 2024",
-      price: "Rp.210.000",
-    },
-    {
-      id: 3,
-      name: "Choco Cappuccino Set",
-      date: "29 May 2024",
-      price: "Rp.190.000",
-    },
-    // Add more transactions here if needed
-  ];
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userCartDocRef = doc(db, `history/${user.uid}`);
+          const userCartDocSnap = await getDoc(userCartDocRef);
+
+          if (userCartDocSnap.exists()) {
+            const userData = userCartDocSnap.data();
+            const bundleItems = userData.bundle || [];
+            const itemsInBundle = userData.items || [];
+            const tickets = userData.tickets || [];
+
+            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+              id: `${item.name}-${index}`,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              date: item.date.toDate().toLocaleDateString(),
+            }));
+
+            setTransactions(allItems);
+          } else {
+            console.log("User history does not exist");
+          }
+        } catch (error) {
+          console.error('Error fetching transaction history:', error);
+        }
+      }
+
+      setLoading(false);
+    };
+
+    const unsubscribe = onAuthStateChanged(getAuth(), (currentUser) => {
+      if (currentUser) {
+        fetchTransactions();
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const handlePress = (item) => {
     setSelectedItem(item);
     setModalVisible(true);
@@ -49,7 +78,7 @@ const History = () => {
     setModalVisible(false);
   };
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || loading) {
     return null;
   }
 
@@ -65,14 +94,14 @@ const History = () => {
               onPress={() => handlePress(item)}
             >
               <View style={styles.textContainer}>
-                <Text style={styles.itemName}>
-                  {Array.isArray(item.name) ? item.name.join("\n") : item.name}
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text style={styles.visitDate}>
+                  Visit date: {item.date}
                 </Text>
-                <Text style={styles.visitDate}>Visit date: {item.date}</Text>
               </View>
               <View style={styles.groupContainer}>
-                <Text style={styles.itemPrice}>{item.price}</Text>
-                <Text style={styles.paidText}>Paid</Text>
+                <Text style={styles.itemPrice}>Rp.{item.price}</Text>
+                <Text style={styles.paidText}>Quantity: {item.quantity}</Text>
               </View>
             </TouchableOpacity>
           ))}
