@@ -3,12 +3,11 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackgr
 import CurrencyInput from 'react-native-currency-input';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemDetails}>
-      {/* <View style={styles.itemImagePlaceholder}></View> */}
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
         <CurrencyInput
@@ -35,7 +34,8 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState(0); // Initialize with 0 and fetch from Firestore
   const navigation = useNavigation();
-  
+  const db = getFirestore(); // Initialize Firestore here
+
   useEffect(() => {
     const fetchCartItems = async () => {
       const auth = getAuth();
@@ -43,7 +43,6 @@ const Cart = () => {
       
       if (user) {
         try {
-          const db = getFirestore();
           const userCartDocRef = doc(db, `carts/${user.uid}`);
           const userCartDocSnap = await getDoc(userCartDocRef);
   
@@ -77,7 +76,7 @@ const Cart = () => {
     };
   
     fetchCartItems();
-  }, []);
+  }, [db]);
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -107,15 +106,26 @@ const Cart = () => {
     if (balance >= totalAmount) {
       const newBalance = balance - totalAmount;
       setBalance(newBalance);
-      // Alert.alert('Purchase Successful', `Your new balance is IDR ${newBalance.toLocaleString()}`);
-      navigation.navigate('Confirmation');
 
-      // Clear the cart in Firestore and update the balance
+      // Save purchase history to Firestore
       const auth = getAuth();
       const user = auth.currentUser;
       if (user) {
         try {
-          const db = getFirestore();
+          const purchaseHistoryRef = collection(db, 'history');
+          const purchaseData = {
+            userId: user.uid,
+            items: cartItems.map(item => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+            })),
+            totalAmount: totalAmount,
+            date: new Date().toISOString(),
+          };
+          await addDoc(purchaseHistoryRef, purchaseData);
+          
+          // Clear the cart in Firestore and update the balance
           const userCartDocRef = doc(db, `carts/${user.uid}`);
           await updateDoc(userCartDocRef, {
             bundle: [],
@@ -124,8 +134,11 @@ const Cart = () => {
             balance: newBalance, // Save the updated balance
           });
           setCartItems([]); // Clear the cart items locally
+          
+          // Navigate to confirmation screen
+          navigation.navigate('Confirmation');
         } catch (error) {
-          console.error('Error clearing cart items:', error);
+          console.error('Error processing purchase:', error);
         }
       }
     } else {
