@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import CurrencyInput from 'react-native-currency-input';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -33,46 +34,47 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const auth = getAuth(); 
-      const user = auth.currentUser;
-      
-      if (user) {
-        try {
-          const db = getFirestore();
-          const userCartDocRef = doc(db, `carts/${user.uid}`); // Menggunakan doc untuk membuat referensi dokumen
-          const userCartDocSnap = await getDoc(userCartDocRef);
-  
-          if (userCartDocSnap.exists()) {
-            const userData = userCartDocSnap.data();
-            const bundleItems = userData.bundle || [];
-            const itemsInBundle = userData.items || [];
-            const tickets = userData.tickets || [];
-  
-            const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
-              id: `${item.name}-${index}`, // Membuat ID unik berdasarkan nama dan indeks
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              date: item.date,
-            }));
-  
-            setCartItems(allItems);
-            setLoading(false);
-          } else {
-            console.log("User cart does not exist");
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Error fetching cart items:', error);
-          setLoading(false);
+  const fetchCartItems = async () => {
+    const auth = getAuth(); 
+    const user = auth.currentUser;
+    
+    if (user) {
+      try {
+        const db = getFirestore();
+        const userCartDocRef = doc(db, `carts/${user.uid}`);
+        const userCartDocSnap = await getDoc(userCartDocRef);
+
+        if (userCartDocSnap.exists()) {
+          const userData = userCartDocSnap.data();
+          const bundleItems = userData.bundle || [];
+          const itemsInBundle = userData.items || [];
+          const tickets = userData.tickets || [];
+
+          const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+            id: `${item.name}-${index}`,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            date: item.date,
+          }));
+
+          setCartItems(allItems);
+        } else {
+          console.log("User cart does not exist");
         }
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      } finally {
+        setLoading(false);
       }
-    };    
-  
-    fetchCartItems();
-  }, []);  
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartItems();
+    }, [])
+  );
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -85,7 +87,7 @@ const Cart = () => {
       )
     );
   };
-  
+
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
