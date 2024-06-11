@@ -41,7 +41,6 @@ const ActiveTicketsScreen = () => {
               const userData = snapshot.data();
               const purchases = userData.purchases || [];
               
-              
               // Filter transactions with today's date
               const today = new Date();
               const formattedToday = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
@@ -53,10 +52,10 @@ const ActiveTicketsScreen = () => {
                 });
               todayTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
               setTransactions(todayTransactions);
-              setLoading(false);
             } else {
               console.log("User history does not exist");
             }
+            setLoading(false);
           });
 
           return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
@@ -148,7 +147,7 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
   title: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 30,
     color: "#375A82",
     marginBottom: 20,
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   itemName: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 15,
     color: "#375A82",
     marginBottom: 5,
@@ -185,13 +184,13 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   itemPrice: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 12,
     color: "#375A82",
     marginBottom: 5,
   },
   paidText: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 12,
     color: "#375A82",
   },
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: "white",
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
   },
 });
 
