@@ -32,11 +32,8 @@ const ActiveTicketsScreen = () => {
         try {
           const db = getFirestore();
           const userHistoryRef = doc(db, `history/${user.uid}`);
-          
-          console.log("Fetching data from Firestore...");
 
           const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
-            console.log("Snapshot received:", snapshot);
             if (snapshot.exists()) {
               const userData = snapshot.data();
               const purchases = userData.purchases || [];
