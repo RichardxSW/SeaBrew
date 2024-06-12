@@ -135,7 +135,7 @@ const Cart = () => {
           });
   
           // Navigate to confirmation screen
-          navigation.navigate('Confirmation');
+          navigation.navigate('ConfirmationScreen');
         } catch (error) {
           console.error('Error processing purchase:', error);
         }
