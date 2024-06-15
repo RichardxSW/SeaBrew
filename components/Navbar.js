@@ -52,9 +52,10 @@ const Navbar = () => {
           title: 'SeaBrew',
           headerStyle: {
             backgroundColor: '#92DAFD',
+            height: 100
           },
           headerTintColor: '#375A82',
-          headerStatusBarHeight: 35,
+          headerStatusBarHeight: 30,
           headerLeft: () => (
             <View style={styles.avatarContainer}>
               <View style={styles.avatarBorder}>

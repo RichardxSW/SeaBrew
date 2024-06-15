@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import CurrencyInput from 'react-native-currency-input';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
     <View style={styles.itemDetails}>
-      <View style={styles.itemImagePlaceholder}></View>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>IDR {item.price}</Text>
+        <CurrencyInput
+          style={styles.itemPrice}
+          value={item.price}
+          prefix="IDR "
+          delimiter="."
+          separator=","
+          precision={0}
+          editable={false}
+        />
       </View>
     </View>
     <View style={styles.itemQuantity}>
@@ -19,12 +30,38 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 );
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: '1', name: 'Americano', price: 38000, quantity: 3 },
-    { id: '2', name: 'Frappuccino', price: 47000, quantity: 2 },
-    { id: '3', name: 'Choco Cappuccino Set', price: 190000, quantity: 2 },
-    { id: '4', name: 'Weekday Regular', price: 120500, quantity: 6 },
-  ]);
+  const [cartItems, setCartItems] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const navigation = useNavigation();
+  const db = getFirestore();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const unsubscribe = onSnapshot(doc(db, `carts/${user.uid}`), (snapshot) => { // Listen for real-time updates
+        const userData = snapshot.data();
+        const bundleItems = userData.bundle || [];
+        const itemsInBundle = userData.items || [];
+        const tickets = userData.tickets || [];
+        const userBalance = userData.balance || 10000000;
+
+        const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
+          id: `${item.name}-${index}`,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          date: item.date,
+        }));
+
+        setCartItems(allItems);
+        setBalance(userBalance);
+      });
+
+      return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
+    }
+  }, [db]);
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
@@ -33,14 +70,92 @@ const Cart = () => {
       )
     );
   };
-
+  
   const handleDecrease = (id) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
+        item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
       )
     );
   };
+
+  const handleBuyNow = async () => {
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const applicationFee = 1000;
+    const totalAmount = totalPrice + applicationFee;
+    const db = getFirestore();
+  
+    if (balance >= totalAmount) {
+      const newBalance = balance - totalAmount;
+      setBalance(newBalance);
+
+      const getDayName = (date) => {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        return days[date.getDay()];
+      };
+      const today = new Date();
+      const formattedDate = `${getDayName(today)} ${getMonthName(today)} ${today.getDate()} ${today.getFullYear()}`;
+  
+      // Save purchase history to Firestore
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userHistoryRef = doc(db, `history/${user.uid}`); // Get a reference to the user's history document
+          const purchaseData = {
+            items: cartItems.map(item => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              totalAmount: totalAmount,
+              date: item.date || formattedDate,
+            })),
+          };
+  
+          // Check if the user's history document exists
+          const userHistoryDoc = await getDoc(userHistoryRef);
+  
+          if (userHistoryDoc.exists()) {
+            // If the document exists, update it with the new purchase data
+            await updateDoc(userHistoryRef, {
+              purchases: arrayUnion(purchaseData),
+            });
+          } else {
+            // If the document doesn't exist, create it with the purchase data
+            await setDoc(userHistoryRef, { purchases: [purchaseData] });
+          }
+  
+          // Clear the cart in Firestore and update the balance
+          const userCartDocRef = doc(db, `carts/${user.uid}`);
+          await updateDoc(userCartDocRef, {
+            bundle: [],
+            items: [],
+            tickets: [],
+            balance: newBalance, // Save the updated balance
+          });
+  
+          // Navigate to confirmation screen
+          navigation.navigate('ConfirmationScreen');
+        } catch (error) {
+          console.error('Error processing purchase:', error);
+        }
+      }
+    } else {
+      Alert.alert('Insufficient Balance', 'You do not have enough balance to make this purchase.');
+    }
+  };
+
+  const getDayName = (date) => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[date.getDay()];
+  };
+  
+  // Helper function to get month name (e.g., "Jun")
+  const getMonthName = (date) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[date.getMonth()];
+  };
+  
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -54,19 +169,25 @@ const Cart = () => {
         <FlatList
           data={cartItems}
           renderItem={({ item }) => (
-            <CartItem item={item} onIncrease={handleIncrease} onDecrease={handleDecrease} />
+            <CartItem 
+              key={item.id}
+              item={item} 
+              onIncrease={handleIncrease} 
+              onDecrease={handleDecrease} 
+            />
           )}
           keyExtractor={(item) => item.id}
         />
         <View style={styles.metodeContainer}>
-          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR 2.500.000)</Text>
+          <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR {balance.toLocaleString()})</Text>
         </View>
 
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice}</Text>
-          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee}</Text>
-          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount}</Text>
-          <TouchableOpacity style={styles.buyButton}>
+          <Text style={styles.summaryText}>Total Price ({totalItems} Items): IDR {totalPrice.toLocaleString()}</Text>
+          <Text style={styles.summaryText}>Application Fee: IDR {applicationFee.toLocaleString()}</Text>
+          <Text style={styles.totalAmount}>Total Amount: IDR {totalAmount.toLocaleString()}</Text>
+
+          <TouchableOpacity style={styles.buyButton} onPress={handleBuyNow}>
             <Text style={styles.buyButtonText}>Buy Now</Text>
           </TouchableOpacity>
         </View>
@@ -82,9 +203,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
     marginTop: 20,
     marginBottom: 12,
+    textAlign: 'center',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -114,10 +236,12 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Montserrat',
   },
   itemPrice: {
     fontSize: 14,
     color: '#757575',
+    fontFamily: 'Montserrat',
   },
   itemQuantity: {
     flexDirection: 'row',
@@ -126,30 +250,32 @@ const styles = StyleSheet.create({
   quantityText: {
     marginHorizontal: 8,
     fontSize: 16,
+    fontFamily: 'Montserrat',
   },
   metodeContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginBottom: 20
+    marginBottom: 20,
   },
   summaryContainer: {
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    marginBottom: 55
+    marginBottom: 55,
   },
   summaryText: {
     fontSize: 14,
     marginBottom: 4,
+    fontFamily: 'Montserrat',
   },
   totalAmount: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
     marginBottom: 16,
   },
   buyButton: {
-    backgroundColor: '#00796B',
+    backgroundColor: '#375A82',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -157,14 +283,13 @@ const styles = StyleSheet.create({
   buyButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   background: {
     flex: 1,
     resizeMode: "cover",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 });
-
 
 export default Cart;

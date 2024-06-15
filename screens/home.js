@@ -5,7 +5,6 @@ import PagerView from 'react-native-pager-view';
 import CurrencyInput from 'react-native-currency-input';
 import backgroundImage from '../assets/Background.png';
 import Bundle from '../assets/data/bundledata.js';
-import BundleScreen from './BundleScreen';
 import shows from '../assets/data/showdata.js';
 
 const Home = () => {
@@ -154,6 +153,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: 'center',
+    paddingBottom: 60,
   },
   pagerView: {
     width: '100%',

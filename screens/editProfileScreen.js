@@ -5,9 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function EditProfileScreen({ navigation }) {
-  const [username, setUsername] = useState('tanjaya123');
-  const [email, setEmail] = useState('tanjaya123@gmail.com');
-  const [fullname, setFullName] = useState('Tanjaya Jason Winata');
+  const [username, setUsername] = useState('user123');
+  const [email, setEmail] = useState('user123@gmail.com');
+  const [fullname, setFullName] = useState('User User');
   const [profileImage, setProfileImage] = useState(null);
 
   const handleSaveChanges = () => {

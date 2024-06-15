@@ -4,9 +4,9 @@ import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function ProfileScreen({ navigation, route }) {
-  const [username, setUsername] = useState('tanjaya123');
-  const [email, setEmail] = useState('tanjaya123@gmail.com');
-  const [fullname, setFullname] = useState('Tanjaya Jason Winata');
+  const [username, setUsername] = useState('user123');
+  const [email, setEmail] = useState('user123@gmail.com');
+  const [fullname, setFullname] = useState('User User');
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
     height: 100,
     position: 'relative',
     marginBottom: 50,
-    marginTop: -60,
+    marginTop: -20,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   avatarBorder: {
-    width: 116,
-    height: 116,
+    width: 70,
+    height: 70,
     borderRadius: 58,
     borderWidth: 8,
     borderColor: '#375A82',
@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   },
 
   avatarIcon: {
-    width: 100,
-    height: 100,
+    width: 62,
+    height: 62,
     borderRadius: 50,
   },
 

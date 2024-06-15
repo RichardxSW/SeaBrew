@@ -100,7 +100,7 @@ export default function RegisterScreen({ navigation }) {
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
 
-          <Text style={styles.text}>Or Sign Up With</Text>
+          {/* <Text style={styles.text}>Or Sign Up With</Text>
 
           <TouchableOpacity style={styles.buttonGoogleContainer}>
             <Image
@@ -108,7 +108,7 @@ export default function RegisterScreen({ navigation }) {
               style={styles.iconStyle}
             />
             <Text style={styles.buttonText}>Google</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <Text style={styles.bottomtext}>Already have an account?</Text>
 

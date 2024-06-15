@@ -16,7 +16,11 @@ import EditProfileScreen from './screens/editProfileScreen';
 import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
 import BundleScreen from './screens/BundleScreen';
+import ConfirmationScreen from './screens/confirmation';
 import { initializeApp } from "firebase/app";
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBrg-qp3vfv09l2jxSWLtptKFbOZHkyJac",
@@ -29,6 +33,9 @@ const firebaseConfig = {
 };
 
 initializeApp(firebaseConfig);
+initializeAuth(initializeApp(firebaseConfig), {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 const Stack = createStackNavigator();
 
@@ -107,7 +114,7 @@ export default function App() {
             options={{
               title: 'Detail',
               headerStyle: {
-                backgroundColor: 'transparent',
+                backgroundColor: '#92DAFD',
               },
               headerTintColor: 'black',
               headerTitleStyle: {
@@ -174,6 +181,10 @@ export default function App() {
               headerTitleAlign: 'center',
              }}
           />
+          <Stack.Screen 
+          name="ConfirmationScreen" 
+          component={ConfirmationScreen}
+          options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

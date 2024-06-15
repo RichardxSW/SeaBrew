@@ -113,7 +113,7 @@ export default function LoginScreen({ navigation }) {
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
-            <Text style={styles.text}>Or Sign In With</Text>
+            {/* <Text style={styles.text}>Or Sign In With</Text>
 
             <TouchableOpacity style={styles.buttonGoogleContainer} disabled={!request} onPress={() => promptAsync()}>
               <Image
@@ -121,7 +121,7 @@ export default function LoginScreen({ navigation }) {
                 style={styles.iconStyle}
               />
               <Text style={styles.buttonText}>Google</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <Text style={styles.bottomtext}>Don't have an account?</Text>
 
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginTop: 30,
-    marginBottom: 20,
+    marginBottom: 60,
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },

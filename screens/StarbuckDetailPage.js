@@ -7,6 +7,8 @@ import Data from '../assets/data/sbuckdata.js';
 // import Checkbox from 'react-native-elements';
 import { RadioGroup } from 'react-native-radio-buttons-group';
 import CurrencyInput from 'react-native-currency-input';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const StarbuckDetailPage = ({ route }) => {
   const { item } = route.params;
@@ -31,7 +33,7 @@ const StarbuckDetailPage = ({ route }) => {
 
   const Size = useMemo(() => ([
     {
-        id: '1', // acts as primary key, should be unique and non-empty string
+        id: '1',
         label: 'Small',
         value: 'small',
         borderColor: 'black',
@@ -69,6 +71,75 @@ const StarbuckDetailPage = ({ route }) => {
     }
   };
 
+  const addToCart = async (item, selectedSize, quantity) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You need to be logged in to add items to the cart');
+      return;
+    }
+    
+    const db = getFirestore();
+    
+    try {
+      // Dokumen cart untuk pengguna saat ini
+      const cartRef = doc(db, 'carts', user.uid);
+      
+      // Mengambil data keranjang dari Firestore
+      const cartSnapshot = await getDoc(cartRef);
+      let cartData;
+      
+      if (cartSnapshot.exists()) {
+        // Jika dokumen keranjang sudah ada, gunakan data yang ada
+        cartData = cartSnapshot.data();
+      } else {
+        // Jika dokumen keranjang belum ada, inisialisasi dengan objek kosong
+        cartData = {};
+      }
+      
+      // Pastikan bahwa cartData memiliki properti 'items' dan inisialisasi jika belum ada
+      if (!cartData.hasOwnProperty('items')) {
+        cartData.items = [];
+      }
+      
+      // Menentukan tanggal hari ini dalam format yang sesuai
+      const currentDate = new Date().toDateString(); // Sat Jun 08 2024
+      
+      // Mencari apakah item yang sama sudah ada dalam keranjang pada tanggal hari ini
+      const existingItemIndex = cartData.items.findIndex(
+        (cartItem) =>
+        cartItem.name === item.name && cartItem.dateAdded === currentDate
+      );
+      
+      if (existingItemIndex !== -1) {
+        // Jika item sudah ada dalam keranjang pada tanggal yang sama, tambahkan jumlah yang baru
+        cartData.items[existingItemIndex].quantity += quantity;
+      } else {
+        // Jika item belum ada dalam keranjang pada tanggal hari ini, tambahkan item baru
+        const newItem = {
+          name: item.name || null,
+          price: item.price || null,
+          quantity: quantity || null,
+          dateAdded: currentDate,
+        };
+        cartData.items.push(newItem);
+      }
+      
+      // Mengatur kembali dokumen keranjang dengan data yang telah diperbarui
+      await setDoc(cartRef, cartData);
+      
+      // Mengatur ulang nilai selectedIceorHot, selectedSize, dan quantity menjadi nilai default
+      setSelectedIceorHot(); // Mengosongkan radio button
+      setSelectedSize(); // Mengosongkan radio button
+      setQuantity(0); // Mengatur quantity menjadi 0
+      
+      alert('Item added to cart successfully!');
+    } catch (error) {
+      console.error('Error adding item to cart: ', error);
+      alert('Error adding item to cart: ' + error.message);
+    }
+  };  
+
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
@@ -89,7 +160,7 @@ const StarbuckDetailPage = ({ route }) => {
             <CurrencyInput 
               style={styles.productPrice}
               value={item.price}
-              prefix="Rp "
+              prefix="IDR "
               delimiter="."
               separator=","
               precision={2}
@@ -140,7 +211,7 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.quantityButtonText}>+</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addToCartButton}>
+            <TouchableOpacity style={styles.addToCartButton} onPress={() => addToCart(item, selectedSize, quantity)}>
               <Text style={styles.addToCartButtonText}>Add To Cart</Text>
             </TouchableOpacity>
           </View>
@@ -153,40 +224,15 @@ const StarbuckDetailPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#f0f0f0', // Light background color
   },
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
     justifyContent: 'center',
   },
-  // grayLine: {
-  //   height: 1, // Set the height of the line
-  //   backgroundColor: 'gray', // Gray color (you can customize this)
-  //   width: '100%', // Make the line span the entire width of the container
-  //   marginTop: 10, // Add some margin above the line (optional)
-  //   marginBottom: 10, // Add some margin below the line (optional)
-  // },
-  // header: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingHorizontal: 20,
-  //   paddingTop: 20,
-  //   // backgroundColor: '#f0f0f0', // Consistent background
-  // },
-  // backButton: {
-  //   padding: 10,
-  // },
-  // headerText: {
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   marginLeft: 'auto',
-  // },
   product: {
     flexDirection: 'column',
     alignItems: 'center',
-    // paddingHorizontal: 20,
-    // marginTop: 20,
   },
   productImage: {
     width: 170,
@@ -203,20 +249,19 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productPrice: {
     fontSize: 18,
-    fontWeight: 'bold',
-    // color: '#222',
+    fontFamily: 'MontserratSemiBold',
     color: '#4DC3FC',
-    // marginBottom: 15,
   },
   productDescriptionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productDescription: {
+    fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#999',
     marginTop: 10,
@@ -230,7 +275,7 @@ const styles = StyleSheet.create({
   },
   productOptionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productOptionButtons: {
     flexDirection: 'row', // Adjust as needed (e.g., 'row')
@@ -271,9 +316,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 10,
     paddingVertical: 8,
+    fontSize: 16,
+    fontFamily : 'Montserrat',
   },
   addToCartButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#375A82',
     padding: 15,
     borderRadius: 5,
     marginTop: 20,
@@ -282,6 +329,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: 'MontserratSemiBold',
   },
 });
 
