@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ProfileScreen({ navigation, route }) {
   const auth = getAuth();
-  const [user] = useAuthState(auth); // Get the authenticated user from Firebase Auth
+  const [user] = useAuthState(auth);
   const [userData, setUserData] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user) {
-        const db = getFirestore();
-        const userDoc = doc(db, 'users', user.uid); // Assuming your collection is named 'users'
-        const docSnap = await getDoc(userDoc);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUserData(data);
-          if (data.profileImageUrl) {
-            setProfileImage(data.profileImageUrl); // Set profile image URL from Firestore
-          }
+  const fetchUserData = async () => {
+    if (user) {
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userDoc);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserData(data);
+        if (data.profileImageUrl) {
+          setProfileImage(data.profileImageUrl);
         }
       }
-    };
+    }
+  };
 
-    fetchUserData();
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [user])
+  );
 
   return (
     <KeyboardAvoidingView
