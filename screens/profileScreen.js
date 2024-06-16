@@ -6,6 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen({ navigation }) {
   const auth = getAuth();
@@ -34,6 +35,18 @@ export default function ProfileScreen({ navigation }) {
     }, [user])
   );
 
+  const handleLogout = async () => {
+    // Clear AsyncStorage
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error('Error clearing AsyncStorage:', error);
+    }
+
+    // Navigate to Login screen
+    navigation.navigate('Login', { email: '', password: '' });
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -48,7 +61,7 @@ export default function ProfileScreen({ navigation }) {
 
             <TouchableOpacity 
               style={styles.logoutButton} 
-              onPress={() => navigation.navigate('Login')}
+              onPress={handleLogout}
             >
               <FontAwesome name="sign-out" size={30} color="#375A82" />
             </TouchableOpacity>

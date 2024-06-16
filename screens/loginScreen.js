@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
@@ -7,6 +7,15 @@ import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'fir
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const clearInput = () => {
+    setEmail('');
+    setPassword('');
+  };
+
+  useEffect(() => {
+    clearInput();
+  }, []);
 
   const handleLogin = () => {
     if (!email && !password) {

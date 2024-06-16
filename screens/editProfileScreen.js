@@ -145,6 +145,7 @@ export default function EditProfileScreen({ navigation }) {
                 value={email}
                 onChangeText={(text) => setEmail(text)}
                 keyboardType="email-address"
+                editable={false}
               />
             </View>
 
