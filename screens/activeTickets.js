@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ImageBackground
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
@@ -79,6 +80,7 @@ const ActiveTicketsScreen = () => {
   }
 
   return (
+    <ImageBackground source={require('../assets/Background.png')} style={styles.container}>
     <ScrollView>
       <View style={styles.historyPage}>
         <Text style={styles.title}>Active Tickets</Text>
@@ -129,10 +131,14 @@ const ActiveTicketsScreen = () => {
         </Modal>
       )}
     </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   historyPage: {
     position: "relative",
     display: "flex",
@@ -140,7 +146,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     boxSizing: "border-box",
-    backgroundColor: "rgba(255,255,255,1)",
     paddingTop: 30,
   },
   title: {
