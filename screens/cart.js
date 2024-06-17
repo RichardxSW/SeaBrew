@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackgr
 import CurrencyInput from 'react-native-currency-input';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -40,7 +40,7 @@ const Cart = () => {
     const user = auth.currentUser;
 
     if (user) {
-      const unsubscribe = onSnapshot(doc(db, `carts/${user.uid}`), (snapshot) => { // Listen for real-time updates
+      const unsubscribe = onSnapshot(doc(db, `carts/${user.uid}`), (snapshot) => { 
         const userData = snapshot.data();
         const bundleItems = userData.bundle || [];
         const itemsInBundle = userData.items || [];
@@ -59,7 +59,7 @@ const Cart = () => {
         setBalance(userBalance);
       });
 
-      return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
+      return () => unsubscribe();
     }
   }, [db]);
 
@@ -83,18 +83,17 @@ const Cart = () => {
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const applicationFee = 1000;
     const totalAmount = totalPrice + applicationFee;
-    const db = getFirestore();
+    const pointsEarned = Math.floor(totalAmount / 100000) * 100;
+    const auth = getAuth();
+    const user = auth.currentUser;
   
     if (balance >= totalAmount) {
       const newBalance = balance - totalAmount;
       setBalance(newBalance);
   
-      // Save purchase history to Firestore
-      const auth = getAuth();
-      const user = auth.currentUser;
       if (user) {
         try {
-          const userHistoryRef = doc(db, `history/${user.uid}`); // Get a reference to the user's history document
+          const userHistoryRef = doc(db, `history/${user.uid}`);
           const purchaseData = {
             items: cartItems.map(item => ({
               name: item.name,
@@ -105,29 +104,34 @@ const Cart = () => {
             })),
           };
   
-          // Check if the user's history document exists
           const userHistoryDoc = await getDoc(userHistoryRef);
   
           if (userHistoryDoc.exists()) {
-            // If the document exists, update it with the new purchase data
             await updateDoc(userHistoryRef, {
               purchases: arrayUnion(purchaseData),
             });
           } else {
-            // If the document doesn't exist, create it with the purchase data
             await setDoc(userHistoryRef, { purchases: [purchaseData] });
           }
   
-          // Clear the cart in Firestore and update the balance
           const userCartDocRef = doc(db, `carts/${user.uid}`);
           await updateDoc(userCartDocRef, {
             bundle: [],
             items: [],
             tickets: [],
-            balance: newBalance, // Save the updated balance
+            balance: newBalance,
           });
+
+          const userPointsRef = doc(db, `points/${user.uid}`);
+          const userPointsDoc = await getDoc(userPointsRef);
+          if (userPointsDoc.exists()) {
+            await updateDoc(userPointsRef, {
+              points: userPointsDoc.data().points + pointsEarned,
+            });
+          } else {
+            await setDoc(userPointsRef, { points: pointsEarned });
+          }
   
-          // Navigate to confirmation screen
           navigation.navigate('Confirmation');
         } catch (error) {
           console.error('Error processing purchase:', error);
@@ -137,7 +141,6 @@ const Cart = () => {
       Alert.alert('Insufficient Balance', 'You do not have enough balance to make this purchase.');
     }
   };
-  
 
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
