@@ -4,14 +4,16 @@ const Data = [
       name: 'Americano',
       price: 35000,
       image: require('../imgStarbuck/Americano.webp'),
-      desc: 'A classic espresso drink with a bold and rich flavor.'
+      desc: 'A classic espresso drink with a bold and rich flavor.',
+      // disc: true
     },
     {
       id: 2,
       name: 'Macchiato',
       price: 60000,
       image: require('../imgStarbuck/Macchiato.webp'),
-      desc: 'Espresso with a dollop of milk foam, known for its strong coffee taste.'
+      desc: 'Espresso with a dollop of milk foam, known for its strong coffee taste.',
+      // disc: true
     },
     {
       id: 3,
@@ -32,7 +34,8 @@ const Data = [
       name: 'Chocolate',
       price: 56000,
       image: require('../imgStarbuck/Chocolate.webp'),
-      desc: 'A rich and decadent chocolate-based drink, perfect for chocoholics.'
+      desc: 'A rich and decadent chocolate-based drink, perfect for chocoholics.',
+      disc: true
     },
     {
       id: 6,
