@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ImageBackground
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
@@ -69,28 +70,33 @@ const History = () => {
   }
 
   return (
+    <ImageBackground source={require('../assets/Background.png')} style={styles.container}>
     <ScrollView>
       <View style={styles.historyPage}>
         <Text style={styles.title}>Transaction History</Text>
         <View style={styles.bundleContainer}>
-          {transactions.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.bundleRow}
-              onPress={() => handlePress(item)}
-            >
-              <View style={styles.textContainer}>
-                <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
-                <Text style={styles.visitDate}>
-                  Visit date: {item.date}
-                </Text>
-              </View>
-              <View style={styles.groupContainer}>
-                <Text style={styles.itemPrice}>IDR {item.price}</Text>
-                <Text style={styles.paidText}>Paid</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {transactions.length === 0 ? (
+            <Text style={[styles.itemName, { textAlign: 'center' }]}>No Transactions</Text>
+          ) : (
+            transactions.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.bundleRow}
+                onPress={() => handlePress(item)}
+              >
+                <View style={styles.textContainer}>
+                  <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
+                  <Text style={styles.visitDate}>
+                    Visit date: {item.date}
+                  </Text>
+                </View>
+                <View style={styles.groupContainer}>
+                  <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                  <Text style={styles.paidText}>Paid</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </View>
       {selectedItem && (
@@ -115,10 +121,15 @@ const History = () => {
         </Modal>
       )}
     </ScrollView>
+    </ImageBackground>
   );
 };
 
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   historyPage: {
     position: "relative",
     display: "flex",
@@ -126,7 +137,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     boxSizing: "border-box",
-    backgroundColor: "rgba(255,255,255,1)",
     paddingTop: 30,
   },
   title: {

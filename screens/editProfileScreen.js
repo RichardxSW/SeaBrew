@@ -1,22 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground, TextInput, KeyboardAvoidingView, Platform, Image, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function EditProfileScreen({ navigation }) {
-  const [username, setUsername] = useState('user123');
-  const [email, setEmail] = useState('user123@gmail.com');
-  const [fullname, setFullName] = useState('User User');
+  const auth = getAuth();
+  const [user] = useAuthState(auth);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [fullname, setFullName] = useState('');
   const [profileImage, setProfileImage] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleSaveChanges = () => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const db = getFirestore();
+        const userDoc = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userDoc);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setUsername(data.username);
+          setFullName(data.fullName);
+          setEmail(data.email);
+          if (data.profileImageUrl) {
+            setProfileImage(data.profileImageUrl);
+          }
+        }
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  const handleSaveChanges = async () => {
     if (!username || !fullname || !email) {
       Alert.alert('Error', 'Please fill in all required fields.');
     } else {
-      const newData = { newUsername: username, newEmail: email, newFullname: fullname };
-      // Simulate data sending
-      // console.log('Data to be sent:', newData);
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', user.uid);
+      const newData = {
+        username: username,
+        email: email,
+        fullName: fullname,
+      };
+
+      if (profileImage) {
+        const storage = getStorage();
+        const response = await fetch(profileImage);
+        const blob = await response.blob();
+        const storageRef = ref(storage, `profileImages/${user.uid}`);
+        await uploadBytes(storageRef, blob);
+        const profileImageUrl = await getDownloadURL(storageRef);
+        newData.profileImageUrl = profileImageUrl;
+      }
+
+      await setDoc(userDoc, newData, { merge: true });
       Alert.alert('Success', 'Changes have been saved successfully.');
     }
   };
@@ -34,12 +79,17 @@ export default function EditProfileScreen({ navigation }) {
     });
 
     if (!result.canceled) {
-      console.log('Image URI:', result.assets[0].uri); // Log the URI
       setProfileImage(result.assets[0].uri);
-    } else {
-      console.log('Image picking canceled');
     }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -68,7 +118,6 @@ export default function EditProfileScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                defaultValue={username}
                 placeholder='Username'
                 placeholderTextColor="rgba(55, 90, 130, 0.5)"
                 value={username}
@@ -80,7 +129,6 @@ export default function EditProfileScreen({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                defaultValue={fullname}
                 placeholder='Full Name'
                 placeholderTextColor="rgba(55, 90, 130, 0.5)"
                 value={fullname}
@@ -92,12 +140,12 @@ export default function EditProfileScreen({ navigation }) {
             <View style={styles.emailInputContainer}>
               <TextInput
                 style={styles.input}
-                defaultValue={email}
                 placeholder='Email'
                 placeholderTextColor="rgba(55, 90, 130, 0.5)"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
                 keyboardType="email-address"
+                editable={false}
               />
             </View>
 

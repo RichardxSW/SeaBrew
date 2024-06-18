@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image } from 'react-native';
-import React, { useState }from 'react';
+import React, { useState, useCallback }from 'react';
 import HomeScreen from '../screens/home';
 import CartScreen from '../screens/cart';
 import ScreenTabs from '../screens/screenTabs';
@@ -7,11 +7,37 @@ import StarbuckMainScreen from '../screens/StarbuckMainPage';
 import ProfileScreen from '../screens/profileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icon libraries
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const Navbar = () => {
+  const auth = getAuth();
+  const [user] = useAuthState(auth);
   const [profileImage, setProfileImage] = useState(null);
+
+  const fetchUserData = async () => {
+    if (user) {
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userDoc);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.profileImageUrl) {
+          setProfileImage(data.profileImageUrl);
+        }
+      }
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [user])
+  );
 
   return (
     <Tab.Navigator

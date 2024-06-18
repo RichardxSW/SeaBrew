@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ImageBackground
   ScrollView,
 } from "react-native";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
@@ -32,11 +33,8 @@ const ActiveTicketsScreen = () => {
         try {
           const db = getFirestore();
           const userHistoryRef = doc(db, `history/${user.uid}`);
-          
-          console.log("Fetching data from Firestore...");
 
           const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
-            console.log("Snapshot received:", snapshot);
             if (snapshot.exists()) {
               const userData = snapshot.data();
               const purchases = userData.purchases || [];
@@ -52,10 +50,10 @@ const ActiveTicketsScreen = () => {
                 });
               todayTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
               setTransactions(todayTransactions);
-              setLoading(false);
             } else {
               console.log("User history does not exist");
             }
+            setLoading(false);
           });
 
           return () => unsubscribe(); // Cleanup function to unsubscribe from real-time updates
@@ -82,7 +80,8 @@ const ActiveTicketsScreen = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+    <ImageBackground source={require('../assets/Background.png')} style={styles.container}>
+    <ScrollView>
       <View style={styles.historyPage}>
         <Text style={styles.title}>Active Tickets</Text>
         <View style={styles.bundleContainer}>
@@ -132,12 +131,13 @@ const ActiveTicketsScreen = () => {
         </Modal>
       )}
     </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollViewContent: {
-    flexGrow: 1,
+  container: {
+    flex: 1,
   },
   historyPage: {
     flex: 1,
@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     boxSizing: "border-box",
-    backgroundColor: "rgba(255,255,255,1)",
     paddingTop: 30,
     paddingHorizontal: 15, // Add horizontal padding here
   },

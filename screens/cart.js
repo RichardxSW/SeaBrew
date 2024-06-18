@@ -128,8 +128,9 @@ const Cart = () => {
             tickets: [],
             balance: newBalance,
           });
-
-          navigation.navigate('Confirmation');
+  
+          // Navigate to confirmation screen
+          navigation.navigate('ConfirmationScreen');
         } catch (error) {
           console.error('Error processing purchase:', error);
         }

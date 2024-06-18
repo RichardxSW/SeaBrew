@@ -1,22 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ProfileScreen({ navigation, route }) {
-  const [username, setUsername] = useState('user123');
-  const [email, setEmail] = useState('user123@gmail.com');
-  const [fullname, setFullname] = useState('User User');
+export default function ProfileScreen({ navigation }) {
+  const auth = getAuth();
+  const [user] = useAuthState(auth);
+  const [userData, setUserData] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const { newData, successMessage } = route.params || {};
-    if (newData) {
-        setUsername(newData.newUsername);
-        setEmail(newData.newEmail);
-        setFullname(newData.newFullname);
+  const fetchUserData = async () => {
+    if (user) {
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userDoc);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserData(data);
+        if (data.profileImageUrl) {
+          setProfileImage(data.profileImageUrl);
+        }
+      }
     }
-}, [route.params]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [user])
+  );
+
+  const handleLogout = async () => {
+    // Clear AsyncStorage
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error('Error clearing AsyncStorage:', error);
+    }
+
+    // Navigate to Login screen
+    navigation.navigate('Login', { email: '', password: '' });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -32,7 +61,7 @@ export default function ProfileScreen({ navigation, route }) {
 
             <TouchableOpacity 
               style={styles.logoutButton} 
-              onPress={() => navigation.navigate('Login')}
+              onPress={handleLogout}
             >
               <FontAwesome name="sign-out" size={30} color="#375A82" />
             </TouchableOpacity>
@@ -50,17 +79,17 @@ export default function ProfileScreen({ navigation, route }) {
           
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.text}>{username}</Text>
+            <Text style={styles.text}>{userData ? userData.username : 'Loading...'}</Text>
           </View>
 
           <View style={styles.inputContainer}>
             <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
-            <Text style={styles.text}>{fullname}</Text>
+            <Text style={styles.text}>{userData ? userData.fullName : 'Loading...'}</Text>
           </View>
 
           <View style={styles.emailInputContainer}>
             <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.emailtext}>{email}</Text>
+            <Text style={styles.emailtext}>{userData ? userData.email : 'Loading...'}</Text>
           </View>
 
           <TouchableOpacity style={styles.buttonEditContainer}

@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, TextI
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from 'react-native-vector-icons';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 export default function RegisterScreen({ navigation }) {
   const [fullName, setFullName] = useState('');
@@ -17,13 +18,27 @@ export default function RegisterScreen({ navigation }) {
       Alert.alert('Error', 'Please fill in all required fields and agree to the terms and conditions.');
     } else {
       const auth = getAuth();
+      const db = getFirestore();
+
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           const user = userCredential.user;
-          // console.log('Registered with user:', user);
-          navigation.navigate('Login');
+          // Save user data to Firestore
+          try {
+            await setDoc(doc(db, "users", user.uid), {
+              fullName,
+              email,
+              username,
+            });
+            Alert.alert('Success', 'User registered successfully!');
+            navigation.navigate('Login');
+          } catch (error) {
+            console.error('Error saving user data:', error);
+            Alert.alert('Error', 'Failed to save user data.');
+          }
         })
         .catch((error) => {
+          console.error('Error creating user:', error);
           Alert.alert('Error', error.message);
         });
     }
