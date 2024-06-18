@@ -10,6 +10,8 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
     <View style={styles.itemDetails}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemDetail}>Type: {item.type}</Text>
+        <Text style={styles.itemDetail}>Size: {item.size}</Text>
         <CurrencyInput
           style={styles.itemPrice}
           value={item.price}
@@ -22,9 +24,16 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       </View>
     </View>
     <View style={styles.itemQuantity}>
-      <Button title="-" onPress={() => onDecrease(item.id)} />
+      {/* <Button title="-" onPress={() => onDecrease(item.id)} />
       <Text style={styles.quantityText}>{item.quantity}</Text>
-      <Button title="+" onPress={() => onIncrease(item.id)} />
+      <Button title="+" onPress={() => onIncrease(item.id)} /> */}
+      <TouchableOpacity style={styles.quantityButton} onPress={() => onDecrease(item.id)}>
+                  <Text style={styles.quantityButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.quantityInput}>{item.quantity}</Text>
+                <TouchableOpacity style={styles.quantityButton} onPress={() => onIncrease(item.id)}>
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </TouchableOpacity>
     </View>
   </View>
 );
@@ -36,19 +45,16 @@ const Cart = () => {
   const navigation = useNavigation();
   const db = getFirestore();
 
-  // Fungsi untuk menghapus item dari Firebase
   const deleteItemFromFirebase = async (itemName) => {
     const auth = getAuth();
     const user = auth.currentUser;
-  
+
     if (user) {
       const cartRef = doc(db, `carts/${user.uid}`);
       try {
         const cartSnapshot = await getDoc(cartRef);
         const cartData = cartSnapshot.data();
-        console.log('Cart data:', cartData); // Tambahkan ini untuk melihat data keranjang sebelum item dihapus
         const updatedItems = cartData.items.filter(item => item.name !== itemName);
-        console.log('Updated items:', updatedItems); // Tambahkan ini untuk melihat item yang akan dihapus
         await updateDoc(cartRef, { items: updatedItems });
       } catch (error) {
         console.error('Error deleting item from Firebase:', error);
@@ -74,6 +80,8 @@ const Cart = () => {
           price: item.price,
           quantity: item.quantity,
           date: item.date,
+          type: item.type, // pastikan type ada di sini
+          size: item.size, // pastikan size ada di sini
         }));
 
         setCartItems(allItems);
@@ -92,32 +100,28 @@ const Cart = () => {
     );
   };
 
-// Kemudian panggil fungsi deleteItemFromFirebase dengan item name ketika menghapus dari keranjang
-const handleDecrease = async (id) => {
-  setCartItems((prevItems) => {
-    const updatedItems = prevItems.map((item) =>
-      item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
-    );
+  const handleDecrease = async (id) => {
+    setCartItems((prevItems) => {
+      const updatedItems = prevItems.map((item) =>
+        item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
+      );
 
-    if (updatedItems.find((item) => item.id === id)?.quantity === 0) {
-      const itemToDelete = updatedItems.find((item) => item.id === id);
-      console.log('Deleting item:', itemToDelete); // Tambahkan ini untuk melihat item yang akan dihapus
-      deleteItemFromFirebase(itemToDelete.name);
-    }
+      if (updatedItems.find((item) => item.id === id)?.quantity === 0) {
+        const itemToDelete = updatedItems.find((item) => item.id === id);
+        deleteItemFromFirebase(itemToDelete.name);
+      }
 
-    return updatedItems;
-  });
-};
+      return updatedItems;
+    });
+  };
 
   const handleBuyNow = async () => {
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const applicationFee = 1000;
     const totalAmount = totalPrice + applicationFee;
-    const db = getFirestore();
 
     if (balance >= totalAmount) {
       const newBalance = balance - totalAmount;
-      setBalance(newBalance);
 
       const getDayName = (date) => {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -138,6 +142,8 @@ const handleDecrease = async (id) => {
               quantity: item.quantity,
               totalAmount: totalAmount,
               date: item.date || formattedDate,
+              type: item.type,
+              size: item.size,
             })),
           };
 
@@ -158,8 +164,7 @@ const handleDecrease = async (id) => {
             tickets: [],
             balance: newBalance,
           });
-  
-          // Navigate to confirmation screen
+
           navigation.navigate('ConfirmationScreen');
         } catch (error) {
           console.error('Error processing purchase:', error);
@@ -185,7 +190,6 @@ const handleDecrease = async (id) => {
   const applicationFee = 1000;
   const totalAmount = totalPrice + applicationFee;
 
-  // Logika untuk mengosongkan keranjang
   const handleEmptyCart = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -202,8 +206,7 @@ const handleDecrease = async (id) => {
     }
   };
 
-
-return (
+  return (
     <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.title}>Cart</Text>
@@ -221,7 +224,7 @@ return (
               )}
               keyExtractor={(item) => item.id}
             />
-              <View style={styles.metodeContainer}>
+            <View style={styles.metodeContainer}>
               <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR {balance.toLocaleString()})</Text>
             </View>
             <View style={styles.summaryContainer}>
@@ -233,7 +236,6 @@ return (
                 <Text style={styles.buyButtonText}>Buy Now</Text>
               </TouchableOpacity>
             </View>
-            {/* Tampilkan tombol "Empty Cart" jika showEmptyCartButton bernilai true */}
             {showEmptyCartButton && (
               <TouchableOpacity style={styles.emptyCartButton} onPress={handleEmptyCart}>
                 <Text style={styles.emptyCartButtonText}>Empty Cart</Text>
@@ -252,7 +254,7 @@ return (
 
 const styles = StyleSheet.create({
   emptyCartButton: {
-    backgroundColor: '#FF6347', // Merah untuk menarik perhatian
+    backgroundColor: '#FF6347',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -309,9 +311,37 @@ const styles = StyleSheet.create({
     color: '#757575',
     fontFamily: 'Montserrat',
   },
+  itemDetail: {
+    fontSize: 14,
+    color: '#757575',
+    fontFamily: 'Montserrat',
+  },
   itemQuantity: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  quantityButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 4,
+    // borderWidth: 1,
+    backgroundColor: '#375A82',
+    borderColor: '#ddd',
+    borderRadius: 8,
+  },
+  quantityButtonText: {
+    fontSize: 24,
+    color: 'white',
+    fontFamily: 'Montserrat',
+  },
+  quantityInput: {
+    width: 30,
+    textAlign: 'center',
+    borderColor: '#ddd',
+    borderRadius: 5,
+    marginHorizontal: 5,
+    paddingVertical: 8,
+    fontSize: 16,
+    fontFamily: 'Montserrat',
   },
   quantityText: {
     marginHorizontal: 8,
