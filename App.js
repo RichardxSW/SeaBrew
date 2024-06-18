@@ -1,19 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import 'react-native-gesture-handler';
-import { StyleSheet, Image} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 import Navbar from "./components/Navbar";
 import SplashScreen from './screens/splashScreen';
 import LoginScreen from './screens/loginScreen';
+import RegisterScreen from './screens/registerScreen';
 import ShowList from './screens/showList';
 import Home from './screens/home';
 import StarbuckMain from "./screens/StarbuckMainPage";
 import StarbuckDetail from "./screens/StarbuckDetailPage";
 import EditProfileScreen from './screens/editProfileScreen';
 import ProfileScreen from './screens/profileScreen';
+import Ticket from "./screens/ticket";
+import BundleScreen from './screens/BundleScreen';
+import ConfirmationScreen from './screens/confirmation';
+import { initializeApp } from "firebase/app";
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBrg-qp3vfv09l2jxSWLtptKFbOZHkyJac",
+  authDomain: "seabrew-f052c.firebaseapp.com",
+  projectId: "seabrew-f052c",
+  storageBucket: "seabrew-f052c.appspot.com",
+  messagingSenderId: "62416172444",
+  appId: "1:62416172444:web:5a187986fb6403c49ac459",
+  measurementId: "G-SKHC3JH4KV"
+};
+
+initializeApp(firebaseConfig);
+initializeAuth(initializeApp(firebaseConfig), {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 const Stack = createStackNavigator();
 
@@ -49,7 +71,12 @@ export default function App() {
     return <SplashScreen />;
   }
 
-  if (!fontsLoaded && !fontError) {
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  if (fontError) {
+    console.warn(fontError);
     return null;
   }
 
@@ -65,29 +92,6 @@ export default function App() {
         component={Navbar}
         options={{ headerShown: false }} 
         />
-        {/* <Stack.Screen 
-          name="Home" 
-          component={Home} 
-          options={{
-            title: 'SeaBrew',
-            headerStyle: {
-              backgroundColor: '#92DAFD',
-              // backgroundColor: '#4DC3FC',
-            },
-            headerTintColor: '#375A82',
-            headerLeft: () => (
-              <Image
-                source={require('./assets/user.png')}
-                style={{ width: 23, height: 23, marginLeft: 15, marginTop: 5}}
-              />
-            ),
-            headerTitleStyle: {
-              fontFamily: 'BigShouldersStencilBold',
-              fontSize: 27,
-            },
-            headerTitleAlign: 'center',
-          }}
-          /> */}
         <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
@@ -104,18 +108,13 @@ export default function App() {
             },
             headerTitleAlign: 'center',
           }}/>
-          {/* <Stack.Screen 
-            name="StarbuckMain"
-            component={StarbuckMain}
-            options={{headerShown : false }}
-          /> */}
           <Stack.Screen 
             name="StarbuckDetail"
             component={StarbuckDetail}
             options={{
               title: 'Detail',
               headerStyle: {
-                backgroundColor: 'transparent',
+                backgroundColor: '#92DAFD',
               },
               headerTintColor: 'black',
               headerTitleStyle: {
@@ -126,13 +125,66 @@ export default function App() {
             }}
           />
           <Stack.Screen 
-        name="Profile" 
-        component={ProfileScreen}
-        options={{ headerShown: false }} />
+            name="Register" 
+            component={RegisterScreen}
+            options={{ headerShown: false }} />
           <Stack.Screen 
-        name="EditProfile" 
-        component={EditProfileScreen}
-        options={{ headerShown: false }} />
+            name="Profile" 
+            component={ProfileScreen}
+            options={{ headerShown: false }} />
+          <Stack.Screen 
+            name="EditProfile" 
+            component={EditProfileScreen}
+            options={{
+            title: 'Edit Profile',
+            headerStyle: {
+              backgroundColor: '#92DAFD',
+            },
+            headerTintColor: '#375A82',
+            headerTitleStyle: {
+              fontFamily: 'Montserrat',
+              fontSize: 24,
+            },
+            headerTitleAlign: 'center',
+          }}/>
+          <Stack.Screen 
+            name="Ticket"
+            component={Ticket}
+            options={{
+              title: 'Ticket',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
+          />
+          <Stack.Screen 
+            name="BundleScreen"
+            component={BundleScreen}
+            options={{
+              title: 'All Bundle',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
+          />
+          <Stack.Screen 
+          name="ConfirmationScreen" 
+          component={ConfirmationScreen}
+          options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,62 +1,27 @@
-import React, { useState , useMemo} from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import backgroundImage from '../assets/Background-putih.png';
-import { FontAwesome } from 'react-native-vector-icons';
-import Data from '../assets/data/sbuckdata.js';
-// import Checkbox from 'react-native-elements';
-import { RadioGroup } from 'react-native-radio-buttons-group';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 import CurrencyInput from 'react-native-currency-input';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const StarbuckDetailPage = ({ route }) => {
   const { item } = route.params;
-//   const item = Data.find((item) => item.id === id);
 
-  const IceorHot = useMemo(() => ([
-    {
-        id: '1', // acts as primary key, should be unique and non-empty string
-        label: 'Ice',
-        value: 'Ice',
-        borderColor: 'black',
-        color: '#4DC3FC'
-    },
-    {
-        id: '2',
-        label: 'Hot',
-        value: 'Hot',
-        borderColor: 'black',
-        color: '#4DC3FC'
-    }
-  ]), []);
+  const Type = [
+    { label: 'Ice     ', value: 'Ice' },
+    { label: 'Hot', value: 'Hot' }
+  ];
 
-  const Size = useMemo(() => ([
-    {
-        id: '1', // acts as primary key, should be unique and non-empty string
-        label: 'Small',
-        value: 'small',
-        borderColor: 'black',
-        color: '#4DC3FC'
-    },
-    {
-        id: '2',
-        label: 'Medium',
-        value: 'medium',
-        borderColor: 'black',
-        color: '#4DC3FC'
-    },
-    {
-        id: '3',
-        label: 'Large',
-        value: 'large',
-        borderColor: 'black',
-        color: '#4DC3FC'
-    }
-  ]), []);
+  const Size = [
+    { label: 'Small', value: 'Small' },
+    { label: 'Medium', value: 'Medium' },
+    { label: 'Large', value: 'Large' }
+  ];
 
-  const [selectedIceorHot, setSelectedIceorHot] = useState();
-
-  const [selectedSize, setSelectedSize] = useState();
-
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(0);
 
   const handleIncrement = () => {
@@ -69,129 +34,184 @@ const StarbuckDetailPage = ({ route }) => {
     }
   };
 
+  const addToCart = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
+      alert('You need to be logged in to add items to the cart');
+      return;
+    }
+
+    const db = getFirestore();
+
+    try {
+      const cartRef = doc(db, 'carts', user.uid);
+      const cartSnapshot = await getDoc(cartRef);
+      let cartData;
+
+      if (cartSnapshot.exists()) {
+        cartData = cartSnapshot.data();
+      } else {
+        cartData = {};
+      }
+
+      if (!cartData.hasOwnProperty('items')) {
+        cartData.items = [];
+      }
+
+      const currentDate = new Date().toDateString();
+      const existingItemIndex = cartData.items.findIndex(
+        (cartItem) =>
+          cartItem.name === item.name && cartItem.dateAdded === currentDate
+      );
+
+      if (existingItemIndex !== -1) {
+        cartData.items[existingItemIndex].quantity += quantity;
+      } else {
+        const newItem = {
+          name: item.name || null,
+          price: item.price || null,
+          quantity: quantity || null,
+          dateAdded: currentDate,
+          size: selectedSize || null,
+          type: selectedType || null,
+        };
+        cartData.items.push(newItem);
+      }
+
+      await setDoc(cartRef, cartData);
+
+      setSelectedType('');
+      setSelectedSize('');
+      setQuantity(0);
+
+      alert('Item added to cart successfully!');
+    } catch (error) {
+      console.error('Error adding item to cart: ', error);
+      alert('Error adding item to cart: ' + error.message);
+    }
+  };
+
+  const resetAll = () => {
+    setQuantity(0);
+    setSelectedType('');
+    setSelectedSize('');
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-        {/* <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton}>
-            <FontAwesome name="angle-left" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerText}>Detail</Text>
-        </View> */}
-        <View style={styles.product}>
-          <Image
-            source={item.image} // Use the image from the item object
-            style={styles.productImage}
-          />
-          <View style={styles.productDetails}>
-            <View style={styles.productNameContainer}>
-            <Text style={styles.productName}>{item.name}</Text>
-            <CurrencyInput 
-              style={styles.productPrice}
-              value={item.price}
-              prefix="Rp "
-              delimiter="."
-              separator=","
-              precision={2}
-              editable={false}
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={styles.product}>
+            <Image
+              source={item.image}
+              style={styles.productImage}
             />
+            <View style={styles.productDetails}>
+              <View style={styles.productNameContainer}>
+                <Text style={styles.productName}>{item.name}</Text>
+                <CurrencyInput
+                  style={styles.productPrice}
+                  value={item.price}
+                  prefix="IDR "
+                  delimiter="."
+                  separator=","
+                  precision={2}
+                  editable={false}
+                />
+              </View>
+              <Text style={styles.productDescription}>{item.desc}</Text>
+              <View style={styles.grayLine} />
+
+              {/* Ice / Hot options */}
+              <View style={styles.productOptions}>
+                <Text style={styles.productOptionTitle}>Ice / Hot</Text>
+                <RadioForm
+                  radio_props={Type}
+                  initial={0}
+                  onPress={(value) => setSelectedType(value)}
+                  formHorizontal={true} // Set to true for horizontal layout
+                  labelHorizontal={true}
+                  buttonColor={'#4DC3FC'}
+                  selectedButtonColor={'#4DC3FC'}
+                  animation = {true}
+                  style={styles.radioForm}
+                />
+              </View>
+
+              <View style={styles.grayLine} />
+
+              {/* Size options */}
+              <View style={styles.productOptions}>
+                <Text style={styles.productOptionTitle}>Size</Text>
+                <RadioForm
+                  radio_props={Size}
+                  initial={0}
+                  onPress={(value) => setSelectedSize(value)}
+                  formHorizontal={true} // Set to true for horizontal layout
+                  labelHorizontal={true}
+                  buttonColor={'#4DC3FC'}
+                  selectedButtonColor={'#4DC3FC'}
+                  style={styles.radioForm}
+                />
+              </View>
+
+              <View style={styles.grayLine} />
+
+              {/* Quantity and Add to Cart */}
+              <View style={styles.quantityContainer}>
+                <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
+                  <Text style={styles.quantityButtonText}>-</Text>
+                </TouchableOpacity>
+                <Text style={styles.quantityInput}>{quantity}</Text>
+                <TouchableOpacity style={styles.quantityButton} onPress={handleIncrement}>
+                  <Text style={styles.quantityButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+
             </View>
-            {/* <Text style={styles.productDescriptionTitle}>Description</Text> */}
-            <Text style={styles.productDescription}>{item.desc}</Text>
-
-            <View style={styles.grayLine} />
-
-            {/* Ice / Hot options */}
-      <View style={styles.productOptions}>
-        <Text style={styles.productOptionTitle}>Ice / Hot</Text>
-        <View style={styles.productOptionButtons}>
-        <RadioGroup 
-            radioButtons={IceorHot} 
-            onPress={setSelectedIceorHot}
-            selectedId={selectedIceorHot}
-            layout='row'
-        />
-        </View>
-      </View>
-
-      <View style={styles.grayLine} />
-
-      {/* Size options */}
-      <View style={styles.productOptions}>
-        <Text style={styles.productOptionTitle}>Size</Text>
-        <View style={styles.productOptionButtons}>
-        <RadioGroup 
-            radioButtons={Size} 
-            onPress={setSelectedSize}
-            selectedId={selectedSize}
-            layout='row'
-        />
-        </View>
-      </View>
-
-      <View style={styles.grayLine} />
-
-            <View style={styles.quantityContainer}>
-              <TouchableOpacity style={styles.quantityButton} onPress={handleDecrement}>
-                <Text style={styles.quantityButtonText}>-</Text>
-              </TouchableOpacity>
-              <Text style={styles.quantityInput}>{quantity}</Text>
-              <TouchableOpacity style={styles.quantityButton} onPress={handleIncrement}>
-                <Text style={styles.quantityButtonText}>+</Text>
-              </TouchableOpacity>
-            </View>
-            <TouchableOpacity style={styles.addToCartButton}>
-              <Text style={styles.addToCartButtonText}>Add To Cart</Text>
-            </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
+
+        {/* Reset Button */}
+        {quantity > 0 && (
+          <TouchableOpacity style={styles.resetButton} onPress={resetAll}>
+            <Text style={styles.resetButtonText}>Reset All</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Add to Cart Button */}
+        <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
+          <Text style={styles.addToCartButtonText}>
+            Add to Cart - IDR { (item.price * quantity).toLocaleString('id-ID') }
+          </Text>
+        </TouchableOpacity>
+
       </ImageBackground>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#f0f0f0', // Light background color
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 140, // Adjust this value as needed
   },
   backgroundImage: {
     flex: 1,
     resizeMode: 'cover',
-    justifyContent: 'center',
   },
-  // grayLine: {
-  //   height: 1, // Set the height of the line
-  //   backgroundColor: 'gray', // Gray color (you can customize this)
-  //   width: '100%', // Make the line span the entire width of the container
-  //   marginTop: 10, // Add some margin above the line (optional)
-  //   marginBottom: 10, // Add some margin below the line (optional)
-  // },
-  // header: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   paddingHorizontal: 20,
-  //   paddingTop: 20,
-  //   // backgroundColor: '#f0f0f0', // Consistent background
-  // },
-  // backButton: {
-  //   padding: 10,
-  // },
-  // headerText: {
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   marginLeft: 'auto',
-  // },
   product: {
+    marginTop: 60,
     flexDirection: 'column',
     alignItems: 'center',
-    // paddingHorizontal: 20,
-    // marginTop: 20,
   },
   productImage: {
     width: 170,
     height: 170,
-    // resizeMode: 'cover',
     marginBottom: 20,
   },
   productDetails: {
@@ -203,20 +223,15 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productPrice: {
     fontSize: 18,
-    fontWeight: 'bold',
-    // color: '#222',
+    fontFamily: 'MontserratSemiBold',
     color: '#4DC3FC',
-    // marginBottom: 15,
-  },
-  productDescriptionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   productDescription: {
+    fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#999',
     marginTop: 10,
@@ -230,58 +245,79 @@ const styles = StyleSheet.create({
   },
   productOptionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   productOptionButtons: {
-    flexDirection: 'row', // Adjust as needed (e.g., 'row')
+    flexDirection: 'row',
     marginTop: 5,
-  },
-  productOptionButton: {
-    // paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  productOptionButtonText: {
-    // fontSize: 14,
   },
   quantityContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 20
+    marginTop: 40,
+    marginBottom: 20,
   },
+  radioForm: {
+    marginTop: 10, // Adjust as needed
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    gap: 20,
+  },  
   quantityButton: {
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    backgroundColor: '#375A82',
+    // borderColor: '#ddd',
     borderRadius: 5,
   },
   quantityButtonText: {
     fontSize: 16,
+    color: 'white',
   },
   quantityInput: {
     width: 40,
     textAlign: 'center',
-    // borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 5,
     marginHorizontal: 10,
     paddingVertical: 8,
+    fontSize: 16,
+    fontFamily: 'Montserrat',
   },
-  addToCartButton: {
-    backgroundColor: '#4CAF50',
+  resetButton: {
+    backgroundColor: '#FF6347',
     padding: 15,
     borderRadius: 5,
-    marginTop: 20,
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: 80,
+    left: 20,
+    right: 20,
+    zIndex: 10,
+  },
+  resetButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'MontserratSemiBold',
+  },
+  addToCartButton: {
+    backgroundColor: '#375A82',
+    padding: 15,
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    zIndex: 10,
   },
   addToCartButtonText: {
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+    fontFamily: 'MontserratSemiBold',
   },
 });
 

@@ -1,21 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getAuth, signOut} from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ProfileScreen({ navigation, route }) {
-  const [username, setUsername] = useState('tanjaya123');
-  const [email, setEmail] = useState('tanjaya123@gmail.com');
-  const [fullname, setFullname] = useState('Tanjaya Jason Winata');
+export default function ProfileScreen({ navigation }) {
+  const auth = getAuth();
+  const [user] = useAuthState(auth);
+  const [userData, setUserData] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
 
-  useEffect(() => {
-    const { newData, successMessage } = route.params || {};
-    if (newData) {
-        setUsername(newData.newUsername);
-        setEmail(newData.newEmail);
-        setFullname(newData.newFullname);
+  const fetchUserData = async () => {
+    if (user) {
+      const db = getFirestore();
+      const userDoc = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userDoc);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserData(data);
+        if (data.profileImageUrl) {
+          setProfileImage(data.profileImageUrl);
+        }
+      }
     }
-}, [route.params]);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [user])
+  );
+
+  // const handleLogout = async () => {
+  //   // Clear AsyncStorage
+  //   try {
+  //     await AsyncStorage.clear();
+  //   } catch (error) {
+  //     console.error('Error clearing AsyncStorage:', error);
+  //   }
+
+  //   // Navigate to Login screen
+  //   navigation.navigate('Login', { email: '', password: '' });
+  // };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Keluar dari sesi pengguna
+      // Navigasi ke halaman Login dengan menghapus email dan password dari navigasi
+      navigation.navigate('Login', { email: '', password: '' });
+    } catch (error) {
+      console.error('Error while logging out:', error);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -31,29 +71,43 @@ export default function ProfileScreen({ navigation, route }) {
 
             <TouchableOpacity 
               style={styles.logoutButton} 
-              onPress={() => navigation.navigate('Login')}
+              onPress={handleLogout}
             >
               <FontAwesome name="sign-out" size={30} color="#375A82" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.avatarContainer}>
-            <FontAwesome name="user" size={100} color="#375A82" style={styles.avatarIcon} />
+            <View style={styles.avatarBorder}>
+              {profileImage ? (
+                <Image source={{ uri: profileImage }} style={styles.avatarIcon} />
+              ) : (
+                <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
+              )}
+            </View>
           </View>
           
+          <TouchableOpacity style={styles.customButton} 
+            // onPress={() => navigation.navigate('')}
+          >
+            <FontAwesome name="star" size={20} color="#375A82" style={styles.piconStyle} />
+            <Text style={styles.leftText}>300 points</Text>
+            <Text style={styles.rightText}>Exchange</Text>
+          </TouchableOpacity>
+
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.text}>{username}</Text>
+            <Text style={styles.text}>{userData ? userData.username : 'Loading...'}</Text>
           </View>
 
           <View style={styles.inputContainer}>
             <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
-            <Text style={styles.text}>{fullname}</Text>
+            <Text style={styles.text}>{userData ? userData.fullName : 'Loading...'}</Text>
           </View>
 
           <View style={styles.emailInputContainer}>
             <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
-            <Text style={styles.emailtext}>{email}</Text>
+            <Text style={styles.emailtext}>{userData ? userData.email : 'Loading...'}</Text>
           </View>
 
           <TouchableOpacity style={styles.buttonEditContainer}
@@ -88,22 +142,31 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: 100,
     height: 100,
-    borderRadius: 60, // half of width or height
+    position: 'relative',
+    marginBottom: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarBorder: {
+    width: 70,
+    height: 70,
+    borderRadius: 58,
     borderWidth: 8,
     borderColor: '#375A82',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 60,
-    marginTop: -90,
   },
 
   avatarIcon: {
-    fontSize: 60,
+    width: 62,
+    height: 62,
+    borderRadius: 50,
   },
 
   headerContainer: {
     position: 'absolute',
-    top: 50, // Ubah nilai top di sini
+    top: 40, // Ubah nilai top di sini
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -122,6 +185,39 @@ const styles = StyleSheet.create({
   logoutButton: {
     position: 'absolute',
     right: 20,
+  },
+
+  customButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    height: 40,
+    width: '75%',
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 35,
+  },
+
+  leftText: {
+    color: '#375A82',
+    fontFamily: 'MontserratBold',
+    fontSize: 13,
+    marginLeft: -25,
+  },
+
+  rightText: {
+    color: '#375A82',
+    fontFamily: 'MontserratBold',
+    fontSize: 13,
   },
 
   inputContainer: {
@@ -182,7 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     marginTop: 50,
-    marginBottom: 20,
+    marginBottom: 80,
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },
@@ -208,6 +304,14 @@ const styles = StyleSheet.create({
     marginRight: 11,
     marginTop: 4,
     marginLeft: -2,
+  },
+
+  piconStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: -25,
+    marginTop: 4.5,
   },
 
   successMessage: {
