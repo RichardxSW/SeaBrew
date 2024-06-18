@@ -10,7 +10,7 @@ const StarbuckDetailPage = ({ route }) => {
   const { item } = route.params;
 
   const Type = [
-    { label: 'Ice', value: 'Ice' },
+    { label: 'Ice     ', value: 'Ice' },
     { label: 'Hot', value: 'Hot' }
   ];
 
@@ -253,24 +253,26 @@ const styles = StyleSheet.create({
   quantityContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 40,
     marginBottom: 20,
   },
   radioForm: {
     marginTop: 10, // Adjust as needed
-    flexDirection: 'row',
+    // flexDirection: 'row',
     // justifyContent: 'space-between',
-    gap: 10,
+    gap: 20,
   },  
   quantityButton: {
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    backgroundColor: '#375A82',
+    // borderColor: '#ddd',
     borderRadius: 5,
   },
   quantityButtonText: {
     fontSize: 16,
+    color: '#white',
   },
   quantityInput: {
     width: 40,
