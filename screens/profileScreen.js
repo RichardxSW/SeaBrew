@@ -77,6 +77,14 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
           
+          <TouchableOpacity style={styles.customButton} 
+            // onPress={() => navigation.navigate('')}
+          >
+            <FontAwesome name="star" size={20} color="#375A82" style={styles.piconStyle} />
+            <Text style={styles.leftText}>300 points</Text>
+            <Text style={styles.rightText}>Exchange</Text>
+          </TouchableOpacity>
+
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
             <Text style={styles.text}>{userData ? userData.username : 'Loading...'}</Text>
@@ -125,8 +133,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     position: 'relative',
-    marginBottom: 50,
-    marginTop: -20,
+    marginBottom: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -168,6 +175,39 @@ const styles = StyleSheet.create({
   logoutButton: {
     position: 'absolute',
     right: 20,
+  },
+
+  customButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    height: 40,
+    width: '75%',
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 35,
+  },
+
+  leftText: {
+    color: '#375A82',
+    fontFamily: 'MontserratBold',
+    fontSize: 13,
+    marginLeft: -25,
+  },
+
+  rightText: {
+    color: '#375A82',
+    fontFamily: 'MontserratBold',
+    fontSize: 13,
   },
 
   inputContainer: {
@@ -254,6 +294,14 @@ const styles = StyleSheet.create({
     marginRight: 11,
     marginTop: 4,
     marginLeft: -2,
+  },
+
+  piconStyle: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+    marginRight: -25,
+    marginTop: 4.5,
   },
 
   successMessage: {

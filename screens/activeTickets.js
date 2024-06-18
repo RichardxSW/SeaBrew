@@ -6,7 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  ImageBackground
+  ImageBackground,
   ScrollView,
 } from "react-native";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
