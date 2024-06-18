@@ -6,8 +6,8 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
 import { collection, query, where, getDocs, doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore';
@@ -40,7 +40,6 @@ const ActiveTicketsScreen = () => {
             if (snapshot.exists()) {
               const userData = snapshot.data();
               const purchases = userData.purchases || [];
-              
               
               // Filter transactions with today's date
               const today = new Date();
@@ -83,12 +82,12 @@ const ActiveTicketsScreen = () => {
   }
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.historyPage}>
         <Text style={styles.title}>Active Tickets</Text>
         <View style={styles.bundleContainer}>
           {transactions.length === 0 ? (
-            <Text style={[styles.itemName, { textAlign: 'center' }]}>No Active Tickets</Text>
+            <Text style={[styles.noTicketsText, { textAlign: 'center' }]}>No Active Tickets</Text>
           ) : (
             transactions.map((item, index) => (
               <TouchableOpacity
@@ -137,18 +136,21 @@ const ActiveTicketsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   historyPage: {
-    position: "relative",
+    flex: 1,
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
     boxSizing: "border-box",
     backgroundColor: "rgba(255,255,255,1)",
     paddingTop: 30,
+    paddingHorizontal: 15, // Add horizontal padding here
   },
   title: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 30,
     color: "#375A82",
     marginBottom: 20,
@@ -159,6 +161,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#B3E0F5",
     marginBottom: 40,
+    alignItems: 'center', // Center the content inside
   },
   bundleRow: {
     flexDirection: "row",
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   itemName: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 15,
     color: "#375A82",
     marginBottom: 5,
@@ -185,15 +188,21 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   itemPrice: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 12,
     color: "#375A82",
     marginBottom: 5,
   },
   paidText: {
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
     fontSize: 12,
     color: "#375A82",
+  },
+  noTicketsText: {
+    fontFamily: "Montserrat_700Bold",
+    fontSize: 15,
+    color: "#375A82",
+    marginBottom: 5,
   },
   modalContainer: {
     flex: 1,
@@ -207,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     alignItems: "center",
-    justifyContent: "center", // Add this line
+    justifyContent: "center",
   },
   closeButton: {
     marginTop: 20,
@@ -217,7 +226,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     color: "white",
-    fontFamily: "MontserratBold",
+    fontFamily: "Montserrat_700Bold",
   },
 });
 

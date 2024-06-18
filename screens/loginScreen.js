@@ -106,6 +106,7 @@ export default function LoginScreen({ navigation }) {
 
             <StatusBar style="auto" />
           </View>
+          <Text style={styles.groupNameText}>SD-OK</Text>
         </ScrollView>
       </ImageBackground>
     </KeyboardAvoidingView>
@@ -239,5 +240,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Montserrat',
     textDecorationLine: 'underline',
+  },
+  groupNameText: {
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#375A82',
+    fontSize: 16,
+    fontFamily: 'Montserrat',
   },
 });

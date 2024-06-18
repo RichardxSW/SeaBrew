@@ -281,13 +281,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   bundleName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontFamily: 'MontserratBold',
     color: '#375A82',
   },
   bundleDesc: {
     fontSize: 12,
     color: '#375A82',
+    fontFamily: 'Montserrat',
     marginTop: 5,
   },
   bundleActions: {
@@ -295,8 +296,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   bundlePrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'MontserratBold',
     color: '#375A82',
   },
   quantityContainer: {
@@ -335,7 +336,7 @@ const styles = StyleSheet.create({
   addToCartButtonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'MonserratSemiBold',
+    fontFamily: 'MontserratSemiBold',
     textAlign: 'center',
   },
   resetButton: {
