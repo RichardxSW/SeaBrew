@@ -128,12 +128,13 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.productOptionTitle}>Ice / Hot</Text>
                 <RadioForm
                   radio_props={Type}
-                  initial={-1}
+                  initial={0}
                   onPress={(value) => setSelectedType(value)}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}
                   buttonColor={'#4DC3FC'}
                   selectedButtonColor={'#4DC3FC'}
+                  animation = {true}
                   style={styles.radioForm}
                 />
               </View>
@@ -145,7 +146,7 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.productOptionTitle}>Size</Text>
                 <RadioForm
                   radio_props={Size}
-                  initial={-1}
+                  initial={0}
                   onPress={(value) => setSelectedSize(value)}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
   },
   quantityButtonText: {
     fontSize: 16,
-    color: '#white',
+    color: 'white',
   },
   quantityInput: {
     width: 40,
