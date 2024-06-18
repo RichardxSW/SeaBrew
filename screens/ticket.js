@@ -21,15 +21,16 @@ const generateDates = () => {
 };
 
 const weekdayTickets = [
-  { name: 'Weekday Regular', description: 'Aquarium Tour (1x entry)\nIncludes all animal and Mermaid Show', price: 120500 },
-  { name: 'Weekday Premium', description: 'Aquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 196000 },
+  { name: 'Weekday Regular', description: 'Aquarium Tour (1x entry)\nIncludes all animal and Mermaid Show', price: 120500, points: 100 },
+  { name: 'Weekday Premium', description: 'Aquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 196000, points: 150 },
 ];
 
 const weekendTickets = [
-  { name: 'Weekend Regular', description: 'Aquarium Tour (1x entry)\nIncludes all animal and Mermaid Show', price: 150500 },
-  { name: 'Weekend Premium', description: 'Aquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 226000 },
-  { name: 'Weekend Premium Family', description: '3 to 6 Person\nAquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 900000 },
+  { name: 'Weekend Regular', description: 'Aquarium Tour (1x entry)\nIncludes all animal and Mermaid Show', price: 150500, points: 120 },
+  { name: 'Weekend Premium', description: 'Aquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 226000, points: 180 },
+  { name: 'Weekend Premium Family', description: '3 to 6 Person\nAquarium Tour (Multiple Entry within the first 4 hours)\nFast lane ticket redemption\nIncludes all animal and Mermaid Show\nCustomized hand fan', price: 900000, points: 500 },
 ];
+
 
 const { width, height } = Dimensions.get('window');
 

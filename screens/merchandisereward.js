@@ -2,20 +2,20 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 
 const MerchandiseRewardPage = ({ route }) => {
-  const { rewards } = route.params;
+  // const { rewards } = route.params;
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>
         <Text style={styles.title}>My Rewards</Text>
-        <View style={styles.merchandiseContainer}>
+        {/* <View style={styles.merchandiseContainer}>
           {rewards.map((item, index) => (
             <View key={index} style={styles.merchandiseItem}>
               <Image source={item.image} style={styles.image} />
               <Text>{item.name}</Text>
             </View>
           ))}
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );

@@ -88,7 +88,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
           
           <TouchableOpacity style={styles.customButton} 
-            // onPress={() => navigation.navigate('')}
+            onPress={() => navigation.navigate('merchandiseScreen')}
           >
             <FontAwesome name="star" size={20} color="#375A82" style={styles.piconStyle} />
             <Text style={styles.leftText}>300 points</Text>

@@ -17,6 +17,8 @@ import ProfileScreen from './screens/profileScreen';
 import Ticket from "./screens/ticket";
 import BundleScreen from './screens/BundleScreen';
 import ConfirmationScreen from './screens/confirmation';
+import MerchandiseScreen from './screens/exchangeTabs';
+import MerchandiseDetail from './screens/merchandisedetailpage';
 import { initializeApp } from "firebase/app";
 import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -180,6 +182,39 @@ export default function App() {
               },
               headerTitleAlign: 'center',
              }}
+          />
+          <Stack.Screen 
+            name="merchandiseScreen"
+            component={MerchandiseScreen}
+            options={{
+              title: 'Exchange Points',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+                // backgroundColor: '#4DC3FC',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+             }}
+          />
+          <Stack.Screen 
+            name="MerchandiseDetail"
+            component={MerchandiseDetail}
+            options={{
+              title: 'Detail',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+              },
+              headerTintColor: 'black',
+              headerTitleStyle: {
+                fontFamily: 'MontserratBold',
+                fontSize: 24,
+              },
+              headerTitleAlign: 'center',
+            }}
           />
           <Stack.Screen 
           name="ConfirmationScreen" 

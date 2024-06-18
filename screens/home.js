@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView }
 import { useNavigation } from '@react-navigation/native';
 import PagerView from 'react-native-pager-view';
 import CurrencyInput from 'react-native-currency-input';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import backgroundImage from '../assets/Background.png';
 import Bundle from '../assets/data/bundledata.js';
 import shows from '../assets/data/showdata.js';
@@ -95,7 +96,8 @@ const Home = () => {
               ))}
             </View>
             <TouchableOpacity style={styles.seeAllContainer} onPress={() => navigation.navigate('BundleScreen')}>
-              <Text style={styles.seeAllText}>See More</Text>
+              <Text style={styles.seeAllText}>See More </Text>
+              <FontAwesome name="chevron-right" size={14} color="#375A82" style={styles.icon} />
             </TouchableOpacity>
           </View>
 
@@ -126,7 +128,8 @@ const Home = () => {
               ))}
             </View>
             <TouchableOpacity style={styles.seeAllContainer} onPress={() => navigation.navigate('ShowList')}>
-              <Text style={styles.seeAllText}>See More</Text>
+              <Text style={styles.seeAllText}>See More </Text>
+              <FontAwesome name="chevron-right" size={14} color="#375A82" style={styles.icon} />
             </TouchableOpacity>
           </View>
         </View>
@@ -168,6 +171,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  icon: {
+    marginTop: 4.2,
+    marginLeft: 5,
   },
   topPickContainer: {
     marginTop: 20,
@@ -231,6 +238,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 20,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   seeAllText: {
     fontFamily: 'MontserratBold',

@@ -168,6 +168,21 @@ const Cart = () => {
             balance: newBalance,
           });
 
+          // Calculate total points
+          const totalPoints = cartItems.reduce((sum, item) => sum + item.points * item.quantity, 0);
+
+          // Update points in Firestore
+          const userPointsRef = doc(db, `points/${user.uid}`);
+          const userPointsDoc = await getDoc(userPointsRef);
+
+          if (userPointsDoc.exists()) {
+            await updateDoc(userPointsRef, {
+              points: userPointsDoc.data().points + totalPoints,
+            });
+          } else {
+            await setDoc(userPointsRef, { points: totalPoints });
+          }
+
           navigation.navigate('ConfirmationScreen');
         } catch (error) {
           console.error('Error processing purchase:', error);

@@ -10,15 +10,17 @@ const MerchandiseDetailPage = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Detail</Text>
-      <Image source={item.image} style={styles.image} />
-      <Text style={styles.merchandiseName}>{item.name}</Text>
-      <Text style={styles.detailTitle}>Detail</Text>
-      <Text style={styles.detailText}>Special merchandise from SeaBrew</Text>
-      <Text style={styles.points}>Total Points: {points} Points</Text>
-      <Text style={styles.price}>Price: {item.points} Points</Text>
+      <View style={styles.contentContainer}>
+        <View style={styles.imageContainer}>
+          <Image source={item.image} style={styles.image} />
+          <Text style={styles.brandName}>Seabrew</Text>
+        </View>
+        <Text style={styles.merchandiseName}>{item.name}</Text>
+        <Text style={styles.detailText}>{item.desc}</Text>
+        <Text style={styles.sizeText}>Size: {item.size}</Text>
+      </View>
       <TouchableOpacity style={styles.exchangeButton} onPress={handleExchange}>
-        <Text style={styles.exchangeButtonText}>Exchange now</Text>
+        <Text style={styles.exchangeButtonText}>Exchange now - {item.points} Pts</Text>
       </TouchableOpacity>
     </View>
   );
@@ -29,45 +31,51 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+    justifyContent: 'space-between',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  imageContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   image: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
-    marginVertical: 20,
+  },
+  brandName: {
+    position: 'absolute',
+    bottom: 10,
+    left: 50,
+    fontSize: 20,
+    color: '#375A82',
+    fontFamily: 'BigShouldersStencilBold',
   },
   merchandiseName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 10,
-  },
-  detailTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontFamily: 'MontserratBold',
+    textAlign: 'left',
     marginVertical: 10,
   },
   detailText: {
     fontSize: 16,
     color: '#555',
+    marginBottom: 10,
+    textAlign: 'left',
+    fontFamily: 'Montserrat',
+  },
+  sizeText: {
+    fontSize: 16,
+    color: '#555',
     marginBottom: 20,
-  },
-  points: {
-    fontSize: 18,
-    marginVertical: 10,
-  },
-  price: {
-    fontSize: 18,
-    marginVertical: 10,
+    textAlign: 'left',
+    fontFamily: 'MontserratSemiBold',
   },
   exchangeButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#375A82',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -76,7 +84,7 @@ const styles = StyleSheet.create({
   exchangeButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
 });
 
