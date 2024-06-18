@@ -24,16 +24,13 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
       </View>
     </View>
     <View style={styles.itemQuantity}>
-      {/* <Button title="-" onPress={() => onDecrease(item.id)} />
-      <Text style={styles.quantityText}>{item.quantity}</Text>
-      <Button title="+" onPress={() => onIncrease(item.id)} /> */}
       <TouchableOpacity style={styles.quantityButton} onPress={() => onDecrease(item.id)}>
-                  <Text style={styles.quantityButtonText}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.quantityInput}>{item.quantity}</Text>
-                <TouchableOpacity style={styles.quantityButton} onPress={() => onIncrease(item.id)}>
-                  <Text style={styles.quantityButtonText}>+</Text>
-                </TouchableOpacity>
+        <Text style={styles.quantityButtonText}>-</Text>
+      </TouchableOpacity>
+      <Text style={styles.quantityInput}>{item.quantity}</Text>
+      <TouchableOpacity style={styles.quantityButton} onPress={() => onIncrease(item.id)}>
+        <Text style={styles.quantityButtonText}>+</Text>
+      </TouchableOpacity>
     </View>
   </View>
 );
@@ -44,23 +41,6 @@ const Cart = () => {
   const [showEmptyCartButton, setShowEmptyCartButton] = useState(false);
   const navigation = useNavigation();
   const db = getFirestore();
-
-  const deleteItemFromFirebase = async (itemName) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (user) {
-      const cartRef = doc(db, `carts/${user.uid}`);
-      try {
-        const cartSnapshot = await getDoc(cartRef);
-        const cartData = cartSnapshot.data();
-        const updatedItems = cartData.items.filter(item => item.name !== itemName);
-        await updateDoc(cartRef, { items: updatedItems });
-      } catch (error) {
-        console.error('Error deleting item from Firebase:', error);
-      }
-    }
-  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -80,8 +60,8 @@ const Cart = () => {
           price: item.price,
           quantity: item.quantity,
           date: item.date,
-          type: item.type, // pastikan type ada di sini
-          size: item.size, // pastikan size ada di sini
+          type: item.type,
+          size: item.size,
         }));
 
         setCartItems(allItems);
@@ -106,13 +86,36 @@ const Cart = () => {
         item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
       );
 
-      if (updatedItems.find((item) => item.id === id)?.quantity === 0) {
-        const itemToDelete = updatedItems.find((item) => item.id === id);
-        deleteItemFromFirebase(itemToDelete.name);
+      const itemToDelete = updatedItems.find((item) => item.id === id && item.quantity === 0);
+
+      if (itemToDelete) {
+        deleteItemFromFirebase(itemToDelete);
       }
 
       return updatedItems;
     });
+  };
+
+  const deleteItemFromFirebase = async (itemToDelete) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const cartRef = doc(db, `carts/${user.uid}`);
+      try {
+        const cartSnapshot = await getDoc(cartRef);
+        const cartData = cartSnapshot.data();
+        
+        // Filter items, bundles, and tickets
+        const updatedItems = cartData.items.filter(item => item.name !== itemToDelete.name);
+        const updatedBundles = cartData.bundle.filter(bundleItem => bundleItem.name !== itemToDelete.name);
+        const updatedTickets = cartData.tickets.filter(ticket => ticket.name !== itemToDelete.name);
+        
+        await updateDoc(cartRef, { items: updatedItems, bundle: updatedBundles, tickets: updatedTickets });
+      } catch (error) {
+        console.error('Error deleting item from Firebase:', error);
+      }
+    }
   };
 
   const handleBuyNow = async () => {
