@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity, ImageBackgr
 import CurrencyInput from 'react-native-currency-input';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, setDoc, arrayUnion, onSnapshot } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, arrayRemove, collection, addDoc, setDoc, arrayUnion, onSnapshot, deleteDoc } from 'firebase/firestore';
 
 const CartItem = ({ item, onIncrease, onDecrease }) => (
   <View style={styles.itemContainer}>
@@ -32,8 +32,29 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [balance, setBalance] = useState(0);
+  const [showEmptyCartButton, setShowEmptyCartButton] = useState(false);
   const navigation = useNavigation();
   const db = getFirestore();
+
+  // Fungsi untuk menghapus item dari Firebase
+  const deleteItemFromFirebase = async (itemName) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (user) {
+      const cartRef = doc(db, `carts/${user.uid}`);
+      try {
+        const cartSnapshot = await getDoc(cartRef);
+        const cartData = cartSnapshot.data();
+        console.log('Cart data:', cartData); // Tambahkan ini untuk melihat data keranjang sebelum item dihapus
+        const updatedItems = cartData.items.filter(item => item.name !== itemName);
+        console.log('Updated items:', updatedItems); // Tambahkan ini untuk melihat item yang akan dihapus
+        await updateDoc(cartRef, { items: updatedItems });
+      } catch (error) {
+        console.error('Error deleting item from Firebase:', error);
+      }
+    }
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -42,10 +63,10 @@ const Cart = () => {
     if (user) {
       const unsubscribe = onSnapshot(doc(db, `carts/${user.uid}`), (snapshot) => {
         const userData = snapshot.data();
-        const bundleItems = userData.bundle || [];
-        const itemsInBundle = userData.items || [];
-        const tickets = userData.tickets || [];
-        const userBalance = userData.balance || 10000000;
+        const bundleItems = userData?.bundle || [];
+        const itemsInBundle = userData?.items || [];
+        const tickets = userData?.tickets || [];
+        const userBalance = userData?.balance || 10000000;
 
         const allItems = [...bundleItems, ...itemsInBundle, ...tickets].map((item, index) => ({
           id: `${item.name}-${index}`,
@@ -71,13 +92,22 @@ const Cart = () => {
     );
   };
 
-  const handleDecrease = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
-      )
+// Kemudian panggil fungsi deleteItemFromFirebase dengan item name ketika menghapus dari keranjang
+const handleDecrease = async (id) => {
+  setCartItems((prevItems) => {
+    const updatedItems = prevItems.map((item) =>
+      item.id === id && item.quantity > 0 ? { ...item, quantity: item.quantity - 1 } : item
     );
-  };
+
+    if (updatedItems.find((item) => item.id === id)?.quantity === 0) {
+      const itemToDelete = updatedItems.find((item) => item.id === id);
+      console.log('Deleting item:', itemToDelete); // Tambahkan ini untuk melihat item yang akan dihapus
+      deleteItemFromFirebase(itemToDelete.name);
+    }
+
+    return updatedItems;
+  });
+};
 
   const handleBuyNow = async () => {
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -155,7 +185,25 @@ const Cart = () => {
   const applicationFee = 1000;
   const totalAmount = totalPrice + applicationFee;
 
-  return (
+  // Logika untuk mengosongkan keranjang
+  const handleEmptyCart = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const cartRef = doc(db, `carts/${user.uid}`);
+      try {
+        await deleteDoc(cartRef);
+        setCartItems([]);
+        setShowEmptyCartButton(false);
+      } catch (error) {
+        console.error('Error emptying cart:', error);
+      }
+    }
+  };
+
+
+return (
     <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
       <View style={styles.container}>
         <Text style={styles.title}>Cart</Text>
@@ -173,7 +221,7 @@ const Cart = () => {
               )}
               keyExtractor={(item) => item.id}
             />
-            <View style={styles.metodeContainer}>
+              <View style={styles.metodeContainer}>
               <Text style={styles.summaryText}>Payment Method:{'\n'}Gopay (IDR {balance.toLocaleString()})</Text>
             </View>
             <View style={styles.summaryContainer}>
@@ -185,6 +233,12 @@ const Cart = () => {
                 <Text style={styles.buyButtonText}>Buy Now</Text>
               </TouchableOpacity>
             </View>
+            {/* Tampilkan tombol "Empty Cart" jika showEmptyCartButton bernilai true */}
+            {showEmptyCartButton && (
+              <TouchableOpacity style={styles.emptyCartButton} onPress={handleEmptyCart}>
+                <Text style={styles.emptyCartButtonText}>Empty Cart</Text>
+              </TouchableOpacity>
+            )}
           </>
         ) : (
           <View style={styles.emptyCartContainer}>
@@ -197,6 +251,18 @@ const Cart = () => {
 };
 
 const styles = StyleSheet.create({
+  emptyCartButton: {
+    backgroundColor: '#FF6347', // Merah untuk menarik perhatian
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  emptyCartButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontFamily: 'MontserratBold',
+  },
   container: {
     flex: 1,
     padding: 25,

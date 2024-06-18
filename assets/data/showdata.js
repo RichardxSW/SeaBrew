@@ -61,7 +61,7 @@ const shows = [
     image: require('../shows/mermaid2.png'), 
     description: 'Immerse yourself in the enchanting world of mermaids at the Mermaid Legends: Guardian of the Reef show. Experience a captivating performance that celebrates the beauty and mystery of the ocean, as told through the mesmerizing tales of these mythical beings. Journey to the depths of the sea and discover the wonders that lie beneath the waves. Join us for a magical adventure that will leave you spellbound!', 
     location: 'Mermaid Lagoon',
-    day: ['Tue', 'Thu', 'Sat', 'Sun'] 
+    day: ['Tue', 'Thu', 'Sat'] 
   },
 ];
 

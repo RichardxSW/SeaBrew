@@ -15,7 +15,13 @@ export default function LoginScreen({ navigation }) {
 
   useEffect(() => {
     clearInput();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Action to perform when screen comes into focus
+      clearInput();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handleLogin = () => {
     if (!email && !password) {
