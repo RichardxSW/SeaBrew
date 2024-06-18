@@ -18,6 +18,10 @@ const StarbuckMainPage = () => {
     Keyboard.dismiss();
     };
 
+    const hasDiscount = (item) => {
+      return item.disc === true; // Check the 'disc' property instead of comparing 'originalPrice' and 'price'
+    };
+
 const filteredData = Data.filter(item => {
   if (inputValue) {
     // Jika ada nilai di kolom pencarian
@@ -72,9 +76,19 @@ return (
         <Text style={styles.headerText}>SeaBrew's Coffee</Text>
 
         <View style={styles.bannerContainer}>
-            <Text style={styles.bannerText}>Bundles</Text>
-            <Image source={require('../assets/imgStarbuck/bannerSbuck.webp')} style={styles.bannerImage} />
-    </View>  
+          {Data.find(item => item.disc == true) && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('StarbuckDetail', { item: Data.find(item => item.disc === true) })}
+            >
+              <Image
+                source={ Data.find(item => item.disc === true).image } // Dynamic image source based on data item
+                style={styles.bannerImage}
+                resizeMode="cover"
+              />
+              <Text style={styles.bannerText}>30% OFF</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
       <View style={styles.categoryContainer}>
         <TouchableOpacity onPress={() => setCategory('All')}>
@@ -96,15 +110,32 @@ return (
             <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
               <Image source={item.image} style={styles.image} resizeMode="cover" />
               <Text style={styles.itemName}>{item.name}</Text>
-              <CurrencyInput 
-              style={styles.itemPrice}
-              value={item.price}
-              prefix="IDR "
-              delimiter="."
-              separator=","
-              precision={2}
-              editable={false}
-              />
+              {hasDiscount(item) ? (
+                <>
+                  <Text style={[styles.itemPriceOriginal, styles.strikethrough]}>
+                    IDR {item.price.toLocaleString()}
+                  </Text>
+                  <CurrencyInput
+                    style={styles.itemPrice}
+                    value={item.price - item.price * 0.3} // Assuming a 10% discount
+                    prefix="IDR "
+                    delimiter="."
+                    separator=","
+                    precision={0}
+                    editable={false}
+                  />
+                </>
+              ) : (
+                <CurrencyInput
+                  style={styles.itemPrice}
+                  value={item.price}
+                  prefix="IDR "
+                  delimiter="."
+                  separator=","
+                  precision={0}
+                  editable={false}
+                />
+              )}
               <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('StarbuckDetail' , {item})}>
                 <Text style={styles.addButtonText}>+</Text>
               </TouchableOpacity>
@@ -122,7 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 15,
     paddingLeft: 15,
-    paddingTop: 15,
+    paddingTop: 20,
     paddingBottom: 80,
     // marginTop: 20,
     marginBottom: 10,
@@ -213,6 +244,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: '47%',
+    height: 250,
     margin: 5,
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -226,6 +258,17 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  },
+  itemPriceOriginal: {
+    fontSize: 15,
+    color: '#375A82',
+    textAlign: 'left',
+    textDecorationLine: 'line-through',
+    marginBottom: 20,
+    fontFamily: 'Montserrat',
+  },
+  strikethrough: {
+    textDecorationStyle: 'solid',
   },
   scrollViewContent: {
     flexDirection: 'row',
@@ -243,11 +286,11 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratBold',
     maxWidth: '80%',
     textAlign: 'left',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   itemPrice: {
-    fontSize: 13,
-    color: 'gray',
+    fontSize: 15,
+    color: '#375A82',
     textAlign: 'left',
     position: 'absolute',
     fontFamily: 'Montserrat',

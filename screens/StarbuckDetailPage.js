@@ -98,6 +98,10 @@ const StarbuckDetailPage = ({ route }) => {
     setSelectedSize('');
   };
 
+  const hasDiscount = (item) => {
+    return item.disc === true; // Check the 'disc' property instead of comparing 'originalPrice' and 'price'
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
@@ -110,15 +114,34 @@ const StarbuckDetailPage = ({ route }) => {
             <View style={styles.productDetails}>
               <View style={styles.productNameContainer}>
                 <Text style={styles.productName}>{item.name}</Text>
+                <View style={styles.productPriceContainer}>
+                {hasDiscount(item) ? (
+                <>
+                  <Text style={[styles.itemPriceOriginal, styles.strikethrough]}>
+                    IDR {item.price.toLocaleString()}
+                  </Text>
+                  <CurrencyInput
+                    style={styles.productPrice}
+                    value={item.price - item.price * 0.3} // Assuming a 10% discount
+                    prefix="IDR "
+                    delimiter="."
+                    separator=","
+                    precision={0}
+                    editable={false}
+                  />
+                </>
+              ) : (
                 <CurrencyInput
                   style={styles.productPrice}
                   value={item.price}
                   prefix="IDR "
                   delimiter="."
                   separator=","
-                  precision={2}
+                  precision={0}
                   editable={false}
                 />
+              )}
+              </View>
               </View>
               <Text style={styles.productDescription}>{item.desc}</Text>
               <View style={styles.grayLine} />
@@ -220,15 +243,32 @@ const styles = StyleSheet.create({
   productNameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   productName: {
     fontSize: 20,
     fontFamily: 'MontserratBold',
   },
+  productPriceContainer: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+  },
   productPrice: {
     fontSize: 18,
     fontFamily: 'MontserratSemiBold',
     color: '#4DC3FC',
+  },
+  itemPriceOriginal: {
+    fontSize: 18,
+    color: '#4DC3FC',
+    textAlign: 'left',
+    textDecorationLine: 'line-through',
+    // marginBottom: 20,
+    fontFamily: 'MontserratBold',
+  },
+  strikethrough: {
+    textDecorationStyle: 'solid',
   },
   productDescription: {
     fontFamily: 'Montserrat',

@@ -37,7 +37,8 @@ const Data = [
     price: 56000,
     image: require('../imgStarbuck/Chocolate.webp'),
     desc: 'A rich and decadent chocolate-based drink, perfect for chocoholics.',
-    points: 75
+    points: 75,
+    disc: true
   },
   {
     id: 6,
