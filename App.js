@@ -20,7 +20,7 @@ import ConfirmationScreen from './screens/confirmation';
 import MerchandiseScreen from './screens/exchangeTabs';
 import MerchandiseDetail from './screens/merchandisedetailpage';
 import { initializeApp } from "firebase/app";
-import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { getAuth, initializeAuth, getReactNativePersistence, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'firebase/firestore';
 
@@ -34,8 +34,8 @@ const firebaseConfig = {
   measurementId: "G-SKHC3JH4KV"
 };
 
-initializeApp(firebaseConfig);
-initializeAuth(initializeApp(firebaseConfig), {
+const app = initializeApp(firebaseConfig);
+const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
@@ -53,6 +53,7 @@ export default function App() {
     'BigShouldersStencilMedium': require('./assets/fonts/BigShouldersStencilText-Medium.ttf'),
     'BigShouldersStencilSemiBold': require('./assets/fonts/BigShouldersStencilText-SemiBold.ttf'),
   });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     async function prepare() {
@@ -67,6 +68,16 @@ export default function App() {
     }
 
     prepare();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe(); // Clean up the subscription
   }, []);
 
   if (!appIsReady) {
@@ -85,15 +96,29 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen 
-        name="Login" 
-        component={LoginScreen}
-        options={{ headerShown: false }} />
-      <Stack.Screen 
-        name="Navbar" 
-        component={Navbar}
-        options={{ headerShown: false }} 
-        />
+        {user ? (
+          <>
+            <Stack.Screen 
+              name="Navbar" 
+              component={Navbar}
+              options={{ headerShown: false }} 
+            />
+            {/* Add other screens here for authenticated users */}
+          </>
+        ) : (
+          <>
+            <Stack.Screen 
+              name="Login" 
+              component={LoginScreen}
+              options={{ headerShown: false }} 
+            />
+            <Stack.Screen 
+              name="Register" 
+              component={RegisterScreen}
+              options={{ headerShown: false }} 
+            />
+          </>
+        )}
         <Stack.Screen 
           name="ShowList" 
           component={ShowList} 
@@ -128,10 +153,6 @@ export default function App() {
               headerTitleAlign: 'center',
             }}
           />
-          <Stack.Screen 
-            name="Register" 
-            component={RegisterScreen}
-            options={{ headerShown: false }} />
           <Stack.Screen 
             name="Profile" 
             component={ProfileScreen}
@@ -249,5 +270,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-},
+  },
 });
