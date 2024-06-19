@@ -101,7 +101,7 @@ const ActiveTicketsScreen = () => {
                   </Text>
                 </View>
                 <View style={styles.groupContainer}>
-                  <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                  <Text style={styles.itemPrice}>IDR {item.price * item.quantity}</Text>
                   <Text style={styles.paidText}>Paid</Text>
                 </View>
               </TouchableOpacity>
