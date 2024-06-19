@@ -1,37 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Modal, ImageBackground } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Modal, ImageBackground, ActivityIndicator } from 'react-native';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import QRCode from "react-native-qrcode-svg";
 import { getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
 import MerchandiseData from '../assets/data/merchandisedata';
 
 const MerchandiseRewardPage = () => {
   const [rewards, setRewards] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedReward, setSelectedReward] = useState(null);
   const auth = getAuth();
   const user = auth.currentUser;
   const db = getFirestore();
 
+  const fetchRewards = async () => {
+    setLoading(true);
+    try {
+      const rewardsRef = doc(db, `rewards/${user.uid}`);
+      const docSnap = await getDoc(rewardsRef);
+      if (docSnap.exists()) {
+        const rewardsData = docSnap.data().rewards;
+        if (Array.isArray(rewardsData)) {
+          setRewards(rewardsData);
+        } else {
+          console.log('No rewards array found!');
+        }
+      } else {
+        console.log('No rewards found!');
+      }
+    } catch (error) {
+      console.error('Error fetching rewards:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      const fetchRewards = async () => {
-        const rewardsRef = doc(db, `rewards/${user.uid}`);
-        const docSnap = await getDoc(rewardsRef);
-        if (docSnap.exists()) {
-          const rewardsData = docSnap.data().rewards;
-          if (Array.isArray(rewardsData)) {
-            setRewards(rewardsData);
-          } else {
-            console.log('No rewards array found!');
-          }
-        } else {
-          console.log('No rewards found!');
-        }
-      };
       fetchRewards();
     }
-  }, [user, db]);
+  }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        fetchRewards();
+      }
+    }, [user])
+  );
 
   const handlePress = (reward) => {
     setSelectedReward(reward);
@@ -48,7 +66,9 @@ const MerchandiseRewardPage = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.merchandiseContainer}>
-            {rewards.length === 0 ? (
+            {loading ? (
+              <ActivityIndicator size="large" color="#375A82" />
+            ) : rewards.length === 0 ? (
               <View style={styles.noRewardsContainer}>
                 <Text style={styles.noRewardsText}>No rewards claimed yet</Text>
               </View>
@@ -99,11 +119,13 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    alignItems: 'center', // Center the content horizontally
-    paddingVertical: 20, // Adjust vertical spacing as needed
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   container: {
     flex: 1,
+    width: '100%', // Melebarkan kontainer sampai samping
+    paddingHorizontal: 20,
   },
   innerContainer: {
     width: '100%',
@@ -187,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   noRewardsContainer: {
-    alignItems: 'center', // Center the text horizontally
+    alignItems: 'center',
   },
   noRewardsText: {
     textAlign: 'center',
