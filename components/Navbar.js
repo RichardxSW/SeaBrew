@@ -1,16 +1,19 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
-import React, { useState, useCallback }from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { FontAwesome } from '@expo/vector-icons';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { getFirestore, doc, getDoc, collection, query, where } from 'firebase/firestore';
+import { getAuth, signOut } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import HomeScreen from '../screens/home';
 import CartScreen from '../screens/cart';
 import ScreenTabs from '../screens/screenTabs';
 import StarbuckMainScreen from '../screens/StarbuckMainPage';
 import ProfileScreen from '../screens/profileScreen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons'; // Import icon libraries
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,11 +42,20 @@ const Navbar = () => {
     }, [user])
   );
 
+  const handleLogout = async (navigation) => {
+    try {
+      await signOut(auth);
+      navigation.navigate('Login', { email: '', password: '' });
+    } catch (error) {
+      console.error('Error while logging out:', error);
+    }
+  };
+
   return (
     <Tab.Navigator
       style={styles.container}
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, navigation }) => ({
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -55,10 +67,10 @@ const Navbar = () => {
             iconName = focused ? 'cart' : 'cart-outline';
             return <Ionicons name={iconName} size={size} color={color} />;
           } else if (route.name === 'Starbuck') {
-            iconName =  'coffee';
+            iconName = 'coffee';
             return <FontAwesome5 name={iconName} size={size} color={color} />;
           } else if (route.name === 'History') {
-            iconName = focused ? 'time' : 'time-outline'; // Change to history icon
+            iconName = focused ? 'time' : 'time-outline';
             return <Ionicons name={iconName} size={size} color={color} />;
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
@@ -67,7 +79,6 @@ const Navbar = () => {
         },
         tabBarActiveTintColor: '#4DC3FC',
         tabBarInactiveTintColor: '#676D75',
-        // tabBarShowLabel: false,
         tabBarStyle: styles.tabBar,
       })}
     >
@@ -75,10 +86,16 @@ const Navbar = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'SeaBrew',
+          headerTitle: 'SeaBrew',
+          title: 'Home',
           headerStyle: {
             backgroundColor: '#92DAFD',
-            height: 100
+            height: 100,
+            shadowColor: '#375A82',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            elevation: 5,
           },
           headerTintColor: '#375A82',
           headerStatusBarHeight: 30,
@@ -91,7 +108,7 @@ const Navbar = () => {
                   <Image source={require('../assets/profilepic.jpg')} style={styles.avatarIcon} />
                 )}
               </View>
-          </View>
+            </View>
           ),
           headerTitleStyle: {
             fontFamily: 'BigShouldersStencilBold',
@@ -100,10 +117,107 @@ const Navbar = () => {
           headerTitleAlign: 'center',
         }}
       />
-      <Tab.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Starbuck" component={StarbuckMainScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="History" component={ScreenTabs} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
+        options={{
+          headerTitle: 'SeaBrew',
+          title: 'Cart',
+          headerStyle: {
+            backgroundColor: '#92DAFD',
+            height: 100,
+            shadowColor: '#375A82',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            elevation: 5,
+          },
+          headerTintColor: '#375A82',
+          headerStatusBarHeight: 30,
+          headerTitleStyle: {
+            fontFamily: 'BigShouldersStencilBold',
+            fontSize: 27,
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Tab.Screen
+        name="Starbuck"
+        component={StarbuckMainScreen}
+        options={{
+          headerTitle: 'SB Coffee',
+          title: 'Starbuck',
+          headerStyle: {
+            backgroundColor: '#92DAFD',
+            height: 100,
+            shadowColor: '#375A82',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            elevation: 5,
+          },
+          headerTintColor: '#375A82',
+          headerStatusBarHeight: 30,
+          headerTitleStyle: {
+            fontFamily: 'BigShouldersStencilBold',
+            fontSize: 27,
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Tab.Screen
+        name="History"
+        component={ScreenTabs}
+        options={{
+          headerTitle: 'SeaBrew',
+          title: 'History',
+          headerStyle: {
+            backgroundColor: '#92DAFD',
+            height: 100,
+            shadowColor: '#375A82',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            elevation: 5,
+          },
+          headerTintColor: '#375A82',
+          headerStatusBarHeight: 30,
+          headerTitleStyle: {
+            fontFamily: 'BigShouldersStencilBold',
+            fontSize: 27,
+          },
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={({ navigation }) => ({
+          headerTitle: 'SeaBrew',
+          title: 'Profile',
+          headerStyle: {
+            backgroundColor: '#92DAFD',
+            height: 100,
+            shadowColor: '#375A82',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            elevation: 5,
+          },
+          headerTintColor: '#375A82',
+          headerStatusBarHeight: 30,
+          headerTitleStyle: {
+            fontFamily: 'BigShouldersStencilBold',
+            fontSize: 27,
+          },
+          headerTitleAlign: 'center',
+          headerRight: () => (
+            <TouchableOpacity style={styles.logoutButton} onPress={() => handleLogout(navigation)}>
+              <FontAwesome name="sign-out" size={30} color="#375A82" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
     </Tab.Navigator>
   );
 };
@@ -116,7 +230,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     height: 60,
-    backgroundColor: '#1D1F24', // Background color of the tab bar
+    backgroundColor: '#1D1F24',
     borderTopWidth: 0,
     paddingBottom: 10,
     paddingTop: 10,
@@ -124,15 +238,13 @@ const styles = StyleSheet.create({
     bottom: 16,
     right: 16,
     left: 16,
-    borderRadius: 20
+    borderRadius: 20,
   },
-
   avatarContainer: {
     width: 30,
     height: 30,
     marginLeft: 25,
   },
-
   avatarBorder: {
     width: 35,
     height: 35,
@@ -141,10 +253,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   avatarIcon: {
     width: 42,
     height: 42,
     borderRadius: 50,
+  },
+  logoutButton: {
+    marginRight: 20,
   },
 });

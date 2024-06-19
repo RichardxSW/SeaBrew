@@ -98,15 +98,16 @@ export default function App() {
           name="ShowList" 
           component={ShowList} 
           options={{
+            headerTitle: 'SeaBrew',
             title: 'All Show',
             headerStyle: {
               backgroundColor: '#92DAFD',
               // backgroundColor: '#4DC3FC',
             },
-            headerTintColor: 'black',
+            headerTintColor: '#375A82',
             headerTitleStyle: {
-              fontFamily: 'MontserratBold',
-              fontSize: 24,
+              fontFamily: 'BigShouldersStencilBold',
+              fontSize: 27,
             },
             headerTitleAlign: 'center',
           }}/>
@@ -114,14 +115,15 @@ export default function App() {
             name="StarbuckDetail"
             component={StarbuckDetail}
             options={{
+              headerTitle: 'SeaBrew',
               title: 'Detail',
               headerStyle: {
                 backgroundColor: '#92DAFD',
               },
-              headerTintColor: 'black',
+              headerTintColor: '#375A82',
               headerTitleStyle: {
-                fontFamily: 'MontserratBold',
-                fontSize: 24,
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
               },
               headerTitleAlign: 'center',
             }}
@@ -133,35 +135,48 @@ export default function App() {
           <Stack.Screen 
             name="Profile" 
             component={ProfileScreen}
-            options={{ headerShown: false }} />
+            options={{ 
+              headerTitle: 'SeaBrew',
+              title: 'Profile',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+              },
+              headerTintColor: '#375A82',
+              headerTitleStyle: {
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
+              },
+              headerTitleAlign: 'center', }} />
           <Stack.Screen 
             name="EditProfile" 
             component={EditProfileScreen}
             options={{
-            title: 'Edit Profile',
-            headerStyle: {
-              backgroundColor: '#92DAFD',
-            },
-            headerTintColor: '#375A82',
-            headerTitleStyle: {
-              fontFamily: 'Montserrat',
-              fontSize: 24,
-            },
-            headerTitleAlign: 'center',
+              headerTitle: 'SeaBrew',
+              title: 'Edit Profile',
+              headerStyle: {
+                backgroundColor: '#92DAFD',
+              },
+              headerTintColor: '#375A82',
+              headerTitleStyle: {
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
+              },
+              headerTitleAlign: 'center',
           }}/>
           <Stack.Screen 
             name="Ticket"
             component={Ticket}
             options={{
+              headerTitle: 'SeaBrew',
               title: 'Ticket',
               headerStyle: {
                 backgroundColor: '#92DAFD',
                 // backgroundColor: '#4DC3FC',
               },
-              headerTintColor: 'black',
+              headerTintColor: '#375A82',
               headerTitleStyle: {
-                fontFamily: 'MontserratBold',
-                fontSize: 24,
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
               },
               headerTitleAlign: 'center',
              }}
@@ -170,15 +185,16 @@ export default function App() {
             name="BundleScreen"
             component={BundleScreen}
             options={{
+              headerTitle: 'SeaBrew',
               title: 'All Bundle',
               headerStyle: {
                 backgroundColor: '#92DAFD',
                 // backgroundColor: '#4DC3FC',
               },
-              headerTintColor: 'black',
+              headerTintColor: '#375A82',
               headerTitleStyle: {
-                fontFamily: 'MontserratBold',
-                fontSize: 24,
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
               },
               headerTitleAlign: 'center',
              }}
@@ -187,15 +203,16 @@ export default function App() {
             name="merchandiseScreen"
             component={MerchandiseScreen}
             options={{
+              headerTitle: 'SeaBrew',
               title: 'Exchange Points',
               headerStyle: {
                 backgroundColor: '#92DAFD',
                 // backgroundColor: '#4DC3FC',
               },
-              headerTintColor: 'black',
+              headerTintColor: '#375A82',
               headerTitleStyle: {
-                fontFamily: 'MontserratBold',
-                fontSize: 24,
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
               },
               headerTitleAlign: 'center',
              }}
@@ -204,14 +221,15 @@ export default function App() {
             name="MerchandiseDetail"
             component={MerchandiseDetail}
             options={{
+              headerTitle: 'SeaBrew',
               title: 'Detail',
               headerStyle: {
                 backgroundColor: '#92DAFD',
               },
-              headerTintColor: 'black',
+              headerTintColor: '#375A82',
               headerTitleStyle: {
-                fontFamily: 'MontserratBold',
-                fontSize: 24,
+                fontFamily: 'BigShouldersStencilBold',
+                fontSize: 27,
               },
               headerTitleAlign: 'center',
             }}

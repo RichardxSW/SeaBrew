@@ -73,7 +73,7 @@ return (
         </View>
             {/* </View> */}
             
-        <Text style={styles.headerText}>SeaBrew's Coffee</Text>
+        {/* <Text style={styles.headerText}>SeaBrew's Coffee</Text> */}
 
         <View style={styles.bannerContainer}>
           {Data.find(item => item.disc == true) && (
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     marginBottom: 10,
-    marginTop: 35,
   },
   searchIcon: {
     marginRight: 8,
@@ -194,6 +193,13 @@ const styles = StyleSheet.create({
   bannerContainer: {
     position: 'relative',
     marginBottom: 20,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 5,
   },
   bannerText: {
     position: 'absolute',
@@ -243,7 +249,7 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratBold',
   },
   itemContainer: {
-    width: '47%',
+    width: '46.5%',
     height: 250,
     margin: 5,
     backgroundColor: '#fff',
@@ -252,12 +258,10 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'flex-start',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 5,
   },
   itemPriceOriginal: {
     fontSize: 15,

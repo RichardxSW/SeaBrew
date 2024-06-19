@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth, signOut} from 'firebase/auth';
+import { getFirestore, doc, getDoc, collection, query, where } from 'firebase/firestore';
+import { getAuth, signOut } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -13,10 +13,13 @@ export default function ProfileScreen({ navigation }) {
   const [user] = useAuthState(auth);
   const [userData, setUserData] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [points, setPoints] = useState(0);
 
   const fetchUserData = async () => {
     if (user) {
       const db = getFirestore();
+
+      // Mengambil data pengguna dari koleksi 'users'
       const userDoc = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userDoc);
       if (docSnap.exists()) {
@@ -26,6 +29,14 @@ export default function ProfileScreen({ navigation }) {
           setProfileImage(data.profileImageUrl);
         }
       }
+
+      // Mengambil data poin dari koleksi 'points'
+      const userPointsRef = doc(db, 'points', user.uid);
+      const pointsSnap = await getDoc(userPointsRef);
+      if (pointsSnap.exists()) {
+        const pointsData = pointsSnap.data();
+        setPoints(pointsData.points);
+      }
     }
   };
 
@@ -34,18 +45,6 @@ export default function ProfileScreen({ navigation }) {
       fetchUserData();
     }, [user])
   );
-
-  // const handleLogout = async () => {
-  //   // Clear AsyncStorage
-  //   try {
-  //     await AsyncStorage.clear();
-  //   } catch (error) {
-  //     console.error('Error clearing AsyncStorage:', error);
-  //   }
-
-  //   // Navigate to Login screen
-  //   navigation.navigate('Login', { email: '', password: '' });
-  // };
 
   const handleLogout = async () => {
     try {
@@ -60,23 +59,14 @@ export default function ProfileScreen({ navigation }) {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
       <ImageBackground source={require('../assets/profilebg.png')} style={styles.background}>
         <View style={styles.innerContainer}>
-
           <View style={styles.headerContainer}>
             <Text style={styles.titletext}>My Profile</Text>
-
-            <TouchableOpacity 
-              style={styles.logoutButton} 
-              onPress={handleLogout}
-            >
-              <FontAwesome name="sign-out" size={30} color="#375A82" />
-            </TouchableOpacity>
           </View>
-
           <View style={styles.avatarContainer}>
             <View style={styles.avatarBorder}>
               {profileImage ? (
@@ -86,36 +76,32 @@ export default function ProfileScreen({ navigation }) {
               )}
             </View>
           </View>
-          
-          <TouchableOpacity style={styles.customButton} 
+          <TouchableOpacity
+            style={styles.customButton}
             onPress={() => navigation.navigate('merchandiseScreen')}
           >
             <FontAwesome name="star" size={20} color="#375A82" style={styles.piconStyle} />
-            <Text style={styles.leftText}>300 points</Text>
+            <Text style={styles.leftText}>{points} points</Text>
             <Text style={styles.rightText}>Exchange</Text>
           </TouchableOpacity>
-
           <View style={styles.inputContainer}>
             <FontAwesome name="user" size={30} color="#375A82" style={styles.iconStyle} />
             <Text style={styles.text}>{userData ? userData.username : 'Loading...'}</Text>
           </View>
-
           <View style={styles.inputContainer}>
             <FontAwesome name="address-card" size={21} color="#375A82" style={styles.ficonStyle} />
             <Text style={styles.text}>{userData ? userData.fullName : 'Loading...'}</Text>
           </View>
-
           <View style={styles.emailInputContainer}>
             <FontAwesome name="envelope" size={24} color="#375A82" style={styles.iconStyle} />
             <Text style={styles.emailtext}>{userData ? userData.email : 'Loading...'}</Text>
           </View>
-
-          <TouchableOpacity style={styles.buttonEditContainer}
+          <TouchableOpacity
+            style={styles.buttonEditContainer}
             onPress={() => navigation.navigate('EditProfile')}
           >
             <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>
-
           <StatusBar style="auto" />
         </View>
       </ImageBackground>
@@ -128,26 +114,22 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-
   container: {
     flex: 1,
   },
-
   innerContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align items to the top
+    paddingTop: 10,
   },
-
   avatarContainer: {
     width: 100,
     height: 100,
-    position: 'relative',
-    marginBottom: 30,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   avatarBorder: {
     width: 70,
     height: 70,
@@ -157,36 +139,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   avatarIcon: {
     width: 62,
     height: 62,
     borderRadius: 50,
   },
-
   headerContainer: {
-    position: 'absolute',
-    top: 40, // Ubah nilai top di sini
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
-},
-
+  },
   titletext: {
     fontSize: 24,
     fontWeight: '100',
     color: '#375A82',
     fontFamily: 'Montserrat',
   },
-
   logoutButton: {
     position: 'absolute',
     right: 20,
   },
-
   customButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -206,24 +176,21 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 35,
   },
-
   leftText: {
     color: '#375A82',
-    fontFamily: 'MontserratBold',
+    fontFamily: 'MontserratSemiBold',
     fontSize: 13,
     marginLeft: -25,
   },
-
   rightText: {
     color: '#375A82',
     fontFamily: 'MontserratBold',
     fontSize: 13,
   },
-
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%', // Changed to 100%
+    width: '85%',
     height: 60,
     marginVertical: 10,
     paddingLeft: 40,
@@ -238,11 +205,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   emailInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%', // Changed to 100%
+    width: '85%',
     height: 60,
     marginVertical: 8,
     paddingLeft: 39,
@@ -257,14 +223,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   text: {
     flex: 1,
     color: '#375A82',
     fontFamily: 'Montserrat',
     fontSize: 15,
   },
-
   emailtext: {
     flex: 1,
     color: '#375A82',
@@ -272,7 +236,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 2.5,
   },
-
   buttonEditContainer: {
     width: '70%',
     borderRadius: 10,
@@ -282,21 +245,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#70B5F9',
   },
-
   buttonText: {
     textAlign: 'center',
     color: '#375A82',
     fontSize: 16,
     fontFamily: 'Montserrat',
   },
-
   iconStyle: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
     marginRight: 10,
   },
-
   ficonStyle: {
     width: 24,
     height: 24,
@@ -305,7 +265,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: -2,
   },
-
   piconStyle: {
     width: 24,
     height: 24,
@@ -313,7 +272,6 @@ const styles = StyleSheet.create({
     marginRight: -25,
     marginTop: 4.5,
   },
-
   successMessage: {
     marginTop: 20,
     color: 'green',

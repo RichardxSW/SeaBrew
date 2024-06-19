@@ -82,7 +82,8 @@ const BundleScreen = () => {
         name: bundle.name,
         quantity: quantities[index],
         price: bundle.price,
-        date: selectedDate.toDateString(), // Format date to string without time
+        date: selectedDate.toDateString(),
+        points: bundle.points // Format date to string without time
       }))
       .filter(bundle => bundle.quantity > 0);
   

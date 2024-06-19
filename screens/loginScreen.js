@@ -15,7 +15,7 @@ export default function LoginScreen({ navigation }) {
 
   useEffect(() => {
     clearInput();
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('blur', () => {
       // Action to perform when screen comes into focus
       clearInput();
     });

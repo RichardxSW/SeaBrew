@@ -3,7 +3,7 @@ const Data = [
     id: 1,
     name: 'Americano',
     price: 35000,
-    image: require('../imgStarbuck/Americano.webp'),
+    image: require('../imgStarbuck/Americano.png'),
     desc: 'A classic espresso drink with a bold and rich flavor.',
     points: 50
   },
@@ -11,7 +11,7 @@ const Data = [
     id: 2,
     name: 'Macchiato',
     price: 60000,
-    image: require('../imgStarbuck/Macchiato.webp'),
+    image: require('../imgStarbuck/Macchiato.png'),
     desc: 'Espresso with a dollop of milk foam, known for its strong coffee taste.',
     points: 70
   },
@@ -19,7 +19,7 @@ const Data = [
     id: 3,
     name: 'Frappuccino',
     price: 47000,
-    image: require('../imgStarbuck/Frappuccino.webp'),
+    image: require('../imgStarbuck/Frappuccino.png'),
     desc: 'A blended iced coffee drink, available in various flavors and customizations.',
     points: 60
   },
@@ -27,7 +27,7 @@ const Data = [
     id: 4,
     name: 'Cappuccino',
     price: 48000,
-    image: require('../imgStarbuck/Cappuccino.webp'),
+    image: require('../imgStarbuck/Cappuccino.png'),
     desc: 'Espresso with equal parts steamed milk and milk foam, offering a smooth and creamy texture.',
     points: 65
   },
@@ -35,7 +35,7 @@ const Data = [
     id: 5,
     name: 'Chocolate',
     price: 56000,
-    image: require('../imgStarbuck/Chocolate.webp'),
+    image: require('../imgStarbuck/Chocolate.png'),
     desc: 'A rich and decadent chocolate-based drink, perfect for chocoholics.',
     points: 75,
     disc: true
@@ -44,7 +44,7 @@ const Data = [
     id: 6,
     name: 'Teavana Iced Tea',
     price: 32000,
-    image: require('../imgStarbuck/Teavana.webp'),
+    image: require('../imgStarbuck/Teavana.png'),
     desc: 'Refreshing iced tea made with premium Teavana® loose-leaf tea blends.',
     points: 40
   },
@@ -52,7 +52,7 @@ const Data = [
     id: 7,
     name: 'Lemonade Tea',
     price: 40000,
-    image: require('../imgStarbuck/Lemonade.webp'),
+    image: require('../imgStarbuck/Lemonade.png'),
     desc: 'A citrusy and refreshing blend of lemonade and iced tea.',
     points: 55
   },
@@ -60,7 +60,7 @@ const Data = [
     id: 8,
     name: 'Green Tea',
     price: 30000,
-    image: require('../imgStarbuck/Greentea.webp'),
+    image: require('../imgStarbuck/Greentea.png'),
     desc: 'A healthy and flavorful unsweetened green tea beverage.',
     points: 35
   },

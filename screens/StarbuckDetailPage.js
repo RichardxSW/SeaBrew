@@ -81,6 +81,7 @@ const StarbuckDetailPage = ({ route }) => {
           dateAdded: currentDate,
           size: selectedSize || null,
           type: selectedType || null,
+          points: item.points || null,
         };
         cartData.items.push(newItem);
       }

@@ -62,6 +62,7 @@ const Cart = () => {
           date: item.date,
           type: item.type,
           size: item.size,
+          points: item.points || 0,
         }));
 
         setCartItems(allItems);
@@ -169,19 +170,35 @@ const Cart = () => {
           });
 
           // Calculate total points
-          const totalPoints = cartItems.reduce((sum, item) => sum + item.points * item.quantity, 0);
+          const totalPoints = cartItems.reduce((sum, item) => {
+            const itemPoints = item.points * item.quantity;
+            console.log('Item:', item.name, 'Points:', item.points, 'Quantity:', item.quantity, 'Item Points:', itemPoints);
+            return sum + itemPoints;
+          }, 0);
+          console.log('Total Points to Add:', totalPoints); // Debug log
 
           // Update points in Firestore
           const userPointsRef = doc(db, `points/${user.uid}`);
           const userPointsDoc = await getDoc(userPointsRef);
 
-          if (userPointsDoc.exists()) {
+         if (userPointsDoc.exists()) {
+          const currentPoints = userPointsDoc.data().points;
+          console.log('Current Points:', currentPoints); // Debug log
+
+          if (!isNaN(currentPoints) && !isNaN(totalPoints)) {
             await updateDoc(userPointsRef, {
-              points: userPointsDoc.data().points + totalPoints,
+              points: currentPoints + totalPoints,
             });
           } else {
-            await setDoc(userPointsRef, { points: totalPoints });
+            console.error('Current points or total points is not a number:', currentPoints, totalPoints);
           }
+        } else {
+          if (!isNaN(totalPoints)) {
+            await setDoc(userPointsRef, { points: totalPoints });
+          } else {
+            console.error('Total points to set is not a number:', totalPoints);
+          }
+        }
 
           navigation.navigate('ConfirmationScreen');
         } catch (error) {
@@ -227,7 +244,6 @@ const Cart = () => {
   return (
     <ImageBackground source={require('../assets/Background.png')} style={styles.background}>
       <View style={styles.container}>
-        <Text style={styles.title}>Cart</Text>
         {cartItems.length > 0 ? (
           <>
             <FlatList

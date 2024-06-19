@@ -10,7 +10,14 @@ const Tab = createMaterialTopTabNavigator();
 function ScreenTabs() {
   return (
     <View style={styles.container}>
-    <Tab.Navigator initialRouteName='ActiveTickets'>
+    <Tab.Navigator 
+      initialRouteName='ActiveTickets' 
+      screenOptions={{
+        tabBarLabelStyle: {
+          fontFamily: 'MontserratBold',
+          fontSize: 12,
+        },
+      }}>
       <Tab.Screen name="Active Tickets" component={ActiveTickets} />
       <Tab.Screen name="Transaction History" component={TransactionHistory} />
     </Tab.Navigator>
@@ -21,8 +28,8 @@ function ScreenTabs() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, 
+    // marginTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    // marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, 
   },
 });
 

@@ -48,13 +48,19 @@ const MerchandisePage = () => {
       const userPointsRef = doc(db, `points/${user.uid}`);
       const unsubscribe = onSnapshot(userPointsRef, (doc) => {
         if (doc.exists()) {
-          setPoints(doc.data().points);
+          const pointsData = doc.data().points;
+          console.log('Fetched Points:', pointsData);
+          if (!isNaN(pointsData)) {
+            setPoints(Number(pointsData)); // Ensure points are stored as a number
+          } else {
+            console.error('Fetched points is not a number:', pointsData);
+          }
         }
       });
-
+  
       return () => unsubscribe();
     }
-  }, [db, user]);
+  }, [db, user]);   
 
   useEffect(() => {
     if (isFocused && user) {
@@ -71,56 +77,64 @@ const MerchandisePage = () => {
     }
   }, [isFocused, points, db, user]);
 
-  const handleExchange = (itemPoints, item) => {
-    if (points >= itemPoints) {
-      setPoints(points - itemPoints);
-      setRewards([...rewards, item]);
-      alert('Exchange successful!');
-    } else {
-      alert('Not enough points!');
-    }
-  };
+  // const handleExchange = (itemPoints, item) => {
+  //   if (points >= itemPoints) {
+  //     setPoints(points - itemPoints);
+  //     setRewards([...rewards, item]);
+  //     alert('Exchange successful!');
+  //   } else {
+  //     alert('Not enough points!');
+  //   }
+  // };
 
   const handlePress = (item) => {
-    navigation.navigate('MerchandiseDetail', { item, points, onExchange: handleExchange });
+    navigation.navigate('MerchandiseDetail', { item, points });
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View style={styles.pointsContainer}>
-          <Text style={styles.pointsTitle}>Your Points</Text>
-          <Text style={styles.pointsValue}>{points} Seabrew Points</Text>
-        </View>
-        <View style={styles.categoryContainer}>
-          <TouchableOpacity onPress={() => setCategory('Plushies')}>
-            <Text style={category === 'Plushies' ? styles.categoryTextActive : styles.categoryText}>Plushies</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setCategory('Keychains')}>
-            <Text style={category === 'Keychains' ? styles.categoryTextActive : styles.categoryText}>Keychains</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setCategory('Pins')}>
-            <Text style={category === 'Pins' ? styles.categoryTextActive : styles.categoryText}>Pins</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.merchandiseContainer}>
-          {filteredData.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.merchandiseItem} onPress={() => handlePress(item)}>
-              <View style={styles.imageContainer}>
-                <Image source={item.image} style={styles.image} />
-                <Text style={styles.brandName}>Seabrew</Text>
-              </View>
-              <Text style={styles.mercName}>{item.name}</Text>
-              <Text style={styles.mercPoint}>{item.points} Points</Text>
+      <ImageBackground source={require('../assets/Background.png')} style={styles.backgroundImage}>
+        <View style={styles.container}>
+          <View style={styles.pointsContainer}>
+            <Text style={styles.pointsTitle}>Your Points</Text>
+            <Text style={styles.pointsValue}>{points} Seabrew Points</Text>
+          </View>
+          <View style={styles.categoryContainer}>
+            <TouchableOpacity onPress={() => setCategory('Plushies')}>
+              <Text style={category === 'Plushies' ? styles.categoryTextActive : styles.categoryText}>Plushies</Text>
             </TouchableOpacity>
-          ))}
+            <TouchableOpacity onPress={() => setCategory('Keychains')}>
+              <Text style={category === 'Keychains' ? styles.categoryTextActive : styles.categoryText}>Keychains</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCategory('Pins')}>
+              <Text style={category === 'Pins' ? styles.categoryTextActive : styles.categoryText}>Pins</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.scrollView}>
+            <View style={styles.merchandiseContainer}>
+              {filteredData.map((item) => (
+                <TouchableOpacity key={item.id} style={styles.merchandiseItem} onPress={() => handlePress(item)}>
+                  <View style={styles.imageContainer}>
+                    <Image source={item.image} style={styles.image} />
+                    <Text style={styles.brandName}>Seabrew</Text>
+                  </View>
+                  <Text style={styles.mercName}>{item.name}</Text>
+                  <Text style={styles.mercPoint}>{item.points} Points</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         </View>
-      </View>
+      </ImageBackground>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   container: {
     flex: 1,
     paddingRight: 15,
@@ -129,12 +143,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingTop: 15,
   },
+  scrollView: {
+    flex: 1,
+  },
   pointsContainer: {
     marginBottom: 20,
     alignItems: 'center',
     backgroundColor: '#375A82',
     padding: 20,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   pointsTitle: {
     fontSize: 24,
@@ -150,6 +172,11 @@ const styles = StyleSheet.create({
   categoryContainer: {
     flexDirection: 'row',
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   categoryText: {
     fontSize: 14,
@@ -199,6 +226,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     padding: 10,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   image: {
     width: 100,
@@ -210,13 +242,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#375A82',
     marginBottom: 5,
-    textAlign: 'left'
+    textAlign: 'left',
   },
   mercPoint: {
     fontFamily: 'MontserratSemiBold',
     fontSize: 12,
     color: '#375A82',
-    textAlign: 'left'
+    textAlign: 'left',
   },
 });
 

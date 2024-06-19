@@ -25,36 +25,48 @@ const History = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const fetchTransactions = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
   
-    if (user) {
-      try {
-        const db = getFirestore();
-        const userHistoryRef = doc(db, `history/${user.uid}`);
-        
-        const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
-          if (snapshot.exists()) {
-            const userData = snapshot.data();
-            const purchases = userData.purchases || [];
-            const allItems = purchases.flatMap((purchase) => purchase.items);
-            allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (user) {
+        try {
+          const db = getFirestore();
+          const userHistoryRef = doc(db, `history/${user.uid}`);
   
-            setTransactions(allItems);
-          } else {
-            console.log("User history does not exist");
-          }
-        });
+          const unsubscribe = onSnapshot(userHistoryRef, (snapshot) => {
+            if (snapshot.exists()) {
+              const userData = snapshot.data();
+              const purchases = userData.purchases || [];
+              const allItems = purchases.flatMap((purchase) => purchase.items);
+              allItems.sort((a, b) => new Date(b.date) - new Date(a.date));
   
-        setLoading(false);
+              // Filter transactions with past dates
+              const today = new Date();
+              const formattedToday = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+              const pastTransactions = allItems.filter((item) => {
+                const transactionDate = new Date(item.date);
+                const formattedTransactionDate = `${transactionDate.getFullYear()}-${transactionDate.getMonth() + 1}-${transactionDate.getDate()}`;
+                return formattedTransactionDate < formattedToday;
+              });
+              setTransactions(pastTransactions);
+            } else {
+              console.log("User history does not exist");
+            }
+          });
   
-        // Return a cleanup function to unsubscribe from real-time updates when component unmounts
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('Error fetching transaction history:', error);
+          setLoading(false);
+  
+          // Return a cleanup function to unsubscribe from real-time updates when component unmounts
+          return () => unsubscribe();
+        } catch (error) {
+          console.error('Error fetching transaction history:', error);
+        }
       }
-    }
-  }, []);
+    };
+  
+    fetchTransactions();
+  }, []);  
 
   const handlePress = (item) => {
     setSelectedItem(item);
@@ -71,60 +83,39 @@ const History = () => {
 
   return (
     <ImageBackground source={require('../assets/Background.png')} style={styles.container}>
-    <ScrollView>
-      <View style={styles.historyPage}>
-        <Text style={styles.title}>Transaction History</Text>
-        <View style={styles.bundleContainer}>
+      <ScrollView>
+        <View style={styles.historyPage}>
           {transactions.length === 0 ? (
-            <Text style={[styles.itemName, { textAlign: 'center' }]}>No Transactions</Text>
+            <View style={styles.centeredContainer}>
+              <Text style={[styles.itemName, styles.noTransactionsText]}>No Transactions History Yet</Text>
+            </View>
           ) : (
-            transactions.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.bundleRow}
-                onPress={() => handlePress(item)}
-              >
-                <View style={styles.textContainer}>
-                  <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
-                  <Text style={styles.visitDate}>
-                    Visit date: {item.date}
-                  </Text>
+            <View style={styles.bundleContainer}>
+              {transactions.map((item, index) => (
+                <View
+                  key={index}
+                  style={styles.bundleRow}
+                  onPress={() => handlePress(item)}
+                >
+                  <View style={styles.textContainer}>
+                    <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
+                    <Text style={styles.visitDate}>
+                      Visit date: {item.date}
+                    </Text>
+                  </View>
+                  <View style={styles.groupContainer}>
+                    <Text style={styles.itemPrice}>IDR {item.price}</Text>
+                    <Text style={styles.paidText}>Paid</Text>
+                  </View>
                 </View>
-                <View style={styles.groupContainer}>
-                  <Text style={styles.itemPrice}>IDR {item.price}</Text>
-                  <Text style={styles.paidText}>Paid</Text>
-                </View>
-              </TouchableOpacity>
-            ))
+              ))}
+            </View>
           )}
         </View>
-      </View>
-      {selectedItem && (
-        <Modal
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <TouchableWithoutFeedback onPress={closeModal}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <QRCode value={JSON.stringify(selectedItem)} size={200} />
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={closeModal}
-                >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      )}
-    </ScrollView>
+      </ScrollView>
     </ImageBackground>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -138,12 +129,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     boxSizing: "border-box",
     paddingTop: 30,
+    paddingHorizontal: 15, // Add horizontal padding here
   },
-  title: {
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  itemName: {
     fontFamily: "MontserratBold",
-    fontSize: 30,
+    fontSize: 15,
     color: "#375A82",
-    marginBottom: 20,
+    marginBottom: 5,
+  },
+  noTransactionsText: {
+    textAlign: 'center',
   },
   bundleContainer: {
     width: "100%",
@@ -158,13 +158,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    paddingBottom: 40,
-  },
-  itemName: {
-    fontFamily: "MontserratBold",
-    fontSize: 15,
-    color: "#375A82",
-    marginBottom: 5,
+    paddingVertical: 10,
   },
   visitDate: {
     fontFamily: "Montserrat",
@@ -175,6 +169,7 @@ const styles = StyleSheet.create({
   groupContainer: {
     alignItems: "center",
     marginRight: 10,
+    justifyContent: 'center', // Center vertically
   },
   itemPrice: {
     fontFamily: "MontserratBold",

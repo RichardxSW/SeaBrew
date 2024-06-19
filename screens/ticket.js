@@ -126,6 +126,7 @@ const Ticket = () => {
         quantity: ticketCountForDate[ticketName],
         price: (isWeekend(selectedDate) ? weekendTickets : weekdayTickets).find(ticket => ticket.name === ticketName).price,
         date: selectedDate.toDateString(),
+        points: (isWeekend(selectedDate) ? weekendTickets : weekdayTickets).find(ticket => ticket.name === ticketName).points,
       }));
   
     try {

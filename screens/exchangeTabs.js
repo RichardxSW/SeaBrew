@@ -15,7 +15,7 @@ function ExchangeTabs() {
         screenOptions={{
           tabBarLabelStyle: {
             fontFamily: 'MontserratBold',
-            fontSize: 14,
+            fontSize: 12,
           },
         }}
       >
