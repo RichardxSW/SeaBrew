@@ -151,7 +151,7 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.productOptionTitle}>Ice / Hot</Text>
                 <RadioForm
                   radio_props={Type}
-                  initial={0}
+                  initial={-1}
                   onPress={(value) => setSelectedType(value)}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}
@@ -169,7 +169,7 @@ const StarbuckDetailPage = ({ route }) => {
                 <Text style={styles.productOptionTitle}>Size</Text>
                 <RadioForm
                   radio_props={Size}
-                  initial={0}
+                  initial={-1}
                   onPress={(value) => setSelectedSize(value)}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}

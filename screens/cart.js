@@ -10,8 +10,8 @@ const CartItem = ({ item, onIncrease, onDecrease }) => (
     <View style={styles.itemDetails}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemDetail}>Type: {item.type}</Text>
-        <Text style={styles.itemDetail}>Size: {item.size}</Text>
+        {item.type && <Text style={styles.itemDetail}>Type: {item.type}</Text>}
+        {item.size && <Text style={styles.itemDetail}>Size: {item.size}</Text>}
         <CurrencyInput
           style={styles.itemPrice}
           value={item.price}
@@ -145,8 +145,8 @@ const Cart = () => {
               quantity: item.quantity,
               totalAmount: totalAmount,
               date: item.date || formattedDate,
-              type: item.type,
-              size: item.size,
+              type: item.type ? item.type : null,
+              size: item.size ? item.size : null,
             })),
           };
 
