@@ -24,6 +24,12 @@ const StarbuckDetailPage = ({ route }) => {
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(0);
 
+  // Calculate discounted price per item (handling the case where item.disc is not defined)
+  const discountedPrice = item.disc ? item.price - item.price * 0.3 : item.price;
+
+  // Calculate subtotal based on discounted price and quantity
+  const subtotalPrice = discountedPrice * quantity;
+
   const handleIncrement = () => {
     setQuantity(quantity + 1);
   };
@@ -70,7 +76,7 @@ const StarbuckDetailPage = ({ route }) => {
       } else {
         const newItem = {
           name: item.name || null,
-          price: item.price || null,
+          price: discountedPrice || null,
           quantity: quantity || null,
           dateAdded: currentDate,
           size: selectedSize || null,
@@ -206,7 +212,7 @@ const StarbuckDetailPage = ({ route }) => {
         {/* Add to Cart Button */}
         <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
           <Text style={styles.addToCartButtonText}>
-            Add to Cart - IDR { (item.price * quantity).toLocaleString('id-ID') }
+            Add to Cart - IDR { (subtotalPrice).toLocaleString('id-ID') }
           </Text>
         </TouchableOpacity>
 
