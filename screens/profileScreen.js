@@ -6,7 +6,6 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { getFirestore, doc, getDoc, collection, query, where } from 'firebase/firestore';
 import { getAuth, signOut } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ProfileScreen({ navigation }) {
   const auth = getAuth();
@@ -45,16 +44,6 @@ export default function ProfileScreen({ navigation }) {
       fetchUserData();
     }, [user])
   );
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth); // Keluar dari sesi pengguna
-      // Navigasi ke halaman Login dengan menghapus email dan password dari navigasi
-      navigation.navigate('Login', { email: '', password: '' });
-    } catch (error) {
-      console.error('Error while logging out:', error);
-    }
-  };
 
   return (
     <KeyboardAvoidingView

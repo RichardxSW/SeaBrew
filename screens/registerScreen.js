@@ -115,16 +115,6 @@ export default function RegisterScreen({ navigation }) {
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
 
-          {/* <Text style={styles.text}>Or Sign Up With</Text>
-
-          <TouchableOpacity style={styles.buttonGoogleContainer}>
-            <Image
-              source={require('../assets/googleicon.png')}
-              style={styles.iconStyle}
-            />
-            <Text style={styles.buttonText}>Google</Text>
-          </TouchableOpacity> */}
-
           <Text style={styles.bottomtext}>Already have an account?</Text>
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
