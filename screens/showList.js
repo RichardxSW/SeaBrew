@@ -48,7 +48,10 @@ const ShowList = () => {
                     <FontAwesome name="close" size={20} color="#8b0000" />
                   </Pressable>
                   <Text style={styles.modalTitle}>{selectedShow?.name}</Text>
-                  <Image source={selectedShow?.image} style={styles.modalImage} />
+                  <View style={styles.imageContainer}>
+                    <Image source={selectedShow?.image} style={styles.modalImage} />
+                    <Text style={styles.overlayText}>SeaBrew</Text>
+                  </View>
                   <Text style={styles.modalDescription}>{selectedShow?.description}</Text>
                   <View style={styles.location}>
                     <FontAwesome name="map" size={24} color="black" />
@@ -175,10 +178,23 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     textAlign: 'left',
   },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+  },
   modalImage: {
     width: '100%',
     height: 200,
     resizeMode: 'cover',
+  },
+  overlayText: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    color: '#B3E0F5',
+    fontFamily: 'BigShouldersStencilBold',
+    fontSize: 18,
+    padding: 8,
   },
   modalDescription: {
     fontSize: 13,
@@ -192,12 +208,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
     marginTop: 10,
-  },
-  additionalText: {
-    fontSize: 16,
-    fontFamily: 'MontserratBold',
-    color: 'black',
-    textAlign: 'center',
   },
 });
 

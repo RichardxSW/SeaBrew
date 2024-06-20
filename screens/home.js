@@ -55,6 +55,9 @@ const Home = () => {
                     <View style={styles.darkness}>
                       <Text style={styles.pageName}>{show.name}</Text>
                     </View>
+                    <View style={styles.seaBrewTextContainer}>
+                      <Text style={styles.seaBrewText}>SeaBrew</Text>
+                    </View>
                   </ImageBackground>
                 </View>
               ))}
@@ -91,7 +94,7 @@ const Home = () => {
                     separator=","
                     precision="0"
                     editable={false}
-                    />
+                  />
                 </View>
               ))}
             </View>
@@ -146,13 +149,6 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
   },
-  subtitle: {
-    fontFamily: 'MontserratMedium',
-    fontSize: 15,
-    margin: 14,
-    textAlign: 'center',
-    color: 'black',
-  },
   content: {
     flex: 1,
     alignItems: 'center',
@@ -171,6 +167,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+    position: 'relative',
   },
   icon: {
     marginTop: 4.2,
@@ -348,6 +345,16 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 5,
     marginHorizontal: 5,
+  },
+  seaBrewTextContainer: {
+    position: 'absolute',
+    top: 2,
+    left: 2,
+  },
+  seaBrewText: {
+    fontFamily: 'BigShouldersStencilBold',
+    fontSize: 15,
+    color: '#B3E0F5',
   },
 });
 
