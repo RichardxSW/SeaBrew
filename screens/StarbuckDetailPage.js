@@ -23,6 +23,7 @@ const StarbuckDetailPage = ({ route }) => {
   const [selectedType, setSelectedType] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(0);
+  const [hasAddedToCart, setHasAddedToCart] = useState(false);
 
   // Calculate discounted price per item (handling the case where item.disc is not defined)
   const discountedPrice = item.disc ? item.price - item.price * 0.3 : item.price;
@@ -87,6 +88,8 @@ const StarbuckDetailPage = ({ route }) => {
       }
 
       await setDoc(cartRef, cartData);
+      resetForm();
+      setHasAddedToCart(true);
 
       setSelectedType('');
       setSelectedSize('');
@@ -99,14 +102,24 @@ const StarbuckDetailPage = ({ route }) => {
     }
   };
 
-  const resetAll = () => {
-    setQuantity(0);
+  const resetForm = () => {
     setSelectedType('');
     setSelectedSize('');
   };
 
+  const resetAll = () => {
+    setQuantity(0);
+    setSelectedType('');
+    setSelectedSize('');
+    setHasAddedToCart(false);
+  };
+
   const hasDiscount = (item) => {
     return item.disc === true; // Check the 'disc' property instead of comparing 'originalPrice' and 'price'
+  };
+
+  const isFormValid = () => {
+    return (selectedType && selectedSize && quantity > 0) || (hasAddedToCart && quantity > 0);
   };
 
   return (
@@ -159,7 +172,10 @@ const StarbuckDetailPage = ({ route }) => {
                 <RadioForm
                   radio_props={Type}
                   initial={-1}
-                  onPress={(value) => setSelectedType(value)}
+                  onPress={(value) => {
+                    setSelectedType(value);
+                    setHasAddedToCart(false);
+                  }}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}
                   buttonColor={'#4DC3FC'}
@@ -177,7 +193,10 @@ const StarbuckDetailPage = ({ route }) => {
                 <RadioForm
                   radio_props={Size}
                   initial={-1}
-                  onPress={(value) => setSelectedSize(value)}
+                  onPress={(value) => {
+                    setSelectedSize(value);
+                    setHasAddedToCart(false);
+                  }}
                   formHorizontal={true} // Set to true for horizontal layout
                   labelHorizontal={true}
                   buttonColor={'#4DC3FC'}
@@ -211,7 +230,10 @@ const StarbuckDetailPage = ({ route }) => {
         )}
 
         {/* Add to Cart Button */}
-        <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
+        <TouchableOpacity style={[styles.addToCartButton, { backgroundColor: isFormValid() ? '#375A82' : '#ccc' }]} 
+          disabled={!isFormValid()} 
+          onPress={addToCart}
+        >
           <Text style={styles.addToCartButtonText}>
             Add to Cart - IDR { (subtotalPrice).toLocaleString('id-ID') }
           </Text>
