@@ -127,7 +127,6 @@ export default function App() {
             title: 'All Show',
             headerStyle: {
               backgroundColor: '#92DAFD',
-              // backgroundColor: '#4DC3FC',
             },
             headerTintColor: '#375A82',
             headerTitleStyle: {
@@ -140,7 +139,7 @@ export default function App() {
             name="StarbuckDetail"
             component={StarbuckDetail}
             options={{
-              headerTitle: 'SeaBrew',
+              headerTitle: 'SB Coffee',
               title: 'Detail',
               headerStyle: {
                 backgroundColor: '#92DAFD',
@@ -192,7 +191,6 @@ export default function App() {
               title: 'Ticket',
               headerStyle: {
                 backgroundColor: '#92DAFD',
-                // backgroundColor: '#4DC3FC',
               },
               headerTintColor: '#375A82',
               headerTitleStyle: {
@@ -210,7 +208,6 @@ export default function App() {
               title: 'All Bundle',
               headerStyle: {
                 backgroundColor: '#92DAFD',
-                // backgroundColor: '#4DC3FC',
               },
               headerTintColor: '#375A82',
               headerTitleStyle: {
@@ -228,7 +225,6 @@ export default function App() {
               title: 'Exchange Points',
               headerStyle: {
                 backgroundColor: '#92DAFD',
-                // backgroundColor: '#4DC3FC',
               },
               headerTintColor: '#375A82',
               headerTitleStyle: {

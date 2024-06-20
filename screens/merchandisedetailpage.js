@@ -40,50 +40,72 @@ const MerchandiseDetailPage = ({ route }) => {
       console.error('User not authenticated');
       return;
     }
-
+  
     const db = getFirestore();
     const userPointsRef = doc(db, `points/${user.uid}`);
-
+  
     try {
       // Get the current user points
       const userPointsSnap = await getDoc(userPointsRef);
       const userData = userPointsSnap.data();
       const currentPoints = userData.points;
-
+  
       // Calculate total points needed for the exchange
       const totalPoints = item.points * quantity;
-
+  
       // Check if user has enough points
       if (currentPoints >= totalPoints) {
         // Calculate new points after exchange
         const newPoints = currentPoints - totalPoints;
-
+  
         // Update user points
         await updateDoc(userPointsRef, { points: newPoints });
-
+  
         // Save exchanged item info to rewards collection
         const rewardsRef = doc(db, `rewards/${user.uid}`);
         const rewardsSnap = await getDoc(rewardsRef);
-
-        const rewardItem = {
-          id: item.id,
-          name: item.name,
-          image: item.image,
-          quantity: quantity,
-        };
-
+  
         if (rewardsSnap.exists()) {
-          // If rewards document exists, update it with arrayUnion
-          await updateDoc(rewardsRef, {
-            rewards: arrayUnion(rewardItem),
-          });
+          // If rewards document exists, check if the item already exists in rewards
+          const rewardsData = rewardsSnap.data();
+          const existingItem = rewardsData.rewards.find(reward => reward.id === item.id);
+  
+          if (existingItem) {
+            // If item already exists, update its quantity
+            const updatedRewards = rewardsData.rewards.map(reward =>
+              reward.id === item.id
+                ? { ...reward, quantity: reward.quantity + quantity }
+                : reward
+            );
+            await updateDoc(rewardsRef, {
+              rewards: updatedRewards,
+            });
+          } else {
+            // If item does not exist, add new item to rewards
+            await updateDoc(rewardsRef, {
+              rewards: arrayUnion({
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                quantity: quantity,
+              }),
+            });
+          }
         } else {
           // If rewards document does not exist, create it with initial reward
           await setDoc(rewardsRef, {
-            rewards: [rewardItem],
+            rewards: [{
+              id: item.id,
+              name: item.name,
+              image: item.image,
+              quantity: quantity,
+            }],
           });
         }
-
+  
+        // Reset the quantity after successful exchange
+        setQuantity(0);
+  
         // Show success alert
         Alert.alert('Exchange Successful', `You have successfully exchanged ${quantity} ${item.name}(s)`);
       } else {
@@ -92,7 +114,7 @@ const MerchandiseDetailPage = ({ route }) => {
     } catch (error) {
       console.error('Error exchanging item:', error);
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>

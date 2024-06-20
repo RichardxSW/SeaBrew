@@ -81,6 +81,7 @@ const MerchandiseRewardPage = () => {
                   </View>
                   <View style={styles.innerContainer}>
                     <Text style={styles.mercname}>{item.name}</Text>
+                    <Text style={styles.quantityText}>Quantity: {item.quantity}</Text>
                   </View>
                 </TouchableOpacity>
               ))
@@ -99,6 +100,7 @@ const MerchandiseRewardPage = () => {
                 <>
                   <Text style={styles.modalTitle}>{selectedReward.name}</Text>
                   <QRCode value={String(selectedReward.id)} size={200} />
+                  <Text style={styles.modalQuantity}>Quantity: {selectedReward.quantity}</Text>
                   <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                     <Text style={styles.closeButtonText}>Close</Text>
                   </TouchableOpacity>
@@ -121,6 +123,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     paddingVertical: 20,
+    justifyContent: 'center'
   },
   container: {
     flex: 1,
@@ -155,6 +158,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     fontFamily: 'MontserratBold',
+  },
+  quantityText: {
+    fontSize: 14,
+    color: 'white',
+    fontFamily: 'Montserrat',
+    marginTop: 5,
   },
   imageContainer: {
     alignItems: 'center',
@@ -196,6 +205,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontFamily: 'MontserratBold',
   },
+  modalQuantity: {
+    fontSize: 16,
+    marginTop: 20,
+    fontFamily: 'Montserrat',
+  },
   closeButton: {
     marginTop: 20,
     paddingVertical: 10,
@@ -209,6 +223,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   noRewardsContainer: {
+    flex: 1,
+    justifyContent: 'center', 
     alignItems: 'center',
   },
   noRewardsText: {

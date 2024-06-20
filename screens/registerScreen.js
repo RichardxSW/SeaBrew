@@ -30,8 +30,8 @@ export default function RegisterScreen({ navigation }) {
               email,
               username,
             });
-            Alert.alert('Success', 'User registered successfully!');
-            navigation.navigate('Login');
+            // Alert.alert('Success', 'User registered successfully!');
+            navigation.navigate('Navbar');
           } catch (error) {
             console.error('Error saving user data:', error);
             Alert.alert('Error', 'Failed to save user data.');
