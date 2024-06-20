@@ -100,24 +100,24 @@ const Cart = () => {
   const deleteItemFromFirebase = async (itemToDelete) => {
     const auth = getAuth();
     const user = auth.currentUser;
-
+  
     if (user) {
       const cartRef = doc(db, `carts/${user.uid}`);
       try {
         const cartSnapshot = await getDoc(cartRef);
         const cartData = cartSnapshot.data();
         
-        // Filter items, bundles, and tickets
-        const updatedItems = cartData.items.filter(item => item.name !== itemToDelete.name);
-        const updatedBundles = cartData.bundle.filter(bundleItem => bundleItem.name !== itemToDelete.name);
-        const updatedTickets = cartData.tickets.filter(ticket => ticket.name !== itemToDelete.name);
+        // Use optional chaining to safely access items, bundle, and tickets
+        const updatedItems = cartData?.items?.filter(item => item.name !== itemToDelete.name) || [];
+        const updatedBundles = cartData?.bundle?.filter(bundleItem => bundleItem.name !== itemToDelete.name) || [];
+        const updatedTickets = cartData?.tickets?.filter(ticket => ticket.name !== itemToDelete.name) || [];
         
         await updateDoc(cartRef, { items: updatedItems, bundle: updatedBundles, tickets: updatedTickets });
       } catch (error) {
         console.error('Error deleting item from Firebase:', error);
       }
     }
-  };
+  };  
 
   const handleBuyNow = async () => {
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
