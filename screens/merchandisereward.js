@@ -99,7 +99,7 @@ const MerchandiseRewardPage = () => {
               {selectedReward && (
                 <>
                   <Text style={styles.modalTitle}>{selectedReward.name}</Text>
-                  <QRCode value={String(selectedReward.id)} size={200} />
+                  <Image source={require('../assets/qrillust.png')} style={{ width: 200, height: 200 }} />
                   <Text style={styles.modalQuantity}>Quantity: {selectedReward.quantity}</Text>
                   <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                     <Text style={styles.closeButtonText}>Close</Text>

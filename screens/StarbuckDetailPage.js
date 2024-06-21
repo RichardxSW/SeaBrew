@@ -48,30 +48,33 @@ const StarbuckDetailPage = ({ route }) => {
       alert('You need to be logged in to add items to the cart');
       return;
     }
-
+  
     const db = getFirestore();
-
+  
     try {
       const cartRef = doc(db, 'carts', user.uid);
       const cartSnapshot = await getDoc(cartRef);
       let cartData;
-
+  
       if (cartSnapshot.exists()) {
         cartData = cartSnapshot.data();
       } else {
         cartData = {};
       }
-
+  
       if (!cartData.hasOwnProperty('items')) {
         cartData.items = [];
       }
-
+  
       const currentDate = new Date().toDateString();
       const existingItemIndex = cartData.items.findIndex(
         (cartItem) =>
-          cartItem.name === item.name && cartItem.dateAdded === currentDate
+          cartItem.name === item.name &&
+          cartItem.dateAdded === currentDate &&
+          cartItem.type === selectedType &&
+          cartItem.size === selectedSize
       );
-
+  
       if (existingItemIndex !== -1) {
         cartData.items[existingItemIndex].quantity += quantity;
       } else {
@@ -86,21 +89,21 @@ const StarbuckDetailPage = ({ route }) => {
         };
         cartData.items.push(newItem);
       }
-
+  
       await setDoc(cartRef, cartData);
       resetForm();
       setHasAddedToCart(true);
-
+  
       setSelectedType('');
       setSelectedSize('');
       setQuantity(0);
-
+  
       alert('Item added to cart successfully!');
     } catch (error) {
       console.error('Error adding item to cart: ', error);
       alert('Error adding item to cart: ' + error.message);
     }
-  };
+  };  
 
   const resetForm = () => {
     setSelectedType('');

@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
   ScrollView,
+  Image
 } from "react-native";
 import { useFonts, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 import QRCode from "react-native-qrcode-svg";
@@ -97,6 +98,9 @@ const ActiveTicketsScreen = () => {
                 >
                   <View style={styles.textContainer}>
                     <Text style={styles.itemName}>{item.name} - ({item.quantity}x) </Text>
+                    {item.type && item.size && (
+                      <Text style={styles.itemDetails}>Type: {item.type}, Size: {item.size}</Text>
+                    )}
                     <Text style={styles.visitDate}>
                       Visit date: {item.date}
                     </Text>
@@ -120,7 +124,10 @@ const ActiveTicketsScreen = () => {
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                   <Text style={styles.modalItemName}>{selectedItem.name}</Text>
-                  <QRCode value={JSON.stringify(selectedItem)} size={200} />
+                  {selectedItem.type && selectedItem.size && (
+                    <Text style={styles.modalItemDetails}>Type: {selectedItem.type}, Size: {selectedItem.size}</Text>
+                  )}
+                  <Image source={require('../assets/qrillust.png')} style={{ width: 200, height: 200 }} />
                   <TouchableOpacity
                     style={styles.closeButton}
                     onPress={closeModal}
@@ -149,6 +156,7 @@ const styles = StyleSheet.create({
     boxSizing: "border-box",
     paddingTop: 30,
     paddingHorizontal: 15, // Add horizontal padding here
+    paddingBottom: 60,
   },
   centeredContainer: {
     flex: 1,
@@ -174,6 +182,12 @@ const styles = StyleSheet.create({
   itemName: {
     fontFamily: "Montserrat_700Bold",
     fontSize: 15,
+    color: "#375A82",
+    marginBottom: 5,
+  },
+  itemDetails: {
+    fontFamily: "Montserrat",
+    fontSize: 14,
     color: "#375A82",
     marginBottom: 5,
   },
@@ -222,6 +236,12 @@ const styles = StyleSheet.create({
   modalItemName: {
     fontFamily: "Montserrat_700Bold",
     fontSize: 18,
+    color: "#375A82",
+    marginBottom: 10,
+  },
+  modalItemDetails: {
+    fontFamily: "Montserrat",
+    fontSize: 16,
     color: "#375A82",
     marginBottom: 20,
   },
