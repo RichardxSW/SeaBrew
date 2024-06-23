@@ -48,5 +48,5 @@ SeaBrew merupakan aplikasi yang bertujuan untuk memudahkan pengguna dalam memboo
     - Untuk Android, gunakan emulator Android atau perangkat fisik.
     - Untuk iOS, gunakan emulator Xcode atau perangkat fisik.
 
-#Link Proyek
+# Link Proyek
 - [https://github.com/RichardxSW/SeaBrew](https://github.com/RichardxSW/SeaBrew.git)
