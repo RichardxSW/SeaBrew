@@ -5,15 +5,13 @@
 - Gavriel Joseph Lim ( 535220049 )
 - Jason Sutanto ( 535220052 )
 
-# SeaBrew - Booking Tiket Show dan SB Coffee
+# SeaBrew 
 
 ![SeaBrew Logo](assets/tes.png)
 
-SeaBrew adalah aplikasi mobile yang memungkinkan pengguna untuk membooking tiket untuk menonton show di tempat hiburan aquarium dan membeli minuman kopi SB Coffee. Dilengkapi dengan bundle dan poin yang bisa ditukarkan dengan merchandise, SeaBrew mempermudah pengalaman hiburan Anda.
-
 ## 🌊 Tentang SeaBrew
 
-SeaBrew merupakan aplikasi yang bertujuan untuk memudahkan pengguna dalam membooking tiket show aquarium, membeli kopi, dan menukarkan poin dengan merchandise. Dengan menggunakan QR code, proses penukaran di lokasi menjadi lebih cepat dan mudah.
+SeaBrew adalah aplikasi mobile yang memungkinkan pengguna untuk membooking tiket untuk menonton show di tempat hiburan aquarium dan membeli minuman kopi SB Coffee. Dilengkapi dengan bundle dan poin yang bisa ditukarkan dengan merchandise, SeaBrew mempermudah pengalaman hiburan Anda.
 
 ## 🌟 Fitur Utama
 
